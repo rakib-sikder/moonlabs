@@ -24,26 +24,46 @@ const quotes = [
   },
 ];
 
+const variants = {
+  enter: (dir: number) => ({ opacity: 0, x: dir * 40, filter: "blur(6px)", scale: 0.97 }),
+  center: { opacity: 1, x: 0, filter: "blur(0px)", scale: 1 },
+  exit: (dir: number) => ({ opacity: 0, x: dir * -40, filter: "blur(6px)", scale: 0.97 }),
+};
+
 export function Testimonials() {
-  const [index, setIndex] = useState(0);
+  const [[index, direction], setIndex] = useState<[number, number]>([0, 1]);
+
+  function go(next: number, dir: number) {
+    setIndex([(next + quotes.length) % quotes.length, dir]);
+  }
 
   useEffect(() => {
-    const id = setInterval(() => setIndex((i) => (i + 1) % quotes.length), 5000);
+    const id = setInterval(() => go(index + 1, 1), 5000);
     return () => clearInterval(id);
-  }, []);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [index]);
 
   return (
     <section id="testimonials" className="mx-auto max-w-3xl px-6 py-28 text-center">
       <p className="text-xs uppercase tracking-widest text-accent-2 mb-10">Customers</p>
-      <div className="relative h-56 sm:h-40">
-        <AnimatePresence mode="wait">
+      <div className="relative h-64 sm:h-40 overflow-hidden">
+        <AnimatePresence mode="wait" custom={direction}>
           <motion.div
             key={index}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -16 }}
+            custom={direction}
+            variants={variants}
+            initial="enter"
+            animate="center"
+            exit="exit"
             transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute inset-0"
+            drag="x"
+            dragSnapToOrigin
+            dragElastic={0.6}
+            onDragEnd={(_, info) => {
+              if (info.offset.x < -60) go(index + 1, 1);
+              else if (info.offset.x > 60) go(index - 1, -1);
+            }}
+            className="absolute inset-0 cursor-grab active:cursor-grabbing"
           >
             <p className="text-xl sm:text-2xl font-medium leading-snug">&ldquo;{quotes[index].quote}&rdquo;</p>
             <p className="mt-6 text-sm text-muted">
@@ -56,9 +76,9 @@ export function Testimonials() {
         {quotes.map((_, i) => (
           <button
             key={i}
-            onClick={() => setIndex(i)}
+            onClick={() => go(i, i > index ? 1 : -1)}
             aria-label={`Show testimonial ${i + 1}`}
-            className={`h-1.5 rounded-full transition-all ${i === index ? "w-6 bg-accent" : "w-1.5 bg-border"}`}
+            className={`h-1.5 rounded-full transition-all duration-300 ${i === index ? "w-6 bg-accent" : "w-1.5 bg-border hover:bg-muted"}`}
           />
         ))}
       </div>

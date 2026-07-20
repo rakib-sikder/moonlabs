@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { HeroMockup } from "./HeroMockup";
 
 const words = "Automate the busywork your team keeps putting off.".split(" ");
 
@@ -82,18 +83,8 @@ export function Hero() {
         <motion.div
           animate={{ y: [0, -10, 0] }}
           transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-          className="rounded-2xl border border-border bg-[#0d0e15] shadow-2xl shadow-black/50 p-6"
         >
-          <div className="flex gap-1.5 mb-4">
-            <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
-            <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
-            <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
-          </div>
-          <div className="space-y-2.5">
-            {[92, 68, 84, 45].map((w, i) => (
-              <div key={i} className="h-3 rounded bg-white/[0.06]" style={{ width: `${w}%` }} />
-            ))}
-          </div>
+          <HeroMockup />
         </motion.div>
       </motion.div>
     </section>

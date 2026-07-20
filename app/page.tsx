@@ -1,4 +1,5 @@
 import { Nav } from "@/components/Nav";
+import { ScrollProgress } from "@/components/ScrollProgress";
 import { Hero } from "@/components/Hero";
 import { LogoMarquee } from "@/components/LogoMarquee";
 import { HowItWorks } from "@/components/HowItWorks";
@@ -10,6 +11,7 @@ import { CTAFooter } from "@/components/CTAFooter";
 export default function Home() {
   return (
     <main className="bg-background text-foreground">
+      <ScrollProgress />
       <Nav />
       <Hero />
       <LogoMarquee />
