@@ -4,7 +4,7 @@ export function LogoMarquee() {
   const items = [...names, ...names];
 
   return (
-    <div className="relative py-14 border-y border-border overflow-hidden">
+    <div className="marquee-pause relative py-14 border-y border-border overflow-hidden">
       <p className="text-center text-xs uppercase tracking-widest text-muted mb-8">
         Trusted by teams shipping fast
       </p>

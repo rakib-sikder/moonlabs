@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "framer-motion";
 import { HeroMockup } from "./HeroMockup";
 
 const words = "Automate the busywork your team keeps putting off.".split(" ");
@@ -18,6 +18,26 @@ const word = {
 };
 
 export function Hero() {
+  const reduced = useReducedMotion();
+  const mx = useMotionValue(0.5);
+  const my = useMotionValue(0.5);
+  const sx = useSpring(mx, { stiffness: 140, damping: 18, mass: 0.4 });
+  const sy = useSpring(my, { stiffness: 140, damping: 18, mass: 0.4 });
+  const rotateY = useTransform(sx, [0, 1], [-7, 7]);
+  const rotateX = useTransform(sy, [0, 1], [6, -6]);
+
+  function handleTilt(e: React.MouseEvent<HTMLDivElement>) {
+    if (reduced) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    mx.set((e.clientX - rect.left) / rect.width);
+    my.set((e.clientY - rect.top) / rect.height);
+  }
+
+  function resetTilt() {
+    mx.set(0.5);
+    my.set(0.5);
+  }
+
   return (
     <section className="relative min-h-screen flex flex-col items-center justify-center px-6 pt-24 overflow-hidden">
       <div
@@ -78,13 +98,17 @@ export function Hero() {
         initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.8, delay: 1.0, ease: [0.16, 1, 0.3, 1] }}
-        className="relative mt-20 w-full max-w-3xl"
+        onMouseMove={handleTilt}
+        onMouseLeave={resetTilt}
+        className="relative mt-20 w-full max-w-3xl [perspective:1200px]"
       >
         <motion.div
           animate={{ y: [0, -10, 0] }}
           transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
         >
-          <HeroMockup />
+          <motion.div style={{ rotateX, rotateY }} className="[transform-style:preserve-3d]">
+            <HeroMockup />
+          </motion.div>
         </motion.div>
       </motion.div>
     </section>

@@ -20,6 +20,7 @@ export function HeroMockup() {
 
   useGSAP(
     () => {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
       const tl = gsap.timeline({ repeat: -1, repeatDelay: 0.9, defaults: { ease: "power2.inOut" } });
 
       rows.forEach((_, i) => {

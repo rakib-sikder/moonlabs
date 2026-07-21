@@ -48,3 +48,22 @@ body {
 .animate-marquee {
   animation: marquee 28s linear infinite;
 }
+
+.marquee-pause:hover .animate-marquee {
+  animation-play-state: paused;
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .animate-marquee {
+    animation: none;
+  }
+}
