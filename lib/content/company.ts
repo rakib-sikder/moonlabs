@@ -127,7 +127,7 @@ export const plans = [
   {
     name: "Crescent",
     tagline: "One automation, done properly.",
-    price: "$490",
+    price: "$290",
     unit: "one-time, from",
     cta: "Start with one",
     featured: false,
@@ -141,7 +141,7 @@ export const plans = [
   {
     name: "Half Moon",
     tagline: "A partner that keeps automating.",
-    price: "$990",
+    price: "$490",
     unit: "per month",
     cta: "Book a free audit",
     featured: true,
@@ -156,7 +156,7 @@ export const plans = [
   {
     name: "Full Moon",
     tagline: "Your automation department.",
-    price: "$2,490",
+    price: "$990",
     unit: "per month",
     cta: "Talk to us",
     featured: false,
@@ -190,7 +190,7 @@ export const faqs: { group: string; items: { q: string; a: string }[] }[] = [
   {
     group: "Pricing & timeline",
     items: [
-      { q: "How much does an automation cost?", a: "Single projects start from $490, and most land between $490 and $2,500 depending on how many tools are involved. You get a fixed price before we start." },
+      { q: "How much does an automation cost?", a: "Single projects start from $290, and most land between $290 and $990 depending on how many tools are involved. You get a fixed price before we start." },
       { q: "How long does it take?", a: "Simple workflows go live in 1–2 weeks. Larger projects with several systems take 3–6 weeks." },
       { q: "Can we cancel a monthly plan?", a: "Yes, any time with 30 days' notice. Everything we built stays in your accounts." },
     ],

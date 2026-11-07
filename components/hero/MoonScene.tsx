@@ -7,81 +7,17 @@ import { Html, Line } from "@react-three/drei";
 import * as THREE from "three";
 import { services } from "@/lib/site";
 import type { ThemeColors } from "@/lib/useTheme";
+import { getMoonMaps, moonTextureCanvases } from "@/lib/moonTexture";
 
-/* ---------- Procedural moon surface (no image assets) ---------- */
-function makeMoonTexture() {
-  const W = 1024;
-  const H = 512;
-  const c = document.createElement("canvas");
-  c.width = W;
-  c.height = H;
-  const g = c.getContext("2d")!;
-  let seed = 7;
-  const rnd = () => ((seed = (seed * 16807) % 2147483647) - 1) / 2147483646;
-  // Draw a feature three times (shifted by the texture width) so the sphere's seam is invisible.
-  const wrap = (x: number, draw: (x: number) => void) => [x - W, x, x + W].forEach(draw);
-
-  g.fillStyle = "#a9abb5";
-  g.fillRect(0, 0, W, H);
-
-  // Maria: big soft dark plains.
-  for (let i = 0; i < 14; i++) {
-    const x = rnd() * W;
-    const y = H * 0.2 + rnd() * H * 0.6;
-    const r = 60 + rnd() * 140;
-    wrap(x, (x) => {
-      const grad = g.createRadialGradient(x, y, 0, x, y, r);
-      grad.addColorStop(0, "rgba(60,62,75,0.45)");
-      grad.addColorStop(1, "rgba(60,62,75,0)");
-      g.fillStyle = grad;
-      g.fillRect(x - r, y - r, r * 2, r * 2);
-    });
-  }
-  // Grain.
-  for (let i = 0; i < 26000; i++) {
-    const v = Math.floor(120 + rnd() * 100);
-    g.fillStyle = `rgba(${v},${v},${v + 8},0.12)`;
-    g.fillRect(rnd() * W, rnd() * H, 1.5, 1.5);
-  }
-  // Craters: soft dark bowl with a faint offset highlight — mostly small, a few large.
-  for (let i = 0; i < 700; i++) {
-    const x = rnd() * W;
-    const y = rnd() * H;
-    const r = Math.pow(rnd(), 3.2) * 30 + 1.5;
-    wrap(x, (x) => {
-      const bowl = g.createRadialGradient(x + r * 0.15, y + r * 0.15, 0, x, y, r);
-      bowl.addColorStop(0, "rgba(72,74,86,0.42)");
-      bowl.addColorStop(0.7, "rgba(95,97,110,0.22)");
-      bowl.addColorStop(1, "rgba(95,97,110,0)");
-      g.fillStyle = bowl;
-      g.beginPath();
-      g.arc(x, y, r, 0, Math.PI * 2);
-      g.fill();
-      const lit = g.createRadialGradient(x - r * 0.35, y - r * 0.35, 0, x - r * 0.35, y - r * 0.35, r * 0.9);
-      lit.addColorStop(0, "rgba(230,232,242,0.16)");
-      lit.addColorStop(1, "rgba(230,232,242,0)");
-      g.fillStyle = lit;
-      g.beginPath();
-      g.arc(x, y, r * 1.05, 0, Math.PI * 2);
-      g.fill();
-    });
-  }
-  // A couple of bright ray craters.
-  for (let i = 0; i < 3; i++) {
-    const x = rnd() * W;
-    const y = H * 0.25 + rnd() * H * 0.5;
-    wrap(x, (x) => {
-      const ray = g.createRadialGradient(x, y, 0, x, y, 70);
-      ray.addColorStop(0, "rgba(240,242,250,0.35)");
-      ray.addColorStop(1, "rgba(240,242,250,0)");
-      g.fillStyle = ray;
-      g.fillRect(x - 70, y - 70, 140, 140);
-    });
-  }
-  const tex = new THREE.CanvasTexture(c);
-  tex.colorSpace = THREE.SRGBColorSpace;
-  tex.anisotropy = 4;
-  return tex;
+/* ---------- Moon surface: shared procedural maps (lib/moonTexture) ---------- */
+function makeMoonTextures() {
+  const { color, normal } = moonTextureCanvases(getMoonMaps());
+  const map = new THREE.CanvasTexture(color);
+  map.colorSpace = THREE.SRGBColorSpace;
+  map.anisotropy = 8;
+  const normalMap = new THREE.CanvasTexture(normal);
+  normalMap.anisotropy = 8;
+  return { map, normalMap };
 }
 
 /* ---------- Fresnel glow shell ---------- */
@@ -260,7 +196,8 @@ function System({ colors, reduced }: { colors: ThemeColors; reduced: boolean }) 
   const intro = useRef(reduced ? 1 : 0);
   const [hovered, setHovered] = useState<number | null>(null);
   const specs = useOrbitSpecs();
-  const texture = useMemo(() => makeMoonTexture(), []);
+  const textures = useMemo(() => makeMoonTextures(), []);
+  const normalScale = useMemo(() => new THREE.Vector2(1, 1), []);
   const { size } = useThree();
   const wide = size.width >= 900;
 
@@ -294,11 +231,11 @@ function System({ colors, reduced }: { colors: ThemeColors; reduced: boolean }) 
   return (
     <group ref={root} position={wide ? [2.6, -0.1, 0] : [0, 1.55, 0]}>
       <mesh ref={moon} rotation={[0.2, 0, 0.1]}>
-        <sphereGeometry args={[1.55, 128, 128]} />
-        <meshStandardMaterial map={texture} bumpMap={texture} bumpScale={1.2} roughness={1} metalness={0} />
+        <sphereGeometry args={[1.4, 160, 160]} />
+        <meshStandardMaterial map={textures.map} normalMap={textures.normalMap} normalScale={normalScale} roughness={1} metalness={0} />
       </mesh>
       <mesh scale={1.25}>
-        <sphereGeometry args={[1.55, 64, 64]} />
+        <sphereGeometry args={[1.4, 64, 64]} />
         <shaderMaterial
           vertexShader={glowVertex}
           fragmentShader={glowFragment}
@@ -341,11 +278,15 @@ export default function MoonScene({
       frameloop={active ? "always" : "never"}
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
     >
-      <ambientLight intensity={colors.isDark ? 0.07 : 0.55} />
+      <ambientLight intensity={colors.isDark ? 0.05 : 0.35} />
       {/* Key light from upper-left gives the moon a crescent terminator. */}
-      <directionalLight position={[-7, 2.5, 1.6]} intensity={colors.isDark ? 3.4 : 2.6} />
+      <directionalLight
+        position={colors.isDark ? [-7, 2.5, 1.6] : [-3, 2.5, 6]}
+        intensity={colors.isDark ? 3.6 : 3.1}
+        color={colors.isDark ? "#ffffff" : "#fffaf2"}
+      />
       {/* Cool rim light from behind. */}
-      <directionalLight position={[5, -1, -4]} intensity={colors.isDark ? 1.4 : 0.5} color={colors.accent} />
+      <directionalLight position={[5, -1, -4]} intensity={colors.isDark ? 0.55 : 0.2} color={colors.accent} />
       <System colors={colors} reduced={reduced} />
     </Canvas>
   );
