@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useRef, type MouseEvent } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { services, type Service } from "@/lib/site";
+import { MiniOrbit } from "./ui/MiniOrbit";
+import { RevealText } from "./ui/RevealText";
 
 // Client-side navigation with motion props on the same element.
 const MotionLink = motion.create(Link);
@@ -51,16 +53,22 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
         onMouseMove={onMouseMove}
         onMouseLeave={onMouseLeave}
         style={{ rotateX, rotateY, transformStyle: "preserve-3d" }}
-        className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-surface p-6 transition-colors duration-300 group-hover:border-accent/40"
+        className="relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-surface/80 backdrop-blur-sm p-6 transition-colors duration-300 group-hover:border-accent/40"
       >
+        <span
+          aria-hidden
+          className="pointer-events-none absolute inset-x-6 top-0 h-px opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          style={{ background: `linear-gradient(to right, transparent, ${service.color}, transparent)` }}
+        />
         <motion.div
           aria-hidden
           className="pointer-events-none absolute -inset-px opacity-0 transition-opacity duration-300 group-hover:opacity-100"
           style={{ background: glowBackground }}
         />
-        <span style={{ transform: "translateZ(30px)" }} className="relative font-mono text-xs text-moon">
-          {String(index + 1).padStart(2, "0")}
-        </span>
+        <div style={{ transform: "translateZ(30px)" }} className="relative flex items-start justify-between">
+          <MiniOrbit color={service.color} speed={8 + index * 1.5} />
+          <span className="font-mono text-xs text-moon">{String(index + 1).padStart(2, "0")}</span>
+        </div>
         <h3 style={{ transform: "translateZ(20px)" }} className="relative mt-6 mb-2 text-lg font-medium">
           {service.name}
         </h3>
@@ -88,9 +96,11 @@ export function ServicesGrid() {
       >
         <div className="max-w-xl">
           <p className="text-xs uppercase tracking-widest text-moon mb-3">Services</p>
-          <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight">
-            If your team does it twice a week, we can automate it.
-          </h2>
+          <RevealText
+            text="If your team does it twice a week, we can automate it."
+            highlight={["automate", "it."]}
+            className="text-3xl sm:text-4xl font-semibold tracking-tight"
+          />
         </div>
         <Link href="/services" className="text-sm text-muted hover:text-foreground transition-colors shrink-0">
           All services →

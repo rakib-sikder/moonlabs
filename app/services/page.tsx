@@ -3,6 +3,7 @@ import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
 import { CtaBanner } from "@/components/CtaBanner";
 import { services } from "@/lib/site";
+import { MiniOrbit } from "@/components/ui/MiniOrbit";
 
 export const metadata: Metadata = {
   title: "Services",
@@ -22,10 +23,13 @@ export default function ServicesPage() {
           <Link
             key={s.slug}
             href={`/services/${s.slug}`}
-            className="group rounded-2xl border border-border bg-surface p-8 transition-colors hover:border-accent/40"
+            className="group rounded-2xl border border-border bg-surface/80 backdrop-blur-sm p-8 transition-colors hover:border-accent/40"
           >
-            <div className="flex items-baseline justify-between gap-4">
-              <h2 className="text-xl font-medium">{s.name}</h2>
+            <div className="flex items-center justify-between gap-4">
+              <div className="flex items-center gap-4">
+                <MiniOrbit color={s.color} speed={8 + i * 1.5} size={40} />
+                <h2 className="text-xl font-medium">{s.name}</h2>
+              </div>
               <span className="font-mono text-xs text-moon">{String(i + 1).padStart(2, "0")}</span>
             </div>
             <p className="mt-2 text-muted">{s.short}</p>

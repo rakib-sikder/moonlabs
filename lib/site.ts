@@ -26,6 +26,8 @@ export type Service = {
   slug: string;
   name: string;
   short: string;
+  /** Planet colour in the hero scene and the mini orbit on cards (decorative only). */
+  color: string;
   items: string[];
 };
 
@@ -35,6 +37,7 @@ export const services: Service[] = [
     slug: "sales-and-leads",
     name: "Sales & Leads",
     short: "Find, enrich and follow up with leads automatically.",
+    color: "#9d8cff",
     items: [
       "Lead scraping from Google Maps, directories, LinkedIn and websites",
       "Lead enrichment — find and verify emails and phone numbers",
@@ -49,6 +52,7 @@ export const services: Service[] = [
     slug: "marketing",
     name: "Marketing",
     short: "Content, posting, reviews and reporting on autopilot.",
+    color: "#ff8fb1",
     items: [
       "Social media auto-posting and scheduling",
       "AI-assisted content — posts, captions, blogs, ad copy",
@@ -63,6 +67,7 @@ export const services: Service[] = [
     slug: "customer-support",
     name: "Customer Support",
     short: "Answer faster without hiring more people.",
+    color: "#5ee0d0",
     items: [
       "AI chatbots for website, Messenger, WhatsApp and Instagram DMs",
       "Automatic email replies and inbox sorting",
@@ -75,6 +80,7 @@ export const services: Service[] = [
     slug: "voice-and-calls",
     name: "Voice & Calls",
     short: "Never miss a call or a booking again.",
+    color: "#ffc76b",
     items: [
       "AI voice agents that answer calls and book appointments",
       "Automatic SMS when a call is missed",
@@ -85,6 +91,7 @@ export const services: Service[] = [
     slug: "operations",
     name: "Operations",
     short: "The back-office work nobody wants to do by hand.",
+    color: "#6fb8ff",
     items: [
       "Invoicing, billing and payment reminders",
       "Data entry from PDFs, forms and emails into sheets",
@@ -98,6 +105,7 @@ export const services: Service[] = [
     slug: "finance-and-hr",
     name: "Finance & HR",
     short: "Books, payroll and hiring that run themselves.",
+    color: "#9be07f",
     items: [
       "Expense tracking and receipt scanning",
       "Bookkeeping sync with QuickBooks and Xero",
@@ -110,6 +118,7 @@ export const services: Service[] = [
     slug: "e-commerce",
     name: "E-commerce",
     short: "Orders, listings and stock synced across every channel.",
+    color: "#ff9a62",
     items: [
       "Shopify and WooCommerce order automation",
       "Bulk product listing upload and updates",
@@ -122,6 +131,7 @@ export const services: Service[] = [
     slug: "custom-build",
     name: "Custom Build",
     short: "When no off-the-shelf tool fits, we build one.",
+    color: "#cfd8ff",
     items: [
       "Zapier, Make and n8n workflows",
       "API integrations between the apps you use",

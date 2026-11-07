@@ -14,7 +14,8 @@ ROI calculator, About, Contact, FAQ. Brand, navigation, services and industries 
 ## Build stages
 
 1. ✅ Rebrand, palette tokens, multi-page structure, mobile menu, footer, fake data removed
-2. Space visuals — starfield, 3D moon + service planets hero, warp transitions, mobile fallback
+2. ✅ Space visuals — 3D moon + service-planet hero, grid + starfield backdrop, comet cursor,
+   smooth scroll, warp page transitions, auto light/dark (OS setting), no-WebGL fallback
 3. Services, How it works and Work pages in full
 4. Pricing, ROI calculator, About
 5. Contact form → Telegram, Cal.com booking
@@ -23,7 +24,7 @@ ROI calculator, About, Contact, FAQ. Brand, navigation, services and industries 
 ## Stack
 
 Next.js 16 (App Router) · TypeScript · Tailwind CSS v4 · GSAP + ScrollTrigger + `@gsap/react` ·
-Framer Motion
+Framer Motion · Three.js (React Three Fiber + drei) · Lenis
 
 ## Getting started
 

@@ -15,7 +15,6 @@ export function Nav() {
   const open = openOn === pathname;
   const setOpen = (value: boolean) => setOpenOn(value ? pathname : null);
   const { scrollY } = useScroll();
-  const background = useTransform(scrollY, [0, 120], ["rgba(7,8,15,0)", "rgba(7,8,15,0.82)"]);
   const borderOpacity = useTransform(scrollY, [0, 120], [0, 1]);
 
   // Lock page scroll and allow Escape while the mobile menu is open.
@@ -35,9 +34,10 @@ export function Nav() {
 
   return (
     <>
-      <motion.nav style={{ background }} className="fixed top-0 inset-x-0 z-50 backdrop-blur-md">
+      <motion.nav className="fixed top-0 inset-x-0 z-50">
+        <motion.div style={{ opacity: borderOpacity }} className="absolute inset-0 bg-background/75 backdrop-blur-md" />
         <motion.div style={{ opacity: borderOpacity }} className="absolute bottom-0 inset-x-0 h-px bg-border" />
-        <div className="mx-auto max-w-6xl px-6 h-16 flex items-center justify-between">
+        <div className="relative mx-auto max-w-6xl px-6 h-16 flex items-center justify-between">
           <Link href="/" aria-label="Moonlabs home">
             <Logo />
           </Link>

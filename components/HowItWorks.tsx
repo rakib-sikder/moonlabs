@@ -45,12 +45,26 @@ export function HowItWorks() {
   const track = useRef<HTMLDivElement>(null);
   const progress = useRef<HTMLDivElement>(null);
   const watermark = useRef<HTMLDivElement>(null);
+  const trail = useRef<HTMLDivElement>(null);
+  const comet = useRef<HTMLDivElement>(null);
 
   useGSAP(
     () => {
       if (!track.current || !container.current) return;
 
       const getDistance = () => track.current!.scrollWidth - window.innerWidth;
+      // GSAP can't interpolate var(), so resolve the tokens to real colours.
+      const cs = getComputedStyle(document.documentElement);
+      const dimColor = cs.getPropertyValue("--border").trim();
+      const litColor = cs.getPropertyValue("--moon").trim();
+
+      // The lit trail ends under a glowing comet that stays at the centre of the screen.
+      const placeComet = (p: number) => {
+        const px = p * getDistance() + window.innerWidth * 0.5;
+        gsap.set(trail.current, { width: px });
+        gsap.set(comet.current, { x: px });
+      };
+      placeComet(0);
 
       const scrollTween = gsap.to(track.current, {
         x: () => -getDistance(),
@@ -64,6 +78,7 @@ export function HowItWorks() {
           invalidateOnRefresh: true,
           onUpdate: (self) => {
             gsap.set(progress.current, { scaleX: self.progress });
+            placeComet(self.progress);
           },
         },
       });
@@ -124,9 +139,9 @@ export function HowItWorks() {
         if (num) {
           gsap.fromTo(
             num,
-            { color: "#54545f" },
+            { color: dimColor },
             {
-              color: "var(--moon)",
+              color: litColor,
               ease: "none",
               scrollTrigger: {
                 trigger: panel,
@@ -182,19 +197,33 @@ export function HowItWorks() {
   );
 
   return (
-    <section id="how" ref={container} className="relative h-screen overflow-hidden bg-surface">
+    <section id="how" ref={container} className="relative h-screen overflow-hidden bg-gradient-to-b from-transparent via-surface/70 to-transparent">
       <div
         ref={watermark}
         aria-hidden
         className="pointer-events-none absolute inset-0 flex items-center justify-center select-none"
       >
-        <span className="text-[20vw] font-bold tracking-tighter text-white/[0.025] whitespace-nowrap">
+        <span className="text-[20vw] font-bold tracking-tighter text-foreground/[0.035] whitespace-nowrap">
           MOONLABS
         </span>
       </div>
 
       <div ref={track} className="relative flex h-full items-center gap-8 px-[8vw] w-max">
-        <div className="w-[42vw] max-w-md shrink-0">
+        {/* Orbit path running behind the panels, lit up to the comet as you scroll. */}
+        <div aria-hidden className="pointer-events-none absolute left-0 right-0 top-1/2 h-px bg-border" />
+        <div
+          ref={trail}
+          aria-hidden
+          className="pointer-events-none absolute left-0 top-1/2 h-px -translate-y-px"
+          style={{ background: "linear-gradient(to right, transparent, var(--accent) 60%, var(--moon))", height: 2 }}
+        />
+        <div
+          ref={comet}
+          aria-hidden
+          className="pointer-events-none absolute left-0 top-1/2 z-20 -ml-2.5 -mt-2.5 h-5 w-5 rounded-full bg-moon"
+          style={{ boxShadow: "0 0 20px 6px var(--accent), 0 0 60px 18px color-mix(in srgb, var(--accent) 40%, transparent)" }}
+        />
+        <div className="relative z-10 w-[80vw] sm:w-[42vw] max-w-md shrink-0 rounded-2xl bg-background/60 p-6 backdrop-blur-sm">
           <p className="text-xs uppercase tracking-widest text-moon mb-3">How it works</p>
           <h2 className="text-3xl sm:text-4xl font-semibold tracking-tight">
             Five stages.
@@ -208,11 +237,11 @@ export function HowItWorks() {
         {steps.map((step) => (
           <div
             key={step.n}
-            className="panel w-[80vw] sm:w-[420px] shrink-0 rounded-2xl border border-border bg-surface-2 p-8 h-[60vh] max-h-[420px] flex flex-col justify-between will-change-transform"
+            className="panel relative z-10 w-[80vw] sm:w-[420px] shrink-0 rounded-2xl border border-border bg-surface-2/90 backdrop-blur-sm p-8 h-[60vh] max-h-[420px] flex flex-col justify-between will-change-transform"
           >
             <div className="flex items-center justify-between">
               <span className="step-num font-mono text-sm">{step.n}</span>
-              <div className="relative flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-white/[0.03]">
+              <div className="relative flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-foreground/[0.03]">
                 {step.icon ? (
                   <svg
                     viewBox="0 0 24 24"
@@ -249,7 +278,7 @@ export function HowItWorks() {
         ))}
       </div>
 
-      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 h-[2px] w-[min(60vw,480px)] overflow-hidden rounded-full bg-white/10">
+      <div className="absolute bottom-8 left-1/2 -translate-x-1/2 h-[2px] w-[min(60vw,480px)] overflow-hidden rounded-full bg-foreground/10">
         <div
           ref={progress}
           className="h-full w-full origin-left bg-moon"

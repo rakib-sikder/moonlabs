@@ -1,14 +1,15 @@
 @import "tailwindcss";
 
 /*
-  Moonlabs palette — a night sky with moonlight.
-  Neutrals: background → surface → surface-2 step up in lightness (elevation on dark
-  reads through lighter fills, not shadows). One primary (accent, lunar violet) reserved
-  for primary actions; moon (silver-blue) for eyebrows, numbers and highlights.
-  Contrast vs --background: foreground 17.6:1, muted 6.9:1, moon 14.2:1, accent 7.3:1;
-  accent-ink on accent 7.1:1.
+  Moonlabs palette — night sky (dark) and daylight moon (light), switched automatically
+  by the OS setting. No manual toggle by design.
+  Neutrals step up background → surface → surface-2. One primary (accent) reserved for
+  primary actions; moon for eyebrows, numbers and highlights.
+  Dark contrast vs background: foreground 17.6, muted 6.9, moon 14.2, accent 7.3; ink on accent 7.1.
+  Light contrast vs background: foreground 17.4, muted 6.2, moon 8.6, accent 5.9; ink on accent 6.5.
 */
 :root {
+  color-scheme: dark;
   --background: #07080f;
   --surface: #0d0f1a;
   --surface-2: #131627;
@@ -19,6 +20,28 @@
   --accent-ink: #0b0920;
   --accent-soft: rgba(157, 140, 255, 0.12);
   --moon: #cfd8ff;
+  --grid-line: rgba(207, 216, 255, 0.045);
+  --grid-glow: rgba(157, 140, 255, 0.55);
+  --glow-strength: 0.28;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color-scheme: light;
+    --background: #f5f6fb;
+    --surface: #ffffff;
+    --surface-2: #eceef7;
+    --border: #dde1ee;
+    --foreground: #0c0e1d;
+    --muted: #535a73;
+    --accent: #5a43e6;
+    --accent-ink: #ffffff;
+    --accent-soft: rgba(90, 67, 230, 0.1);
+    --moon: #3b3f9a;
+    --grid-line: rgba(12, 14, 29, 0.055);
+    --grid-glow: rgba(90, 67, 230, 0.45);
+    --glow-strength: 0.16;
+  }
 }
 
 @theme inline {
@@ -36,10 +59,6 @@
   --font-mono: var(--font-geist-mono);
 }
 
-html {
-  scroll-behavior: smooth;
-}
-
 body {
   background: var(--background);
   color: var(--foreground);
@@ -52,6 +71,57 @@ body {
   color: var(--accent-ink);
 }
 
+/* Lenis smooth scroll */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+/* ---------- Background grid ---------- */
+.grid-bg,
+.grid-glow {
+  background-image:
+    linear-gradient(to right, var(--line) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--line) 1px, transparent 1px);
+  background-size: 64px 64px;
+  background-position: center top;
+}
+.grid-bg {
+  --line: var(--grid-line);
+  mask-image: radial-gradient(ellipse 90% 75% at 50% 35%, black 40%, transparent 100%);
+}
+/* A brighter copy of the grid, revealed only in a circle around the cursor. */
+.grid-glow {
+  --line: var(--grid-glow);
+  mask-image: radial-gradient(circle 220px at var(--mx, -999px) var(--my, -999px), black, transparent 70%);
+}
+
+/* Shimmering moonlight gradient for highlighted words */
+.text-moonlight {
+  background: linear-gradient(100deg, var(--moon) 0%, var(--accent) 35%, var(--moon) 55%, var(--accent) 80%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 6s ease-in-out infinite;
+}
+@keyframes shimmer {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Marquee rows */
 @keyframes marquee {
   from {
     transform: translateX(0);
@@ -60,13 +130,25 @@ body {
     transform: translateX(-50%);
   }
 }
-
 .animate-marquee {
-  animation: marquee 32s linear infinite;
+  animation: marquee 40s linear infinite;
+}
+.animate-marquee-reverse {
+  animation: marquee 46s linear infinite reverse;
+}
+.marquee-pause:hover .animate-marquee,
+.marquee-pause:hover .animate-marquee-reverse {
+  animation-play-state: paused;
 }
 
-.marquee-pause:hover .animate-marquee {
-  animation-play-state: paused;
+/* Small decorative orbit: a ring with a planet riding it */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.orbit-spin {
+  animation: spin var(--orbit-speed, 12s) linear infinite;
 }
 
 :focus-visible {
@@ -76,10 +158,10 @@ body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
-  .animate-marquee {
+  .animate-marquee,
+  .animate-marquee-reverse,
+  .orbit-spin,
+  .text-moonlight {
     animation: none;
   }
 }

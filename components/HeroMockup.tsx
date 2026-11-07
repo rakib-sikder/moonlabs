@@ -21,6 +21,11 @@ export function HeroMockup() {
   useGSAP(
     () => {
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+      // GSAP can't interpolate var()/color-mix(), so resolve the tokens to real colours first.
+      const cs = getComputedStyle(document.documentElement);
+      const accent = cs.getPropertyValue("--accent").trim();
+      const moon = cs.getPropertyValue("--moon").trim();
+      const idle = dotRefs.current[0] ? getComputedStyle(dotRefs.current[0]).backgroundColor : "transparent";
       const tl = gsap.timeline({ repeat: -1, repeatDelay: 0.9, defaults: { ease: "power2.inOut" } });
 
       rows.forEach((_, i) => {
@@ -36,9 +41,9 @@ export function HeroMockup() {
           duration: 0.55,
         }, i === 0 ? 0.3 : "+=0.15")
           .to(cursor.current, { scale: 0.8, duration: 0.12, yoyo: true, repeat: 1 })
-          .to(dot, { backgroundColor: "var(--accent)", duration: 0.2 }, "<")
+          .to(dot, { backgroundColor: accent, duration: 0.2 }, "<")
           .to(fill, { scaleX: 1, duration: 0.7, ease: "power1.inOut" }, "<")
-          .to(dot, { backgroundColor: "var(--moon)", duration: 0.2 })
+          .to(dot, { backgroundColor: moon, duration: 0.2 })
           .to(check, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(3)" }, "<-0.1");
       });
 
@@ -49,7 +54,7 @@ export function HeroMockup() {
           { scaleX: 0, duration: 0.3 },
           "<"
         )
-        .to(dotRefs.current, { backgroundColor: "rgba(255,255,255,0.15)", duration: 0.3 }, "<")
+        .to(dotRefs.current, { backgroundColor: idle, duration: 0.3 }, "<")
         .to(checkRefs.current, { opacity: 0, scale: 0, duration: 0.25 }, "<");
     },
     { scope }
@@ -58,12 +63,12 @@ export function HeroMockup() {
   return (
     <div
       ref={scope}
-      className="relative rounded-2xl border border-border bg-surface shadow-2xl shadow-black/50 p-6 overflow-hidden"
+      className="relative rounded-2xl border border-border bg-surface shadow-2xl shadow-black/30 p-6 overflow-hidden"
     >
       <div className="flex gap-1.5 mb-5">
-        <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
-        <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
-        <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
+        <span className="h-2.5 w-2.5 rounded-full bg-foreground/15" />
+        <span className="h-2.5 w-2.5 rounded-full bg-foreground/15" />
+        <span className="h-2.5 w-2.5 rounded-full bg-foreground/15" />
       </div>
 
       <div className="space-y-3">
@@ -73,17 +78,17 @@ export function HeroMockup() {
             ref={(el) => {
               rowRefs.current[i] = el;
             }}
-            className="relative flex items-center gap-3 rounded-lg border border-white/[0.06] bg-white/[0.015] px-3 py-3"
+            className="relative flex items-center gap-3 rounded-lg border border-foreground/[0.07] bg-foreground/[0.02] px-3 py-3"
           >
             <span
               ref={(el) => {
                 dotRefs.current[i] = el;
               }}
-              className="h-2 w-2 shrink-0 rounded-full bg-white/15"
+              className="h-2 w-2 shrink-0 rounded-full bg-foreground/15"
             />
             <div className="min-w-0 flex-1">
               <p className="mb-1.5 truncate text-[11px] text-muted">{row.label}</p>
-              <div className="h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
+              <div className="h-1.5 overflow-hidden rounded-full bg-foreground/[0.07]">
                 <div
                   ref={(el) => {
                     fillRefs.current[i] = el;
@@ -112,7 +117,7 @@ export function HeroMockup() {
 
       <div
         ref={cursor}
-        className="pointer-events-none absolute top-0 left-0 h-3.5 w-3.5 rounded-full bg-white shadow-[0_0_0_5px_rgba(255,255,255,0.08)]"
+        className="pointer-events-none absolute top-0 left-0 h-3.5 w-3.5 rounded-full bg-foreground shadow-[0_0_0_5px_color-mix(in_srgb,var(--foreground)_10%,transparent)]"
       />
     </div>
   );

@@ -20,7 +20,7 @@ export default function IndustriesPage() {
       <section className="mx-auto max-w-6xl px-6 pb-12">
         <ul className="grid gap-4 grid-cols-2 lg:grid-cols-4">
           {industries.map((ind) => (
-            <li key={ind.slug} className="rounded-xl border border-border bg-surface p-5 font-medium">
+            <li key={ind.slug} className="rounded-xl border border-border bg-surface/80 backdrop-blur-sm p-5 font-medium">
               {ind.name}
             </li>
           ))}

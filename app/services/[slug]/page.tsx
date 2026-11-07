@@ -31,13 +31,18 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
 
   return (
     <>
-      <PageHeader eyebrow={`Service ${String(index + 1).padStart(2, "0")}`} title={service.name} intro={service.short} />
+      <PageHeader
+        eyebrow={`Service ${String(index + 1).padStart(2, "0")}`}
+        title={service.name}
+        intro={service.short}
+        accentColor={service.color}
+      />
 
       <section className="mx-auto max-w-6xl px-6 pb-20">
         <h2 className="text-xs uppercase tracking-widest text-moon mb-6">What we automate</h2>
         <ul className="grid gap-4 sm:grid-cols-2">
           {service.items.map((item) => (
-            <li key={item} className="flex gap-4 rounded-xl border border-border bg-surface p-5">
+            <li key={item} className="flex gap-4 rounded-xl border border-border bg-surface/80 backdrop-blur-sm p-5 transition-colors hover:border-accent/40">
               <svg
                 viewBox="0 0 24 24"
                 className="mt-0.5 h-5 w-5 shrink-0 text-moon"

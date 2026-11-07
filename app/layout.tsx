@@ -5,6 +5,9 @@ import { MotionProvider } from "@/components/MotionProvider";
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
 import { ScrollProgress } from "@/components/ScrollProgress";
+import { BackgroundFX } from "@/components/fx/BackgroundFX";
+import { CometCursor } from "@/components/fx/CometCursor";
+import { SmoothScroll } from "@/components/fx/SmoothScroll";
 import { site } from "@/lib/site";
 
 const geistSans = Geist({
@@ -40,9 +43,12 @@ export default function RootLayout({
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
       <body>
         <MotionProvider>
+          <BackgroundFX />
+          <SmoothScroll />
+          <CometCursor />
           <ScrollProgress />
           <Nav />
-          <main className="bg-background text-foreground">{children}</main>
+          <main className="relative text-foreground">{children}</main>
           <Footer />
         </MotionProvider>
       </body>
