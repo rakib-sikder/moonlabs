@@ -1,23 +1,31 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { Suspense, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Html, Line } from "@react-three/drei";
+import { Html, Line, useTexture } from "@react-three/drei";
 import * as THREE from "three";
 import { services } from "@/lib/site";
 import type { ThemeColors } from "@/lib/useTheme";
-import { getMoonMaps, moonTextureCanvases } from "@/lib/moonTexture";
+import { MOON_COLOR_2K, MOON_HEIGHT } from "@/lib/moonTexture";
 
-/* ---------- Moon surface: shared procedural maps (lib/moonTexture) ---------- */
-function makeMoonTextures() {
-  const { color, normal } = moonTextureCanvases(getMoonMaps());
-  const map = new THREE.CanvasTexture(color);
-  map.colorSpace = THREE.SRGBColorSpace;
-  map.anisotropy = 8;
-  const normalMap = new THREE.CanvasTexture(normal);
-  normalMap.anisotropy = 8;
-  return { map, normalMap };
+/* ---------- Moon surface: NASA LRO colour + LOLA elevation (public domain) ---------- */
+function MoonSurface({ meshRef, reduced }: { meshRef: React.RefObject<THREE.Mesh | null>; reduced: boolean }) {
+  const [map, bump] = useTexture([MOON_COLOR_2K, MOON_HEIGHT], (loaded) => {
+    const [color] = loaded as THREE.Texture[];
+    color.colorSpace = THREE.SRGBColorSpace;
+    color.anisotropy = 8;
+  });
+  useFrame((state) => {
+    // Tidally locked: the familiar near side faces us, with a gentle libration sway.
+    if (meshRef.current && !reduced) meshRef.current.rotation.y = -Math.PI / 2 + Math.sin(state.clock.elapsedTime * 0.12) * 0.22;
+  });
+  return (
+    <mesh ref={meshRef} rotation={[0.12, -Math.PI / 2, 0.05]}>
+      <sphereGeometry args={[1.4, 160, 160]} />
+      <meshStandardMaterial map={map} bumpMap={bump} bumpScale={4} roughness={1} metalness={0} />
+    </mesh>
+  );
 }
 
 /* ---------- Fresnel glow shell ---------- */
@@ -196,8 +204,6 @@ function System({ colors, reduced }: { colors: ThemeColors; reduced: boolean }) 
   const intro = useRef(reduced ? 1 : 0);
   const [hovered, setHovered] = useState<number | null>(null);
   const specs = useOrbitSpecs();
-  const textures = useMemo(() => makeMoonTextures(), []);
-  const normalScale = useMemo(() => new THREE.Vector2(1, 1), []);
   const { size } = useThree();
   const wide = size.width >= 900;
 
@@ -218,7 +224,6 @@ function System({ colors, reduced }: { colors: ThemeColors; reduced: boolean }) 
       speed.current = THREE.MathUtils.lerp(speed.current, hovered === null ? 1 : 0, 0.08);
       angle.current += d * speed.current;
     }
-    if (moon.current && !reduced) moon.current.rotation.y += d * 0.05;
     if (root.current) {
       const p = state.pointer;
       root.current.rotation.y = THREE.MathUtils.lerp(root.current.rotation.y, p.x * 0.28, 0.04);
@@ -230,10 +235,9 @@ function System({ colors, reduced }: { colors: ThemeColors; reduced: boolean }) 
 
   return (
     <group ref={root} position={wide ? [2.6, -0.1, 0] : [0, 1.55, 0]}>
-      <mesh ref={moon} rotation={[0.2, 0, 0.1]}>
-        <sphereGeometry args={[1.4, 160, 160]} />
-        <meshStandardMaterial map={textures.map} normalMap={textures.normalMap} normalScale={normalScale} roughness={1} metalness={0} />
-      </mesh>
+      <Suspense fallback={null}>
+        <MoonSurface meshRef={moon} reduced={reduced} />
+      </Suspense>
       <mesh scale={1.25}>
         <sphereGeometry args={[1.4, 64, 64]} />
         <shaderMaterial
@@ -281,8 +285,8 @@ export default function MoonScene({
       <ambientLight intensity={colors.isDark ? 0.05 : 0.35} />
       {/* Key light from upper-left gives the moon a crescent terminator. */}
       <directionalLight
-        position={colors.isDark ? [-7, 2.5, 1.6] : [-3, 2.5, 6]}
-        intensity={colors.isDark ? 3.6 : 3.1}
+        position={colors.isDark ? [-5, 2.2, 4.2] : [-3, 2.5, 6]}
+        intensity={colors.isDark ? 3.4 : 3.1}
         color={colors.isDark ? "#ffffff" : "#fffaf2"}
       />
       {/* Cool rim light from behind. */}

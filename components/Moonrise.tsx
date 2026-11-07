@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { motion, useAnimationFrame, useMotionValue, useReducedMotion, type MotionValue } from "framer-motion";
-import { getMoonMaps, renderMoonSphere } from "@/lib/moonTexture";
+import { loadMoonMaps, MOON_COLOR_2K, MOON_COLOR_4K, renderMoonSphere } from "@/lib/moonTexture";
 import { services } from "@/lib/site";
 
 const ORBITERS = [
@@ -66,9 +66,16 @@ export function Moonrise({ rise }: { rise: MotionValue<string> }) {
       ([e]) => {
         if (!e.isIntersecting) return;
         io.disconnect();
-        const size = Math.min(1600, Math.round(el.offsetWidth * Math.min(window.devicePixelRatio || 1, 1.5)));
-        const canvas = renderMoonSphere(getMoonMaps(), size, { portion: 0.27, light: [-0.35, 0.9, 0.3], ambient: 0.03 });
-        setSrc(canvas.toDataURL("image/png"));
+        const size = Math.min(1800, Math.round(el.offsetWidth * Math.min(window.devicePixelRatio || 1, 1.5)));
+        // Phones get the 2k map; larger screens the 4k one for a crisp horizon.
+        loadMoonMaps(el.offsetWidth < 900 ? MOON_COLOR_2K : MOON_COLOR_4K)
+          .then((maps) => {
+            const canvas = renderMoonSphere(maps, size, { portion: 0.27, light: [-0.35, 0.9, 0.3], ambient: 0.02 });
+            setSrc(canvas.toDataURL("image/png"));
+          })
+          .catch(() => {
+            /* keep the gradient fallback */
+          });
       },
       { rootMargin: "800px" }
     );

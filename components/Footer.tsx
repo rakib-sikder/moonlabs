@@ -28,7 +28,7 @@ export function Footer() {
       <div className="border-t border-border">
         <div className="mx-auto max-w-6xl px-6 py-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-muted">
           <span>© {new Date().getFullYear()} Moonlabs. All rights reserved.</span>
-          <span>Work that runs itself, while you sleep.</span>
+          <span>Moon imagery: NASA Scientific Visualization Studio</span>
         </div>
       </div>
     </footer>
