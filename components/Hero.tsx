@@ -1,9 +1,10 @@
 "use client";
 
 import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from "framer-motion";
+import Link from "next/link";
 import { HeroMockup } from "./HeroMockup";
 
-const words = "Automate the busywork your team keeps putting off.".split(" ");
+const words = "We automate the work your team keeps putting off.".split(" ");
 
 const container = {
   hidden: {},
@@ -50,9 +51,9 @@ export function Hero() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="text-sm text-accent-2 font-mono mb-6 tracking-wide"
+        className="text-sm text-moon font-mono mb-6 tracking-wide"
       >
-        NOW WITH AGENT WORKFLOWS
+        AUTOMATION AGENCY
       </motion.p>
 
       <motion.h1
@@ -76,8 +77,8 @@ export function Hero() {
         transition={{ duration: 0.6, delay: 0.7 }}
         className="mt-6 max-w-xl text-center text-muted"
       >
-        Orbit watches your workflows, drafts the replies, and files the paperwork — so your
-        team ships instead of triaging.
+        Moonlabs builds AI agents, workflows and integrations that handle your leads, support,
+        invoices and data entry — so your people do the work only people can do.
       </motion.p>
 
       <motion.div
@@ -86,12 +87,12 @@ export function Hero() {
         transition={{ duration: 0.6, delay: 0.85 }}
         className="mt-9 flex items-center gap-4"
       >
-        <a href="#cta" className="rounded-full bg-accent text-white text-sm font-medium px-6 py-3 hover:opacity-90 transition-opacity">
-          Start free trial
-        </a>
-        <a href="#how" className="rounded-full border border-border text-sm font-medium px-6 py-3 hover:border-muted transition-colors">
-          See how it works
-        </a>
+        <Link href="/contact" className="rounded-full bg-accent text-accent-ink text-sm font-medium px-6 py-3 hover:opacity-90 transition-opacity">
+          Book a free audit
+        </Link>
+        <Link href="/services" className="rounded-full border border-border text-sm font-medium px-6 py-3 hover:border-muted transition-colors">
+          See services
+        </Link>
       </motion.div>
 
       <motion.div

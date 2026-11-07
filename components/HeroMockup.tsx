@@ -5,9 +5,9 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 
 const rows = [
-  { label: "New lead — Northgate Logistics", width: 72 },
-  { label: "Ticket stalled 2h — #4471", width: 58 },
-  { label: "Invoice overdue — Fieldworks Co.", width: 66 },
+  { label: "New lead from website form → enriched, added to CRM", width: 72 },
+  { label: "Support email waiting 2h → reply drafted for approval", width: 58 },
+  { label: "Invoice 7 days overdue → reminder sent", width: 66 },
 ];
 
 export function HeroMockup() {
@@ -38,7 +38,7 @@ export function HeroMockup() {
           .to(cursor.current, { scale: 0.8, duration: 0.12, yoyo: true, repeat: 1 })
           .to(dot, { backgroundColor: "var(--accent)", duration: 0.2 }, "<")
           .to(fill, { scaleX: 1, duration: 0.7, ease: "power1.inOut" }, "<")
-          .to(dot, { backgroundColor: "var(--accent-2)", duration: 0.2 })
+          .to(dot, { backgroundColor: "var(--moon)", duration: 0.2 })
           .to(check, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(3)" }, "<-0.1");
       });
 
@@ -58,7 +58,7 @@ export function HeroMockup() {
   return (
     <div
       ref={scope}
-      className="relative rounded-2xl border border-border bg-[#0d0e15] shadow-2xl shadow-black/50 p-6 overflow-hidden"
+      className="relative rounded-2xl border border-border bg-surface shadow-2xl shadow-black/50 p-6 overflow-hidden"
     >
       <div className="flex gap-1.5 mb-5">
         <span className="h-2.5 w-2.5 rounded-full bg-white/15" />
@@ -82,7 +82,7 @@ export function HeroMockup() {
               className="h-2 w-2 shrink-0 rounded-full bg-white/15"
             />
             <div className="min-w-0 flex-1">
-              <p className="mb-1.5 truncate text-[11px] text-white/40">{row.label}</p>
+              <p className="mb-1.5 truncate text-[11px] text-muted">{row.label}</p>
               <div className="h-1.5 overflow-hidden rounded-full bg-white/[0.06]">
                 <div
                   ref={(el) => {
@@ -97,7 +97,7 @@ export function HeroMockup() {
                 checkRefs.current[i] = el;
               }}
               viewBox="0 0 24 24"
-              className="h-4 w-4 shrink-0 scale-0 text-accent-2 opacity-0"
+              className="h-4 w-4 shrink-0 scale-0 text-moon opacity-0"
               fill="none"
               stroke="currentColor"
               strokeWidth={2}

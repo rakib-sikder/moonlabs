@@ -2,6 +2,10 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { MotionProvider } from "@/components/MotionProvider";
+import { Nav } from "@/components/Nav";
+import { Footer } from "@/components/Footer";
+import { ScrollProgress } from "@/components/ScrollProgress";
+import { site } from "@/lib/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -14,8 +18,17 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Orbit — Automate the busywork",
-  description: "Animation-driven SaaS landing page showcase built with GSAP ScrollTrigger + Framer Motion.",
+  title: {
+    default: `${site.name} — Automation agency`,
+    template: `%s · ${site.name}`,
+  },
+  description: site.description,
+  openGraph: {
+    title: `${site.name} — Automation agency`,
+    description: site.description,
+    siteName: site.name,
+    type: "website",
+  },
 };
 
 export default function RootLayout({
@@ -26,7 +39,12 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
       <body>
-        <MotionProvider>{children}</MotionProvider>
+        <MotionProvider>
+          <ScrollProgress />
+          <Nav />
+          <main className="bg-background text-foreground">{children}</main>
+          <Footer />
+        </MotionProvider>
       </body>
     </html>
   );

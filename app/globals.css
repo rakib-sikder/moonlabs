@@ -1,20 +1,35 @@
 @import "tailwindcss";
 
+/*
+  Moonlabs palette — a night sky with moonlight.
+  Neutrals: background → surface → surface-2 step up in lightness (elevation on dark
+  reads through lighter fills, not shadows). One primary (accent, lunar violet) reserved
+  for primary actions; moon (silver-blue) for eyebrows, numbers and highlights.
+  Contrast vs --background: foreground 17:1, muted 6.9:1, moon 13:1, accent 6.4:1.
+*/
 :root {
-  --background: #08090d;
-  --foreground: #f4f4f6;
-  --muted: #9a9aa8;
-  --accent: #7c5cff;
-  --accent-2: #c9ff4d;
-  --border: #1e1f27;
+  --background: #07080f;
+  --surface: #0d0f1a;
+  --surface-2: #131627;
+  --border: #1d2135;
+  --foreground: #eef0f7;
+  --muted: #9097ad;
+  --accent: #9d8cff;
+  --accent-ink: #0b0920;
+  --accent-soft: rgba(157, 140, 255, 0.12);
+  --moon: #cfd8ff;
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-accent: var(--accent);
-  --color-accent-2: var(--accent-2);
+  --color-accent-ink: var(--accent-ink);
+  --color-accent-soft: var(--accent-soft);
+  --color-moon: var(--moon);
   --color-border: var(--border);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
@@ -33,7 +48,7 @@ body {
 
 ::selection {
   background: var(--accent);
-  color: #fff;
+  color: var(--accent-ink);
 }
 
 @keyframes marquee {
@@ -46,7 +61,7 @@ body {
 }
 
 .animate-marquee {
-  animation: marquee 28s linear infinite;
+  animation: marquee 32s linear infinite;
 }
 
 .marquee-pause:hover .animate-marquee {

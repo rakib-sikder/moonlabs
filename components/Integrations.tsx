@@ -1,18 +1,41 @@
-const names = ["Northgate", "Fieldworks", "BrightLoop", "Vantage", "Haven Labs", "Circuit", "Meridian", "Alto"];
+// Tools we connect — a factual capability list, not client logos.
+const tools = [
+  "Gmail",
+  "Google Sheets",
+  "Slack",
+  "Telegram",
+  "WhatsApp",
+  "HubSpot",
+  "GoHighLevel",
+  "Shopify",
+  "WooCommerce",
+  "Airtable",
+  "Notion",
+  "QuickBooks",
+  "Xero",
+  "Stripe",
+  "Calendly",
+  "Zapier",
+  "Make",
+  "n8n",
+  "OpenAI",
+  "Claude",
+];
 
-export function LogoMarquee() {
-  const items = [...names, ...names];
+export function Integrations() {
+  const items = [...tools, ...tools];
 
   return (
     <div className="marquee-pause relative py-14 border-y border-border overflow-hidden">
       <p className="text-center text-xs uppercase tracking-widest text-muted mb-8">
-        Trusted by teams shipping fast
+        Connects with the tools you already use
       </p>
       <div className="flex w-max animate-marquee">
         {items.map((name, i) => (
           <span
             key={i}
-            className="mx-8 text-xl font-medium text-muted/60 whitespace-nowrap select-none"
+            aria-hidden={i >= tools.length}
+            className="mx-7 text-lg font-medium text-muted/70 whitespace-nowrap select-none"
           >
             {name}
           </span>

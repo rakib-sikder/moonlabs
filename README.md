@@ -1,27 +1,29 @@
-# Orbit — Animation Showcase Landing Page
+# Moonlabs — Automation agency website
 
-A fictional SaaS landing page built purely to showcase motion/interaction design: staggered
-text reveals, a GSAP ScrollTrigger pinned horizontal-scroll section, scroll-aware nav,
-animated stat counters, and an autoplaying testimonial carousel. No backend — this project
-is a pure frontend/animation piece, separate from the AI projects and the portfolio itself.
+Marketing site for Moonlabs, an agency that automates repetitive business work: leads,
+support, invoices, data entry, custom AI agents and more. Space/moon themed, motion-heavy.
 
-## Highlights
+(Formerly the "Orbit" animation showcase — the GSAP and Framer Motion work carries over.)
 
-- **`components/HowItWorks.tsx`** — the flagship piece: a vertically-pinned section where
-  scroll progress drives a horizontal panel track via GSAP's `ScrollTrigger` (`scrub` + `pin`),
-  using the official `@gsap/react` `useGSAP` hook for React-safe setup/cleanup.
-- **`components/Hero.tsx`** — per-word staggered headline reveal (Framer Motion `variants` +
-  `staggerChildren`) with a floating mockup card.
-- **`components/Stats.tsx`** — numbers count up from 0 once scrolled into view, using
-  `useInView` + `animate()` on a `MotionValue` (no re-renders per frame).
-- **`components/Nav.tsx`** — background/border fade in as you scroll, driven by
-  `useScroll` + `useTransform`.
-- **`components/Testimonials.tsx`** — autoplaying `AnimatePresence` crossfade carousel.
+## Pages
+
+Home, Services (+ one page per service), Industries, How it works, Work, Pricing,
+ROI calculator, About, Contact, FAQ. Brand, navigation, services and industries all live in
+[`lib/site.ts`](lib/site.ts) — edit copy there, not in components.
+
+## Build stages
+
+1. ✅ Rebrand, palette tokens, multi-page structure, mobile menu, footer, fake data removed
+2. Space visuals — starfield, 3D moon + service planets hero, warp transitions, mobile fallback
+3. Services, How it works and Work pages in full
+4. Pricing, ROI calculator, About
+5. Contact form → Telegram, Cal.com booking
+6. SEO, performance, deploy
 
 ## Stack
 
-Next.js 16 (App Router) · TypeScript · Tailwind CSS v4 · GSAP + ScrollTrigger + `@gsap/react`
-· Framer Motion
+Next.js 16 (App Router) · TypeScript · Tailwind CSS v4 · GSAP + ScrollTrigger + `@gsap/react` ·
+Framer Motion
 
 ## Getting started
 
@@ -29,5 +31,3 @@ Next.js 16 (App Router) · TypeScript · Tailwind CSS v4 · GSAP + ScrollTrigger
 npm install
 npm run dev
 ```
-
-No environment variables needed — this is a static frontend piece.
