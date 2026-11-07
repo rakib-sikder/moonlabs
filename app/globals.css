@@ -5,7 +5,8 @@
   Neutrals: background → surface → surface-2 step up in lightness (elevation on dark
   reads through lighter fills, not shadows). One primary (accent, lunar violet) reserved
   for primary actions; moon (silver-blue) for eyebrows, numbers and highlights.
-  Contrast vs --background: foreground 17:1, muted 6.9:1, moon 13:1, accent 6.4:1.
+  Contrast vs --background: foreground 17.6:1, muted 6.9:1, moon 14.2:1, accent 7.3:1;
+  accent-ink on accent 7.1:1.
 */
 :root {
   --background: #07080f;
