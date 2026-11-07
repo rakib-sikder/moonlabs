@@ -1,13 +1,17 @@
 // Single source of truth for brand, navigation, services and industries.
 // Pages, nav and footer all read from here so copy never drifts between them.
 
+import { industryDetails } from "./content/industries";
+
 export const site = {
   name: "Moonlabs",
   tagline: "Automation agency",
   description:
     "Moonlabs builds AI agents, workflows and integrations that take repetitive work off your team — leads, support, invoices, data entry and more.",
-  // Placeholder until the real address is set up in Stage 5.
-  email: "hello@moonlabs.example",
+  /** Public contact address — set NEXT_PUBLIC_CONTACT_EMAIL; hidden everywhere when empty. */
+  email: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "",
+  /** Canonical origin for SEO (sitemap, Open Graph). */
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://moonlabs.vercel.app",
 };
 
 export type NavLink = { href: string; label: string };
@@ -147,16 +151,7 @@ export const services: Service[] = [
 
 export type Industry = { slug: string; name: string };
 
-export const industries: Industry[] = [
-  { slug: "real-estate", name: "Real estate" },
-  { slug: "healthcare", name: "Clinics & healthcare" },
-  { slug: "restaurants", name: "Restaurants" },
-  { slug: "e-commerce", name: "E-commerce stores" },
-  { slug: "agencies", name: "Agencies" },
-  { slug: "law-firms", name: "Law firms" },
-  { slug: "education", name: "Education & coaching" },
-  { slug: "logistics", name: "Logistics" },
-];
+export const industries: Industry[] = industryDetails.map(({ slug, name }) => ({ slug, name }));
 
 export const footerNav: { title: string; links: NavLink[] }[] = [
   {
@@ -177,6 +172,7 @@ export const footerNav: { title: string; links: NavLink[] }[] = [
     links: [
       { href: "/how-it-works", label: "How it works" },
       { href: "/industries", label: "Industries" },
+      { href: "/security", label: "Security" },
       { href: "/roi-calculator", label: "ROI calculator" },
       { href: "/faq", label: "FAQ" },
     ],

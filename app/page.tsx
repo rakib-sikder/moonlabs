@@ -4,6 +4,7 @@ import { MissionControl } from "@/components/MissionControl";
 import { HowItWorks } from "@/components/HowItWorks";
 import { ServicesGrid } from "@/components/ServicesGrid";
 import { CtaBanner } from "@/components/CtaBanner";
+import { IndustriesStrip, WorkPreview } from "@/components/HomeExtras";
 
 export default function Home() {
   return (
@@ -13,6 +14,8 @@ export default function Home() {
       <ServicesGrid />
       <MissionControl />
       <HowItWorks />
+      <WorkPreview />
+      <IndustriesStrip />
       <CtaBanner />
     </>
   );

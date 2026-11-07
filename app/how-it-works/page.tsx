@@ -1,12 +1,21 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
-import { ComingSoon } from "@/components/ComingSoon";
 import { CtaBanner } from "@/components/CtaBanner";
+import { Check, Reveal, SectionHeading } from "@/components/ui/Section";
+import { processStages } from "@/lib/content/company";
 
 export const metadata: Metadata = {
   title: "How it works",
-  description: "We start small, prove the hours saved, and grow from there.",
+  description: "From a free 30-minute audit to automations running on their own — five clear stages, fixed prices, no surprises.",
 };
+
+const principles = [
+  { title: "Humans approve the risky parts", body: "Anything customer-facing or costly waits for a one-tap approval until you decide it doesn't need to." },
+  { title: "Built in your accounts", body: "Workflows, code and data live in tools you own. Nothing is locked inside our systems." },
+  { title: "Every action is logged", body: "You can see what ran, when, and why — and undo it." },
+  { title: "Start small, prove it", body: "We begin with one workflow and real numbers before suggesting the next." },
+];
 
 export default function HowItWorksPage() {
   return (
@@ -14,10 +23,74 @@ export default function HowItWorksPage() {
       <PageHeader
         eyebrow="How it works"
         title="From first call to running on its own."
-        intro="We start small, prove the hours saved, and grow from there."
+        intro="Five stages, a fixed price before we start, and a working automation in as little as a week."
       />
-      <ComingSoon note="The full launch sequence — audit, plan, build, launch and ongoing support — with timelines and what you need to provide." />
-      <CtaBanner />
+
+      <section className="mx-auto max-w-5xl px-6 pb-24">
+        <ol className="relative space-y-6">
+          <div aria-hidden className="absolute left-[27px] top-6 bottom-6 hidden w-px bg-gradient-to-b from-accent via-moon/40 to-transparent sm:block" />
+          {processStages.map((s, i) => (
+            <Reveal key={s.n} delay={0.05 * i}>
+              <li className="relative grid gap-6 rounded-2xl border border-border bg-surface/80 p-6 backdrop-blur-sm sm:grid-cols-[56px_1fr] sm:p-8">
+                <div className="relative z-10 flex h-14 w-14 items-center justify-center rounded-full border border-border bg-background font-mono text-moon">
+                  {s.n}
+                </div>
+                <div className="grid gap-6 lg:grid-cols-[1.2fr_1fr]">
+                  <div>
+                    <div className="flex flex-wrap items-center gap-3">
+                      <h2 className="text-2xl font-medium">{s.title}</h2>
+                      <span className="rounded-full border border-border px-2.5 py-0.5 font-mono text-[11px] text-muted">{s.when}</span>
+                    </div>
+                    <p className="mt-3 text-muted leading-relaxed">{s.body}</p>
+                    <p className="mt-4 text-sm">
+                      <span className="text-moon">What we need from you: </span>
+                      <span className="text-muted">{s.youGive}</span>
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-border bg-background/40 p-5">
+                    <p className="mb-3 font-mono text-[11px] uppercase tracking-widest text-moon">You get</p>
+                    <ul className="space-y-2 text-sm">
+                      {s.youGet.map((g) => (
+                        <li key={g} className="flex gap-2.5">
+                          <Check className="mt-0.5" />
+                          {g}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </li>
+            </Reveal>
+          ))}
+        </ol>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-6 pb-24">
+        <SectionHeading eyebrow="Principles" title="How we build, every time." />
+        <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {principles.map((p, i) => (
+            <Reveal key={p.title} delay={i * 0.06}>
+              <div className="h-full rounded-2xl border border-border bg-surface/80 p-6 backdrop-blur-sm">
+                <h3 className="mb-2 font-medium">{p.title}</h3>
+                <p className="text-sm text-muted leading-relaxed">{p.body}</p>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+        <p className="mt-10 text-sm text-muted">
+          Questions about data and access? Read our{" "}
+          <Link href="/security" className="text-accent hover:underline underline-offset-4">
+            security approach
+          </Link>{" "}
+          or the{" "}
+          <Link href="/faq" className="text-accent hover:underline underline-offset-4">
+            FAQ
+          </Link>
+          .
+        </p>
+      </section>
+
+      <CtaBanner title="Stage one is free." />
     </>
   );
 }

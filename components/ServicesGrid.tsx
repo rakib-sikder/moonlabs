@@ -5,6 +5,7 @@ import { useRef, type MouseEvent } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { services, type Service } from "@/lib/site";
 import { MiniOrbit } from "./ui/MiniOrbit";
+import { serviceDetails } from "@/lib/content/service-details";
 import { RevealText } from "./ui/RevealText";
 
 // Client-side navigation with motion props on the same element.
@@ -75,10 +76,23 @@ function ServiceCard({ service, index }: { service: Service; index: number }) {
         <p style={{ transform: "translateZ(20px)" }} className="relative text-sm text-muted leading-relaxed flex-1">
           {service.short}
         </p>
-        <p className="relative mt-6 text-xs text-muted">
+        <div style={{ transform: "translateZ(15px)" }} className="relative mt-5 flex flex-wrap gap-1.5">
+          {serviceDetails[service.slug].tags.map((t) => (
+            <span
+              key={t}
+              className="rounded-full border border-border bg-background/50 px-2 py-0.5 text-[11px] text-muted transition-colors group-hover:border-foreground/15"
+            >
+              {t}
+            </span>
+          ))}
+        </div>
+        <div className="relative mt-5 flex items-center justify-between border-t border-border pt-4 text-xs text-muted">
+          <span>Live in {serviceDetails[service.slug].setup}</span>
+          <span>
           {service.items.length} automations
           <span className="ml-2 inline-block text-accent transition-transform duration-300 group-hover:translate-x-1">→</span>
-        </p>
+          </span>
+        </div>
       </MotionLink>
     </motion.div>
   );

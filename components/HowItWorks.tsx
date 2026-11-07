@@ -4,6 +4,7 @@ import { cloneElement, useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { processStages } from "@/lib/content/company";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -234,13 +235,18 @@ export function HowItWorks() {
             Keep scrolling — each step comes into focus as it reaches the center of the screen.
           </p>
         </div>
-        {steps.map((step) => (
+        {steps.map((step, si) => {
+          const stage = processStages[si];
+          return (
           <div
             key={step.n}
-            className="panel relative z-10 w-[80vw] sm:w-[420px] shrink-0 rounded-2xl border border-border bg-surface-2/90 backdrop-blur-sm p-8 h-[60vh] max-h-[420px] flex flex-col justify-between will-change-transform"
+            className="panel relative z-10 w-[84vw] sm:w-[440px] shrink-0 rounded-2xl border border-border bg-surface-2/90 backdrop-blur-sm p-7 sm:p-8 h-[68vh] max-h-[480px] flex flex-col justify-between will-change-transform"
           >
             <div className="flex items-center justify-between">
-              <span className="step-num font-mono text-sm">{step.n}</span>
+              <div className="flex items-center gap-3">
+                <span className="step-num font-mono text-sm">{step.n}</span>
+                <span className="rounded-full border border-border px-2.5 py-0.5 font-mono text-[11px] text-muted">{stage.when}</span>
+              </div>
               <div className="relative flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-foreground/[0.03]">
                 {step.icon ? (
                   <svg
@@ -270,12 +276,29 @@ export function HowItWorks() {
                 )}
               </div>
             </div>
+            <div className="my-6 flex-1 rounded-xl border border-border bg-background/40 p-4">
+              <p className="mb-3 font-mono text-[11px] uppercase tracking-widest text-moon">You get</p>
+              <ul className="space-y-2 text-sm">
+                {stage.youGet.map((g) => (
+                  <li key={g} className="flex items-start gap-2.5">
+                    <svg viewBox="0 0 24 24" className="mt-0.5 h-4 w-4 shrink-0 text-moon" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                      <path d="M4 12.5 9.5 18 20 6" />
+                    </svg>
+                    {g}
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-4 border-t border-border pt-3 text-xs text-muted">
+                <span className="text-foreground/80">From you:</span> {stage.youGive}
+              </p>
+            </div>
             <div>
-              <h3 className="text-2xl font-medium mb-3">{step.title}</h3>
-              <p className="text-muted">{step.body}</p>
+              <h3 className="text-2xl font-medium mb-2">{stage.title}</h3>
+              <p className="text-sm text-muted leading-relaxed">{stage.body}</p>
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
 
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 h-[2px] w-[min(60vw,480px)] overflow-hidden rounded-full bg-foreground/10">
