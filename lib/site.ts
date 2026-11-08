@@ -8,10 +8,10 @@ export const site = {
   tagline: "Automation agency",
   description:
     "Moonlabs builds AI agents, workflows and integrations that take repetitive work off your team. We also build the websites, apps, data and marketing around them.",
-  /** Public contact address — set NEXT_PUBLIC_CONTACT_EMAIL; hidden everywhere when empty. */
+  /** Public contact address â€” set NEXT_PUBLIC_CONTACT_EMAIL; hidden everywhere when empty. */
   email: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "",
   /** Canonical origin for SEO (sitemap, Open Graph). */
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://moonlabs.vercel.app",
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://moonlabs.sikdersmail.workers.dev",
 };
 
 export type NavLink = { href: string; label: string; desc?: string };
@@ -49,7 +49,7 @@ export type ServiceCategory = {
   /** Heading above a service's list of items on its detail page. */
   itemsLabel: string;
   color: string;
-  /** The studio's main focus — shown first and larger everywhere. */
+  /** The studio's main focus â€” shown first and larger everywhere. */
   core?: boolean;
 };
 
@@ -409,7 +409,7 @@ export const services: Service[] = [
   ...beyond,
 ];
 
-/** The core automation services — one planet each in the hero scene. */
+/** The core automation services â€” one planet each in the hero scene. */
 export const automationServices = services.filter((s) => s.category === "automation");
 
 export const categoryOf = (s: Service) => serviceCategories.find((c) => c.id === s.category)!;

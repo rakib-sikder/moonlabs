@@ -46,3 +46,8 @@ next-env.d.ts
 
 # Claude Code agent worktrees
 .claude/worktrees/
+
+# Cloudflare build output
+.open-next/
+.wrangler/
+.dev.vars
