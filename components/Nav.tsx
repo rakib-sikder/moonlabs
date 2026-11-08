@@ -18,6 +18,7 @@ import { industryDetails } from "@/lib/content/industries";
 import { caseStudies } from "@/lib/content/company";
 import { categoryIcons, fallbackIcon, industryIcons, resourceIcons, serviceIcons } from "@/lib/icons";
 import { Logo } from "./Logo";
+import { AccountMenu, useNavUser } from "./AccountMenu";
 
 type MenuId = NonNullable<NavItem["menu"]>;
 
@@ -186,6 +187,7 @@ export function Nav() {
     closeTimer.current = setTimeout(() => setActive(null), 160);
   };
 
+  const user = useNavUser();
   const { scrollY } = useScroll();
   const borderOpacity = useTransform(scrollY, [0, 120], [0, 1]);
 
@@ -251,12 +253,20 @@ export function Nav() {
           </div>
 
           <div className="flex items-center gap-1" onMouseEnter={closeMenuSoon}>
-            <Link
-              href={signIn.href}
-              className="hidden rounded-full px-4 py-2 text-sm text-muted transition-colors hover:text-foreground sm:inline-block"
-            >
-              {signIn.label}
-            </Link>
+            {user ? (
+              <div className="mr-2 hidden sm:block">
+                <AccountMenu user={user} />
+              </div>
+            ) : (
+              <Link
+                href={signIn.href}
+                className={`hidden rounded-full px-4 py-2 text-sm text-muted transition-colors hover:text-foreground sm:inline-block ${
+                  user === undefined ? "invisible" : ""
+                }`}
+              >
+                {signIn.label}
+              </Link>
+            )}
             <Link
               href={primaryCta.href}
               className="hidden rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-ink transition-opacity hover:opacity-90 sm:inline-block"
@@ -352,8 +362,12 @@ export function Nav() {
               )}
             </ul>
             <div className="mt-8 grid grid-cols-2 gap-3">
-              <Link href={signIn.href} onClick={() => setOpen(false)} className="rounded-full border border-border py-3 text-center text-sm font-medium">
-                {signIn.label}
+              <Link
+                href={user ? "/dashboard" : signIn.href}
+                onClick={() => setOpen(false)}
+                className="rounded-full border border-border py-3 text-center text-sm font-medium"
+              >
+                {user ? "Dashboard" : signIn.label}
               </Link>
               <Link href={primaryCta.href} onClick={() => setOpen(false)} className="rounded-full bg-accent py-3 text-center text-sm font-medium text-accent-ink">
                 {primaryCta.label}
