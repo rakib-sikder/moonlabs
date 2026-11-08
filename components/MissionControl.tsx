@@ -28,7 +28,7 @@ export function MissionControl() {
   const enterScale = useTransform(scrollYProgress, [0, 1], [0.86, 1]);
 
   return (
-    <section ref={ref} className="relative mx-auto max-w-6xl px-6 py-20 grid gap-14 lg:grid-cols-[1fr_1.15fr] lg:items-center">
+    <section ref={ref} className="relative mx-auto max-w-6xl px-6 py-20 grid grid-cols-[minmax(0,1fr)] gap-14 lg:grid-cols-[1fr_1.15fr] lg:items-center">
       <div>
         <p className="font-mono text-xs uppercase tracking-widest text-moon mb-3">How an automation runs</p>
         <RevealText

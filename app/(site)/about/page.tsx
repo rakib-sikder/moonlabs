@@ -3,7 +3,9 @@ import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
 import { CtaBanner } from "@/components/CtaBanner";
 import { Chip, Reveal, SectionHeading } from "@/components/ui/Section";
-import { MoonImage } from "@/components/ui/MoonImage";
+import Image from "next/image";
+import { caseStudies } from "@/lib/content/company";
+import { founders } from "@/lib/content/proof";
 
 export const metadata: Metadata = {
   title: "About",
@@ -48,27 +50,39 @@ export default function AboutPage() {
           </div>
         </Reveal>
         <Reveal delay={0.1}>
-          <div className="relative aspect-square max-w-md mx-auto w-full">
-            {[1, 0.72, 0.46].map((s, i) => (
-              <div
-                key={s}
-                className="orbit-spin absolute rounded-full border border-foreground/10"
-                style={{
-                  inset: `${(1 - s) * 50}%`,
-                  ["--orbit-speed" as string]: `${30 - i * 8}s`,
-                  animationDirection: i % 2 ? "reverse" : "normal",
-                }}
-              >
-                <span
-                  className="absolute left-1/2 -top-2 h-4 w-4 -translate-x-1/2 rounded-full"
-                  style={{ background: ["#9d8cff", "#5ee0d0", "#ffc76b"][i], boxShadow: `0 0 20px 4px ${["#9d8cff", "#5ee0d0", "#ffc76b"][i]}66` }}
-                />
-              </div>
-            ))}
-            <div className="absolute inset-0 flex items-center justify-center">
-              <MoonImage size={150} />
+          {founders.length > 0 ? (
+            <ul className="space-y-4">
+              {founders.map((f) => (
+                <li key={f.name} className="flex gap-4 rounded-2xl border border-border bg-surface/80 p-5 backdrop-blur-sm">
+                  {f.photo && <Image src={f.photo} alt="" width={64} height={64} className="h-16 w-16 rounded-full object-cover" />}
+                  <div>
+                    <p className="font-medium">{f.name}</p>
+                    <p className="text-sm text-moon">{f.role}</p>
+                    <p className="mt-2 text-sm leading-relaxed text-muted">{f.bio}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <div className="overflow-hidden rounded-2xl border border-border bg-surface/80 backdrop-blur-sm">
+              <p className="border-b border-border px-6 py-3 font-mono text-[11px] uppercase tracking-widest text-muted">
+                Systems we run for ourselves
+              </p>
+              <ul className="divide-y divide-border">
+                {caseStudies.map((c) => (
+                  <li key={c.slug}>
+                    <Link href={`/work/${c.slug}`} className="group block px-6 py-4 transition-colors hover:bg-surface-2/50">
+                      <span className="flex items-center justify-between font-medium">
+                        {c.name}
+                        <span className="text-accent transition-transform group-hover:translate-x-1">→</span>
+                      </span>
+                      <span className="mt-1 block text-sm text-muted">{c.kind}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
-          </div>
+          )}
         </Reveal>
       </section>
 
