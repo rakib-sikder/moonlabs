@@ -1,7 +1,7 @@
 // Shared contact-form schema, used by the form (client) and the API route (server).
 
-export const budgetOptions = ["Not sure yet", "Under $1,000", "$1,000 – $3,000", "$3,000 – $10,000", "$10,000+"] as const;
-export const timelineOptions = ["As soon as possible", "Within a month", "In 1–3 months", "Just exploring"] as const;
+export const budgetOptions = ["Not sure yet", "Under $1,000", "$1,000-$3,000", "$3,000-$10,000", "$10,000+"] as const;
+export const timelineOptions = ["As soon as possible", "Within a month", "In 1-3 months", "Just exploring"] as const;
 
 export type ContactPayload = {
   name: string;

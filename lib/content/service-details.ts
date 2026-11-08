@@ -32,10 +32,10 @@ export const serviceDetails: Record<string, ServiceDetail> = {
         "A personalised first reply is drafted and sent within minutes",
         "Follow-ups go out on day 2 and day 5 if there is no answer",
       ],
-      outcome: "A booked call lands on your calendar — no manual copy-paste.",
+      outcome: "A booked call lands on your calendar with no copy-pasting.",
     },
     tools: ["HubSpot", "GoHighLevel", "Pipedrive", "Airtable", "Gmail", "Google Maps", "Apollo", "WhatsApp"],
-    setup: "1–2 weeks",
+    setup: "1-2 weeks",
     faqs: [
       { q: "Will automated emails land in spam?", a: "We set up sending domains, warm-up and sensible daily limits, and every sequence is reviewed by you before it goes live." },
       { q: "Can it work with the CRM we already have?", a: "Yes. We connect to your existing CRM rather than moving you to a new one." },
@@ -49,7 +49,7 @@ export const serviceDetails: Record<string, ServiceDetail> = {
       { title: "Happy customers never leave reviews", body: "Nobody remembers to ask at the right moment, so your rating undersells you." },
     ],
     workflow: {
-      name: "Review engine",
+      name: "Review requests",
       trigger: "An order or job is marked complete",
       steps: [
         "Wait a few days for the customer to use the product",
@@ -57,10 +57,10 @@ export const serviceDetails: Record<string, ServiceDetail> = {
         "Happy replies are pointed to Google; unhappy ones come to you privately",
         "Every new review is posted to your team's Slack or Telegram",
       ],
-      outcome: "A steady stream of reviews without anyone remembering to ask.",
+      outcome: "Review requests go out on time without anyone having to remember.",
     },
     tools: ["Meta Business Suite", "Google Business Profile", "Mailchimp", "Klaviyo", "Google Ads", "Looker Studio", "OpenAI", "Claude"],
-    setup: "1–2 weeks",
+    setup: "1-2 weeks",
     faqs: [
       { q: "Will AI-written content sound robotic?", a: "Drafts are written in your voice from examples you give us, and nothing is published without an approval step unless you ask for one." },
       { q: "Which ad platforms can you report on?", a: "Meta, Google, TikTok and LinkedIn, combined into one dashboard or a scheduled email." },
@@ -82,10 +82,10 @@ export const serviceDetails: Record<string, ServiceDetail> = {
         "Tickets are tagged by topic and urgency and routed to the right person",
         "A weekly report shows the most common questions to fix at the source",
       ],
-      outcome: "Instant answers for simple questions, faster human answers for the rest.",
+      outcome: "Simple questions get an instant answer, and your team gets to the rest sooner.",
     },
     tools: ["Intercom", "Zendesk", "Freshdesk", "Gmail", "WhatsApp Business", "Messenger", "Instagram", "OpenAI", "Claude"],
-    setup: "1–3 weeks",
+    setup: "1-3 weeks",
     faqs: [
       { q: "What if the bot gives a wrong answer?", a: "It only answers from content you approve, says when it does not know, and hands over to a person. Every conversation is logged for review." },
       { q: "Can customers still reach a human?", a: "Always. A human hand-off is one message away, and urgent topics skip the bot entirely." },
@@ -99,7 +99,7 @@ export const serviceDetails: Record<string, ServiceDetail> = {
       { title: "Calls leave no trace", body: "What was promised on the phone is never written down anywhere." },
     ],
     workflow: {
-      name: "Never miss a caller",
+      name: "Missed-call follow-up",
       trigger: "A call goes unanswered",
       steps: [
         "The caller instantly receives a friendly SMS with a booking link",
@@ -107,13 +107,13 @@ export const serviceDetails: Record<string, ServiceDetail> = {
         "The lead and conversation are saved to your CRM",
         "Your team gets a summary to call back the warm ones",
       ],
-      outcome: "Every missed call becomes a booking or a warm callback.",
+      outcome: "Missed callers get a reply straight away instead of trying the next business.",
     },
     tools: ["Twilio", "Vapi", "Retell", "Aircall", "Calendly", "Cal.com", "HubSpot", "Google Sheets"],
-    setup: "1–2 weeks",
+    setup: "1-2 weeks",
     faqs: [
-      { q: "Does the AI voice sound natural?", a: "Modern voice agents are close to human, but we always tell callers they are talking to an assistant and offer a human option." },
-      { q: "Can we keep our existing phone number?", a: "Usually yes — calls are forwarded from your current number." },
+      { q: "Does the AI voice sound natural?", a: "Current voice agents sound quite natural. We still tell callers they are talking to an assistant and give them a way to reach a person." },
+      { q: "Can we keep our existing phone number?", a: "Usually, yes. Calls are forwarded from your current number." },
     ],
   },
   operations: {
@@ -124,7 +124,7 @@ export const serviceDetails: Record<string, ServiceDetail> = {
       { title: "No-shows", body: "Appointments are forgotten because reminders are sent manually, or not at all." },
     ],
     workflow: {
-      name: "Paperwork autopilot",
+      name: "Supplier invoice processing",
       trigger: "A supplier invoice arrives by email",
       steps: [
         "The PDF is read and key fields are extracted by AI",
@@ -135,10 +135,10 @@ export const serviceDetails: Record<string, ServiceDetail> = {
       outcome: "Invoices are filed in minutes and mistakes are caught before payment.",
     },
     tools: ["Google Sheets", "Excel", "DocuSign", "PandaDoc", "Stripe", "Xero", "Cal.com", "Notion"],
-    setup: "1–3 weeks",
+    setup: "1-3 weeks",
     faqs: [
       { q: "How accurate is document extraction?", a: "Very accurate on clean documents. We add validation rules and a human review step for anything below a confidence threshold." },
-      { q: "Can it handle our odd spreadsheet layout?", a: "Yes — we build around how you already work rather than forcing a new format." },
+      { q: "Can it handle our odd spreadsheet layout?", a: "Yes. We build around the way you already work and don't force a new format on you." },
     ],
   },
   "finance-and-hr": {
@@ -157,10 +157,10 @@ export const serviceDetails: Record<string, ServiceDetail> = {
         "A first-week schedule and checklist are sent to the new starter",
         "The manager gets reminders for day-one, week-one and month-one check-ins",
       ],
-      outcome: "Every new hire gets the same smooth start, with nothing forgotten.",
+      outcome: "Every new hire gets the same start, and no steps get skipped.",
     },
     tools: ["QuickBooks", "Xero", "Google Workspace", "Slack", "BambooHR", "DocuSign", "Notion", "Google Forms"],
-    setup: "2–3 weeks",
+    setup: "2-3 weeks",
     faqs: [
       { q: "Is AI CV screening fair?", a: "We screen against criteria you define, never on protected characteristics, and a person makes every decision. Shortlists come with the reasoning shown." },
       { q: "Do you need access to our bank?", a: "No. We work with your accounting software's read and write permissions only, never bank logins." },
@@ -182,13 +182,13 @@ export const serviceDetails: Record<string, ServiceDetail> = {
         "The customer gets status updates by SMS or email",
         "Low stock triggers a reorder alert to your team",
       ],
-      outcome: "Accurate stock, fewer support emails, and happier customers.",
+      outcome: "Stock counts stay accurate and fewer customers email to ask where their order is.",
     },
     tools: ["Shopify", "WooCommerce", "Amazon", "Daraz", "Stripe", "ShipStation", "Klaviyo", "Google Sheets"],
-    setup: "1–3 weeks",
+    setup: "1-3 weeks",
     faqs: [
       { q: "Which platforms do you support?", a: "Shopify and WooCommerce most often, plus marketplaces that offer an API." },
-      { q: "Can you bulk-update thousands of products?", a: "Yes — from a spreadsheet, a supplier feed or another store." },
+      { q: "Can you bulk-update thousands of products?", a: "Yes, from a spreadsheet, a supplier feed or another store." },
     ],
   },
   "custom-build": {
@@ -207,10 +207,10 @@ export const serviceDetails: Record<string, ServiceDetail> = {
         "An AI summary highlights what moved and why it might have",
         "The summary is posted to your leadership Slack or Telegram",
       ],
-      outcome: "Everyone starts the week with the same numbers and the same story.",
+      outcome: "Everyone starts the week looking at the same numbers.",
     },
     tools: ["n8n", "Make", "Zapier", "Python", "Node.js", "Playwright", "Supabase", "Telegram"],
-    setup: "2–6 weeks",
+    setup: "2-6 weeks",
     faqs: [
       { q: "Who owns the code and workflows?", a: "You do. Everything is built in your accounts and handed over with documentation." },
       { q: "What if a tool changes its API?", a: "Our support plans include monitoring and fixes when a connected service changes." },
@@ -236,9 +236,9 @@ export const serviceDetails: Record<string, ServiceDetail> = {
       outcome: "A fast, editable website that sends every enquiry where it needs to go.",
     },
     tools: ["Next.js", "WordPress", "Webflow", "Shopify", "WooCommerce", "Vercel", "Cloudflare", "Google Analytics"],
-    setup: "2–5 weeks",
+    setup: "2-5 weeks",
     faqs: [
-      { q: "Can we edit the website ourselves?", a: "Yes. We set up an editor that fits your team — WordPress, Webflow or a simple CMS — and show you how to use it." },
+      { q: "Can we edit the website ourselves?", a: "Yes. We set up an editor that suits your team, such as WordPress, Webflow or a simple CMS, and show you how to use it." },
       { q: "Do you write the content?", a: "We can. Send us what you have and we'll shape it, or we write it from a short interview with you." },
       { q: "What about hosting and domains?", a: "We set them up in your own accounts, so you own them. Ongoing care is available if you want us to look after updates and backups." },
     ],
@@ -262,10 +262,10 @@ export const serviceDetails: Record<string, ServiceDetail> = {
       outcome: "A live app in the App Store and Google Play, with a plan for the next release.",
     },
     tools: ["React Native", "Expo", "Flutter", "Firebase", "Supabase", "Stripe", "OneSignal", "App Store Connect"],
-    setup: "6–12 weeks",
+    setup: "6-12 weeks",
     faqs: [
-      { q: "Native or cross-platform?", a: "Most business apps are best built cross-platform (React Native or Flutter): one codebase, both stores, lower cost. We'll say so if your app needs native." },
-      { q: "Do you handle App Store approval?", a: "Yes — store listings, screenshots, privacy forms and review are part of the project." },
+      { q: "Native or cross-platform?", a: "Most business apps are best built cross-platform with React Native or Flutter. One codebase covers both stores and costs less. We'll tell you if your app needs native." },
+      { q: "Do you handle App Store approval?", a: "Yes. Store listings, screenshots, privacy forms and the review process are part of the project." },
       { q: "Can the app connect to our existing systems?", a: "Yes. Apps usually sit on top of your CRM, store or database, and we connect them with your automations." },
     ],
   },
@@ -285,13 +285,13 @@ export const serviceDetails: Record<string, ServiceDetail> = {
         "Build sign-up, the core feature, billing and an admin panel",
         "Launch to first users, measure, and plan the next release",
       ],
-      outcome: "A working product with paying users — and code you fully own.",
+      outcome: "A working product in front of real users, with code you fully own.",
     },
     tools: ["Next.js", "React", "Node.js", "Python", "PostgreSQL", "Supabase", "Stripe", "OpenAI"],
-    setup: "4–10 weeks",
+    setup: "4-10 weeks",
     faqs: [
       { q: "Who owns the code?", a: "You do. It lives in your repository and accounts from day one." },
-      { q: "Can you add AI features?", a: "Yes — chat assistants, search over your own documents, summaries and automatic data extraction are common additions." },
+      { q: "Can you add AI features?", a: "Yes. Chat assistants, search over your own documents, summaries and automatic data extraction are common additions." },
       { q: "What happens after launch?", a: "We can stay on for new features, monitoring and fixes, or hand over to your own developers with documentation." },
     ],
   },
@@ -301,7 +301,7 @@ export const serviceDetails: Record<string, ServiceDetail> = {
     pains: [
       { title: "Spreadsheets as a database", body: "Ten thousand rows, five editors and a formula someone broke last month." },
       { title: "Everything is slow", body: "Pages and reports take seconds to load because the queries were never tuned." },
-      { title: "No tested backup", body: "Backups exist in theory — nobody has ever tried restoring one." },
+      { title: "No tested backup", body: "Backups exist in theory, but nobody has ever tried restoring one." },
     ],
     workflow: {
       name: "Spreadsheet to database",
@@ -315,7 +315,7 @@ export const serviceDetails: Record<string, ServiceDetail> = {
       outcome: "One reliable source of truth your apps, reports and automations all read from.",
     },
     tools: ["PostgreSQL", "MySQL", "MongoDB", "Supabase", "Firebase", "Redis", "Airtable", "Google Sheets"],
-    setup: "1–4 weeks",
+    setup: "1-4 weeks",
     faqs: [
       { q: "Can we still use spreadsheets?", a: "Yes. We can keep a synced sheet or a simple admin view for the people who prefer it." },
       { q: "Will there be downtime during migration?", a: "We plan migrations so the switch-over takes minutes, usually outside your working hours." },
@@ -340,10 +340,10 @@ export const serviceDetails: Record<string, ServiceDetail> = {
       outcome: "Up-to-date numbers on one screen, and a ping when something needs attention.",
     },
     tools: ["Looker Studio", "Power BI", "Metabase", "BigQuery", "PostgreSQL", "Python", "Google Sheets", "Slack"],
-    setup: "1–3 weeks",
+    setup: "1-3 weeks",
     faqs: [
       { q: "Which dashboard tool should we use?", a: "Usually the one your team already opens. Looker Studio is free and fine for most; Power BI suits Microsoft shops." },
-      { q: "Can you collect data from websites?", a: "Yes, where the site's terms allow it — prices, listings, public directories and similar." },
+      { q: "Can you collect data from websites?", a: "Yes, where the site's terms allow it. Typical examples are prices, listings and public directories." },
     ],
   },
   "cloud-and-devops": {
@@ -354,7 +354,7 @@ export const serviceDetails: Record<string, ServiceDetail> = {
       { title: "The cloud bill keeps growing", body: "Servers nobody remembers creating are still running and still billing." },
     ],
     workflow: {
-      name: "Safe, automatic deploys",
+      name: "Automatic deploys",
       trigger: "A developer pushes a change",
       steps: [
         "Tests and checks run automatically",
@@ -362,12 +362,12 @@ export const serviceDetails: Record<string, ServiceDetail> = {
         "On approval it goes live with zero downtime",
         "Health checks watch it, and a bad release rolls back by itself",
       ],
-      outcome: "Releases become routine, and outages reach your phone before your customers.",
+      outcome: "Releases become routine, and you hear about outages before your customers do.",
     },
     tools: ["AWS", "Google Cloud", "DigitalOcean", "Oracle Cloud", "Vercel", "Docker", "GitHub Actions", "Cloudflare"],
-    setup: "1–3 weeks",
+    setup: "1-3 weeks",
     faqs: [
-      { q: "Do you offer ongoing server management?", a: "Yes — monitoring, updates, backups and fixes are included in our monthly plans." },
+      { q: "Do you offer ongoing server management?", a: "Yes. Monitoring, updates, backups and fixes are included in our monthly plans." },
       { q: "Can you make our emails stop going to spam?", a: "Often, yes. Correct SPF, DKIM and DMARC records and a clean sending setup fix most deliverability problems." },
     ],
   },
@@ -388,12 +388,12 @@ export const serviceDetails: Record<string, ServiceDetail> = {
         "Design high-fidelity screens in Figma on a shared design system",
         "Test a clickable prototype with real users and refine",
       ],
-      outcome: "Developer-ready designs your users have already proven they understand.",
+      outcome: "Designs that are ready to build and have been tested with real users.",
     },
     tools: ["Figma", "FigJam", "Framer", "Maze", "Hotjar", "Google Analytics", "Storybook", "Tailwind CSS"],
-    setup: "2–4 weeks",
+    setup: "2-4 weeks",
     faqs: [
-      { q: "Can you design and also build it?", a: "Yes — our development team builds from the same design system, so nothing gets lost in hand-off." },
+      { q: "Can you design and also build it?", a: "Yes. Our developers build from the same design system, so less gets lost in the hand-off." },
       { q: "Do you do accessibility?", a: "Yes. We design to WCAG contrast and keyboard guidelines, and can audit what you already have." },
     ],
   },
@@ -416,9 +416,9 @@ export const serviceDetails: Record<string, ServiceDetail> = {
       outcome: "A complete brand kit your team can use without calling a designer.",
     },
     tools: ["Figma", "Adobe Illustrator", "Photoshop", "Canva", "Google Slides", "PowerPoint", "After Effects"],
-    setup: "2–3 weeks",
+    setup: "2-3 weeks",
     faqs: [
-      { q: "Do we get the source files?", a: "Yes — every logo format, the editable files and the templates are yours." },
+      { q: "Do we get the source files?", a: "Yes. Every logo format, the editable files and the templates are yours." },
       { q: "Can our team edit the templates?", a: "Yes. We build them in Canva or Google Slides when your team needs to edit them without design software." },
     ],
   },
@@ -431,21 +431,21 @@ export const serviceDetails: Record<string, ServiceDetail> = {
       { title: "Nobody knows what's working", body: "Blog posts go out, but nobody tracks which ones bring business." },
     ],
     workflow: {
-      name: "SEO programme",
+      name: "Monthly SEO work",
       trigger: "A technical and competitor audit of your site",
       steps: [
         "Fix the technical issues holding pages back",
-        "Pick keywords that buyers search, not just browsers",
+        "Pick keywords that people ready to buy actually search",
         "Optimise key pages and publish a steady content plan",
         "Build local listings and reputable links",
       ],
-      outcome: "Rankings and enquiries that grow month on month, with a report that shows it.",
+      outcome: "Steady work on rankings and enquiries, with a monthly report on what changed.",
     },
     tools: ["Google Search Console", "Google Analytics", "Ahrefs", "Semrush", "Screaming Frog", "Google Business Profile", "Surfer"],
-    setup: "Ongoing, results in 3–6 months",
+    setup: "Ongoing, results in 3-6 months",
     faqs: [
       { q: "How long until we see results?", a: "Technical fixes can help within weeks; meaningful ranking gains usually take three to six months." },
-      { q: "Do you guarantee first place?", a: "No — nobody honest can. We commit to the work, the reporting and a clear plan." },
+      { q: "Do you guarantee first place?", a: "No, and nobody honest can. We commit to the work, the reporting and a clear plan." },
     ],
   },
   "paid-ads": {
@@ -456,7 +456,7 @@ export const serviceDetails: Record<string, ServiceDetail> = {
       { title: "Ads point at the homepage", body: "Expensive clicks land on a page that wasn't built to convert them." },
     ],
     workflow: {
-      name: "Ads that pay back",
+      name: "Ad account rebuild",
       trigger: "An audit of your accounts, tracking and landing pages",
       steps: [
         "Fix conversion tracking so every lead and sale is counted",
@@ -467,7 +467,7 @@ export const serviceDetails: Record<string, ServiceDetail> = {
       outcome: "Ad spend you can tie to leads and revenue, reported every week.",
     },
     tools: ["Google Ads", "Meta Ads Manager", "LinkedIn Ads", "TikTok Ads", "GA4", "Google Tag Manager", "Looker Studio"],
-    setup: "1–2 weeks to launch",
+    setup: "1-2 weeks to launch",
     faqs: [
       { q: "Is ad spend included in your fee?", a: "No. Ad spend is paid directly by you to Google or Meta, so you always see exactly where it goes." },
       { q: "What budget do we need?", a: "It depends on your market. We'll suggest a test budget in the audit, sized so the results mean something." },
@@ -481,7 +481,7 @@ export const serviceDetails: Record<string, ServiceDetail> = {
       { title: "No consistent voice", body: "Every post sounds like whoever had time to write it." },
     ],
     workflow: {
-      name: "Monthly content engine",
+      name: "Monthly content plan",
       trigger: "A monthly planning call",
       steps: [
         "Plan topics around your offers, seasons and questions customers ask",
@@ -489,13 +489,13 @@ export const serviceDetails: Record<string, ServiceDetail> = {
         "You approve the batch in one place",
         "Everything is scheduled, and results are reviewed next month",
       ],
-      outcome: "A full month of on-brand content out every week without taking your team's time.",
+      outcome: "A month of on-brand content scheduled ahead, with little of your team's time spent on it.",
     },
     tools: ["Meta Business Suite", "Buffer", "Canva", "CapCut", "Premiere Pro", "Mailchimp", "Klaviyo", "Notion"],
-    setup: "First posts in 1–2 weeks",
+    setup: "First posts in 1-2 weeks",
     faqs: [
-      { q: "Do we need to be on camera?", a: "No. Many formats work without a face — screen recordings, product shots, animated text and customer stories." },
-      { q: "Can AI help keep costs down?", a: "Yes — we use AI for drafts and repurposing, and a person edits everything before it goes out." },
+      { q: "Do we need to be on camera?", a: "No. Many formats work without a face, such as screen recordings, product shots, animated text and customer stories." },
+      { q: "Can AI help keep costs down?", a: "Yes. We use AI for drafts and repurposing, and a person edits everything before it goes out." },
     ],
   },
 };

@@ -9,8 +9,8 @@ export function CaseStudies() {
     <section className="mx-auto max-w-6xl px-6 py-20">
       <SectionHead
         eyebrow="Case studies"
-        title="Systems we built — and still run every day."
-        intro="We automate our own operations first, so every pattern we sell has been in production."
+        title="Systems we built and still run."
+        intro="We automate our own operations first, so the methods we offer clients are already running in production."
         link={{ href: "/work", label: "All case studies" }}
       />
       <div className="overflow-hidden rounded-2xl border border-border bg-surface/70 backdrop-blur-sm">
@@ -23,13 +23,13 @@ export function CaseStudies() {
             }`}
           >
             <div>
-              <p className="font-mono text-[11px] uppercase tracking-widest text-muted">{c.kind}</p>
+              <p className="font-mono text-xs uppercase tracking-widest text-muted">{c.kind}</p>
               <h3 className="mt-2 text-lg font-semibold">{c.name}</h3>
-              <p className="mt-2 text-[13px] leading-relaxed text-muted">{c.problem}</p>
+              <p className="mt-2 text-sm leading-relaxed text-muted">{c.problem}</p>
             </div>
             <div>
               <p className="mb-2 text-xs font-medium text-foreground">What it does</p>
-              <ul className="space-y-1.5 text-[13px] text-muted">
+              <ul className="space-y-1.5 text-sm text-muted">
                 {c.solution.slice(0, 3).map((s) => (
                   <li key={s} className="flex gap-2">
                     <span aria-hidden className="mt-[7px] h-1 w-1 shrink-0 rounded-full bg-moon" />
@@ -41,10 +41,10 @@ export function CaseStudies() {
             <div className="flex flex-col justify-between gap-4">
               <div>
                 <p className="mb-2 text-xs font-medium text-foreground">Result</p>
-                <p className="text-[13px] leading-relaxed text-muted">{c.outcomes[0]}</p>
+                <p className="text-sm leading-relaxed text-muted">{c.outcomes[0]}</p>
                 <div className="mt-3 flex flex-wrap gap-1.5">
                   {c.stack.slice(0, 4).map((t) => (
-                    <span key={t} className="rounded border border-border px-1.5 py-0.5 font-mono text-[11px] text-muted">
+                    <span key={t} className="rounded border border-border px-1.5 py-0.5 font-mono text-xs text-muted">
                       {t}
                     </span>
                   ))}

@@ -478,7 +478,7 @@ async function FilesTab({ ctx, org }: TabProps) {
                         {f.name}
                       </a>
                     </td>
-                    <td className="text-muted">{f.project?.name ?? "—"}</td>
+                    <td className="text-muted">{f.project?.name ?? "-"}</td>
                     <td className="pt-kbd-muted whitespace-nowrap">{formatDate(f.created_at)}</td>
                     <td className="pt-num pt-kbd-muted">{formatBytes(f.size_bytes)}</td>
                     <td className="text-right">

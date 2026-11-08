@@ -6,9 +6,9 @@ import { HeroMockup } from "./HeroMockup";
 import { RevealText } from "./ui/RevealText";
 
 const points = [
-  { k: "Watches", v: "Your inbox, forms, CRM and invoices — around the clock." },
-  { k: "Acts", v: "Enriches the lead, drafts the reply, sends the reminder." },
-  { k: "Asks", v: "Anything risky waits for a one-tap human approval." },
+  { k: "Watches", v: "Your inbox, forms, CRM and invoices, day and night." },
+  { k: "Acts", v: "Looks up the lead's details, drafts a reply or sends a reminder." },
+  { k: "Asks", v: "Anything risky waits until a person approves it." },
 ];
 
 /** "Watch it work" — the animated workflow mockup, tilting toward the cursor. */
@@ -32,7 +32,7 @@ export function MissionControl() {
       <div>
         <p className="font-mono text-xs uppercase tracking-widest text-moon mb-3">How an automation runs</p>
         <RevealText
-          text="Watch the busywork disappear."
+          text="What an automation actually does."
           className="text-2xl sm:text-[2rem] font-semibold tracking-tight leading-tight"
         />
         <ul className="mt-10 space-y-6">

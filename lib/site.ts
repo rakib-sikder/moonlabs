@@ -7,7 +7,7 @@ export const site = {
   name: "Moonlabs",
   tagline: "Automation agency",
   description:
-    "Moonlabs builds AI agents, workflows and integrations that take repetitive work off your team — plus the websites, apps, data and marketing around them.",
+    "Moonlabs builds AI agents, workflows and integrations that take repetitive work off your team. We also build the websites, apps, data and marketing around them.",
   /** Public contact address — set NEXT_PUBLIC_CONTACT_EMAIL; hidden everywhere when empty. */
   email: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "",
   /** Canonical origin for SEO (sitemap, Open Graph). */
@@ -27,7 +27,7 @@ export const mainNav: NavItem[] = [
 
 export const resourceLinks: NavLink[] = [
   { href: "/how-it-works", label: "How we work", desc: "Five steps from free audit to monthly care" },
-  { href: "/work", label: "Case studies", desc: "Systems we built and still run every day" },
+  { href: "/work", label: "Case studies", desc: "Systems we built and still run" },
   { href: "/integrations", label: "Integrations", desc: "The tools we connect, and what we do with each" },
   { href: "/roi-calculator", label: "ROI calculator", desc: "Estimate the hours and money you'd save" },
   { href: "/security", label: "Security", desc: "Access, data handling and approvals" },
@@ -61,34 +61,34 @@ export const serviceCategories: ServiceCategory[] = [
     name: "Automation & AI",
     short: "Our core. AI agents, workflows and integrations that take repetitive work off your team.",
     itemsLabel: "What we automate",
-    color: "#9d8cff",
+    color: "#f5b24e",
     core: true,
   },
   {
     id: "development",
     name: "Web & App Development",
-    short: "Websites, mobile apps and custom web apps — built to plug straight into your automations.",
+    short: "Websites, mobile apps and custom web apps, built to connect with your automations.",
     itemsLabel: "What we build",
     color: "#6fb8ff",
   },
   {
     id: "data-cloud",
     name: "Data & Cloud",
-    short: "Databases, dashboards and the servers everything runs on, kept fast, backed up and secure.",
+    short: "Databases, dashboards and the servers your systems run on. Backed up and looked after.",
     itemsLabel: "What's included",
     color: "#5ee0d0",
   },
   {
     id: "design",
     name: "UI/UX & Brand Design",
-    short: "Interfaces people understand at a glance, and a brand that looks the part.",
+    short: "Clear interfaces for your apps and sites, plus logos and brand basics.",
     itemsLabel: "What we design",
     color: "#ff8fb1",
   },
   {
     id: "growth",
     name: "SEO & Growth Marketing",
-    short: "Get found on Google, run ads that pay back, and keep content going out every week.",
+    short: "Search rankings, paid ads and regular content for your business.",
     itemsLabel: "What's included",
     color: "#ffc76b",
   },
@@ -109,11 +109,11 @@ const automation: Omit<Service, "category">[] = [
   {
     slug: "sales-and-leads",
     name: "Sales & Leads",
-    short: "Find, enrich and follow up with leads automatically.",
+    short: "Find leads, add their contact details and follow up automatically.",
     color: "#9d8cff",
     items: [
       "Lead scraping from Google Maps, directories, LinkedIn and websites",
-      "Lead enrichment — find and verify emails and phone numbers",
+      "Lead enrichment: finding and verifying emails and phone numbers",
       "Cold email outreach with automatic follow-ups",
       "SMS and WhatsApp outreach",
       "CRM setup and automation (HubSpot, GoHighLevel, Pipedrive, Airtable)",
@@ -124,14 +124,14 @@ const automation: Omit<Service, "category">[] = [
   {
     slug: "marketing",
     name: "Marketing",
-    short: "Content, posting, reviews and reporting on autopilot.",
+    short: "Scheduled posts, review requests and reports that go out on their own.",
     color: "#ff8fb1",
     items: [
       "Social media auto-posting and scheduling",
-      "AI-assisted content — posts, captions, blogs, ad copy",
+      "AI-assisted posts, captions, blogs and ad copy",
       "Email marketing and newsletters",
       "Review collection and reputation management",
-      "SEO automation — keyword tracking, reports, programmatic pages",
+      "SEO automation for keyword tracking, reports and programmatic pages",
       "Automatic Facebook and Google Ads reporting",
       "Competitor and price monitoring",
     ],
@@ -139,7 +139,7 @@ const automation: Omit<Service, "category">[] = [
   {
     slug: "customer-support",
     name: "Customer Support",
-    short: "Answer faster without hiring more people.",
+    short: "Reply to customers faster without adding staff.",
     color: "#5ee0d0",
     items: [
       "AI chatbots for website, Messenger, WhatsApp and Instagram DMs",
@@ -152,7 +152,7 @@ const automation: Omit<Service, "category">[] = [
   {
     slug: "voice-and-calls",
     name: "Voice & Calls",
-    short: "Never miss a call or a booking again.",
+    short: "Calls get answered and bookings get made, even after hours.",
     color: "#ffc76b",
     items: [
       "AI voice agents that answer calls and book appointments",
@@ -168,7 +168,7 @@ const automation: Omit<Service, "category">[] = [
     items: [
       "Invoicing, billing and payment reminders",
       "Data entry from PDFs, forms and emails into sheets",
-      "Document processing — AI extraction and summaries",
+      "Document processing with AI extraction and summaries",
       "Appointment booking and reminders",
       "Inventory and order tracking",
       "Contract and e-signature workflows",
@@ -177,20 +177,20 @@ const automation: Omit<Service, "category">[] = [
   {
     slug: "finance-and-hr",
     name: "Finance & HR",
-    short: "Books, payroll and hiring that run themselves.",
+    short: "Bookkeeping, payroll reports and hiring admin, mostly handled for you.",
     color: "#9be07f",
     items: [
       "Expense tracking and receipt scanning",
       "Bookkeeping sync with QuickBooks and Xero",
       "Payroll and attendance reports",
-      "Recruitment — CV screening and interview scheduling",
+      "Recruitment: CV screening and interview scheduling",
       "Employee onboarding and offboarding workflows",
     ],
   },
   {
     slug: "e-commerce",
     name: "E-commerce",
-    short: "Orders, listings and stock synced across every channel.",
+    short: "Orders, listings and stock kept in sync across your sales channels.",
     color: "#ff9a62",
     items: [
       "Shopify and WooCommerce order automation",
@@ -224,7 +224,7 @@ const beyond: Service[] = [
     slug: "web-development",
     name: "Websites",
     category: "development",
-    short: "Fast, good-looking websites that turn visitors into enquiries.",
+    short: "Fast, well-built websites designed to bring in enquiries.",
     color: "#6fb8ff",
     items: [
       "Business and company websites",
@@ -234,7 +234,7 @@ const beyond: Service[] = [
       "Booking, membership and directory sites",
       "Multi-language websites",
       "Redesigns and speed fixes for an existing site",
-      "Ongoing care — updates, backups and uptime monitoring",
+      "Ongoing care: updates, backups and uptime monitoring",
     ],
   },
   {
@@ -248,7 +248,7 @@ const beyond: Service[] = [
       "Food, grocery and delivery ordering apps",
       "Marketplace apps with buyers, sellers and payouts",
       "Loyalty, membership and rewards apps",
-      "Field-staff apps — job lists, check-ins, photos and signatures, even offline",
+      "Field-staff apps with job lists, check-ins, photos and signatures that work offline",
       "Fitness, health and habit-tracking apps",
       "Companion apps for an existing web product",
       "App Store and Google Play publishing and updates",
@@ -266,7 +266,7 @@ const beyond: Service[] = [
       "Internal tools and admin dashboards",
       "Booking, scheduling and quoting systems",
       "A CRM or ERP built around how you actually work",
-      "AI features — chat assistants, search over your documents, summaries",
+      "AI features such as chat assistants, document search and summaries",
       "APIs and backend services",
       "Payments with Stripe and PayPal",
     ],
@@ -276,13 +276,13 @@ const beyond: Service[] = [
     slug: "database-management",
     name: "Database Management",
     category: "data-cloud",
-    short: "Clean, fast, backed-up data — not a pile of spreadsheets.",
+    short: "A proper database with backups, in place of a pile of spreadsheets.",
     color: "#5ee0d0",
     items: [
       "Database design and schema planning",
       "Moving from spreadsheets or Airtable to a real database",
       "PostgreSQL, MySQL, MongoDB, Supabase and Firebase",
-      "Speed fixes — indexes, slow queries and caching",
+      "Speed fixes: indexes, slow queries and caching",
       "Automatic backups with tested restores",
       "User roles, access control and encryption",
       "Data cleaning, de-duplication and merging",
@@ -293,7 +293,7 @@ const beyond: Service[] = [
     slug: "data-and-analytics",
     name: "Data & Dashboards",
     category: "data-cloud",
-    short: "Every number you care about in one place, updated on its own.",
+    short: "The numbers you track in one place, updated automatically.",
     color: "#7fe8b0",
     items: [
       "KPI dashboards in Looker Studio, Power BI or Metabase",
@@ -313,7 +313,7 @@ const beyond: Service[] = [
     items: [
       "Hosting on AWS, Google Cloud, DigitalOcean, Vercel or Oracle Cloud",
       "Linux server setup and hardening",
-      "CI/CD — automatic tests and one-click deploys",
+      "CI/CD with automatic tests and one-click deploys",
       "Docker and containers",
       "Uptime monitoring with alerts to your phone",
       "Domains, SSL and email deliverability (SPF, DKIM, DMARC)",
@@ -347,7 +347,7 @@ const beyond: Service[] = [
     color: "#ffb0d0",
     items: [
       "Logo and visual identity",
-      "Brand guidelines — colours, type, voice",
+      "Brand guidelines for colours, type and voice",
       "Social media templates",
       "Pitch decks and presentations",
       "Ads, banners and print material",
@@ -363,7 +363,7 @@ const beyond: Service[] = [
     short: "Show up when customers search for what you sell.",
     color: "#ffc76b",
     items: [
-      "Technical SEO audits and fixes — speed, Core Web Vitals, indexing",
+      "Technical SEO audits and fixes for speed, Core Web Vitals and indexing",
       "Keyword research and a content plan",
       "On-page optimisation of titles, copy and structure",
       "Local SEO and Google Business Profile",
@@ -379,10 +379,10 @@ const beyond: Service[] = [
     short: "Google and Meta ads measured by what they bring back.",
     color: "#ffa96b",
     items: [
-      "Google Ads — Search, Shopping and Performance Max",
+      "Google Ads: Search, Shopping and Performance Max",
       "Meta ads on Facebook and Instagram",
       "LinkedIn and TikTok ads",
-      "Conversion tracking — GA4, Meta Pixel and Conversions API",
+      "Conversion tracking with GA4, Meta Pixel and Conversions API",
       "Landing page A/B tests",
       "Weekly spend and return reports",
     ],
@@ -391,7 +391,7 @@ const beyond: Service[] = [
     slug: "content-and-social",
     name: "Content & Social Media",
     category: "growth",
-    short: "A steady flow of posts, videos and emails your audience actually reads.",
+    short: "Regular posts, short videos and emails, written for your audience.",
     color: "#ffd98f",
     items: [
       "Social media calendar and management",

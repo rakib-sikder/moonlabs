@@ -25,7 +25,7 @@ export default function FaqPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <PageHeader
         eyebrow="FAQ"
-        title="Questions we get asked a lot."
+        title="Frequently asked questions"
         intro="Pricing, timelines, data security and what happens when something breaks. If yours isn't here, ask us."
       />
       <section className="mx-auto max-w-4xl px-6 pb-24 space-y-14">
@@ -38,7 +38,7 @@ export default function FaqPage() {
           </Reveal>
         ))}
       </section>
-      <CtaBanner title="Still have a question?" body="Ask it in a free 30-minute audit — we'll answer it and show you what you could automate." />
+      <CtaBanner title="Ask us on a call." body="Bring your question to a free 30-minute audit. We'll answer it and show you what you could automate." />
     </>
   );
 }

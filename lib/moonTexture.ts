@@ -2,7 +2,6 @@
 // (NASA Scientific Visualization Studio, CGI Moon Kit — public domain).
 
 export const MOON_COLOR_2K = "/moon/moon-color-2k.jpg";
-export const MOON_COLOR_4K = "/moon/moon-color-4k.jpg";
 export const MOON_HEIGHT = "/moon/moon-height-1k.jpg";
 
 type Pixels = { W: number; H: number; data: Uint8ClampedArray };

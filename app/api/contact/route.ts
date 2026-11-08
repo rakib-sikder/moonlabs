@@ -20,7 +20,7 @@ const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replac
 export async function POST(request: Request) {
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
   if (rateLimited(ip)) {
-    return Response.json({ ok: false, error: "Too many messages — please try again in a few minutes." }, { status: 429 });
+    return Response.json({ ok: false, error: "Too many messages. Please try again in a few minutes." }, { status: 429 });
   }
 
   let body: Partial<ContactPayload>;
@@ -38,15 +38,15 @@ export async function POST(request: Request) {
 
   const validServices = new Set(services.map((s) => s.name));
   const picked = (Array.isArray(body.services) ? body.services : []).filter((s) => validServices.has(s));
-  const budget = budgetOptions.includes(body.budget as (typeof budgetOptions)[number]) ? body.budget! : "—";
-  const timeline = timelineOptions.includes(body.timeline as (typeof timelineOptions)[number]) ? body.timeline! : "—";
+  const budget = budgetOptions.includes(body.budget as (typeof budgetOptions)[number]) ? body.budget! : "-";
+  const timeline = timelineOptions.includes(body.timeline as (typeof timelineOptions)[number]) ? body.timeline! : "-";
 
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;
   if (!token || !chatId) {
-    console.error("[contact] TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID not set — message not delivered");
+    console.error("[contact] TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID not set, message not delivered");
     return Response.json(
-      { ok: false, error: "Our form is temporarily unavailable — please try again shortly." },
+      { ok: false, error: "The form isn't working right now. Please try again shortly." },
       { status: 503 }
     );
   }
@@ -57,7 +57,7 @@ export async function POST(request: Request) {
     `<b>Name:</b> ${esc(body.name!.trim())}`,
     `<b>Email:</b> ${esc(body.email!.trim())}`,
     body.company?.trim() ? `<b>Company:</b> ${esc(body.company.trim())}` : null,
-    `<b>Interested in:</b> ${picked.length ? esc(picked.join(", ")) : "—"}`,
+    `<b>Interested in:</b> ${picked.length ? esc(picked.join(", ")) : "-"}`,
     `<b>Budget:</b> ${esc(budget)}`,
     `<b>Timeline:</b> ${esc(timeline)}`,
     "",

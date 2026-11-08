@@ -33,17 +33,17 @@ function toDate(value: string | Date): Date {
 }
 
 export function formatDate(value: string | Date | null | undefined): string {
-  if (!value) return "—";
+  if (!value) return "-";
   return dateFmt.format(toDate(value));
 }
 
 export function formatShortDate(value: string | Date | null | undefined): string {
-  if (!value) return "—";
+  if (!value) return "-";
   return shortDateFmt.format(toDate(value));
 }
 
 export function formatDateTime(value: string | Date | null | undefined): string {
-  if (!value) return "—";
+  if (!value) return "-";
   return `${dateTimeFmt.format(toDate(value))} UTC`;
 }
 
@@ -70,12 +70,12 @@ export function formatNumber(n: number, digits = 0): string {
 }
 
 export function formatPercent(ratio: number | null): string {
-  if (ratio === null) return "—";
+  if (ratio === null) return "-";
   return `${formatNumber(ratio * 100, ratio === 1 || ratio === 0 ? 0 : 1)}%`;
 }
 
 export function formatDuration(ms: number | null): string {
-  if (ms === null) return "—";
+  if (ms === null) return "-";
   if (ms < 1000) return `${ms} ms`;
   const s = ms / 1000;
   if (s < 60) return `${formatNumber(s, 1)} s`;
@@ -83,7 +83,7 @@ export function formatDuration(ms: number | null): string {
 }
 
 export function formatBytes(bytes: number | null): string {
-  if (bytes === null) return "—";
+  if (bytes === null) return "-";
   if (bytes < 1024) return `${bytes} B`;
   const units = ["KB", "MB", "GB"];
   let v = bytes / 1024;

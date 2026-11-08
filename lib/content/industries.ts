@@ -18,8 +18,8 @@ export const industryDetails: IndustryDetail[] = [
   {
     slug: "real-estate",
     name: "Real estate",
-    headline: "Answer every enquiry before the next agent does.",
-    intro: "Property leads are time-sensitive and arrive from everywhere. We make sure none are missed and every viewing is confirmed.",
+    headline: "Reply to enquiries before the next agent does.",
+    intro: "Property leads come in from portals, your site and the phone, and they go cold fast. We make sure each one gets a reply and every viewing is confirmed.",
     pains: ["Portal enquiries answered hours late", "Viewings booked by phone tag", "Listings updated by hand on every site"],
     automations: [
       { title: "Instant lead reply", body: "Enquiries from portals and your site get a personal reply and viewing slots within minutes." },
@@ -45,7 +45,7 @@ export const industryDetails: IndustryDetail[] = [
     slug: "healthcare",
     name: "Clinics & healthcare",
     headline: "Fewer no-shows, less front-desk overload.",
-    intro: "Clinics lose hours to booking calls, reminders and paperwork. We automate the admin around care, never the care itself.",
+    intro: "Clinics lose hours to booking calls, reminders and paperwork. We automate that admin and leave clinical work to your staff.",
     pains: ["Phones ringing all day for bookings", "Patients forgetting appointments", "Intake forms retyped into the system"],
     automations: [
       { title: "Online booking + reminders", body: "Patients book themselves and get reminders that reduce no-shows." },
@@ -75,7 +75,7 @@ export const industryDetails: IndustryDetail[] = [
     automations: [
       { title: "Booking assistant", body: "Reservations by chat, WhatsApp or phone, confirmed automatically." },
       { title: "Daily specials posting", body: "Post today's menu to every channel from one message." },
-      { title: "Review engine", body: "Guests are asked for a review at the right moment." },
+      { title: "Review requests", body: "Guests are asked for a review the day after their visit." },
       { title: "Supplier reorders", body: "Low stock triggers a draft order to your supplier." },
     ],
     services: ["customer-support", "marketing", "operations", "app-development"],
@@ -94,8 +94,8 @@ export const industryDetails: IndustryDetail[] = [
   {
     slug: "e-commerce",
     name: "E-commerce stores",
-    headline: "Sell everywhere without the spreadsheet chaos.",
-    intro: "Orders, stock and customer messages multiply with every channel. We keep them in sync and your inbox quiet.",
+    headline: "Sell on several channels without the spreadsheets.",
+    intro: "Every new sales channel adds more orders, stock counts and customer messages. We keep them in sync and cut down the support email.",
     pains: ["Overselling across channels", "Abandoned carts with no follow-up", "'Where is my order?' emails"],
     automations: [
       { title: "Inventory sync", body: "Stock updates across every store and marketplace in real time." },
@@ -105,7 +105,7 @@ export const industryDetails: IndustryDetail[] = [
     ],
     services: ["e-commerce", "customer-support", "marketing", "paid-ads"],
     workflow: {
-      name: "Order to delivered, hands-free",
+      name: "Order to delivery",
       trigger: "A new order is placed",
       steps: [
         "Stock is updated on every sales channel",
@@ -119,8 +119,8 @@ export const industryDetails: IndustryDetail[] = [
   {
     slug: "agencies",
     name: "Agencies",
-    headline: "Spend your hours on clients, not on reporting.",
-    intro: "Agencies run on repeatable processes — onboarding, reporting, approvals. They are perfect to automate.",
+    headline: "Less time on reports, more on client work.",
+    intro: "Agencies repeat the same processes for every client: onboarding, reporting and approvals. That makes them good candidates for automation.",
     pains: ["Monthly reports built by hand", "Client onboarding emails copied each time", "Lead gen for your own agency neglected"],
     automations: [
       { title: "Automatic client reports", body: "Ad and SEO results pulled into a branded report on schedule." },
@@ -130,7 +130,7 @@ export const industryDetails: IndustryDetail[] = [
     ],
     services: ["marketing", "sales-and-leads", "custom-build", "web-apps-and-saas"],
     workflow: {
-      name: "Client reporting on autopilot",
+      name: "Weekly client reporting",
       trigger: "Every Monday at 8am",
       steps: [
         "Numbers are pulled from ads, analytics and CRM for each client",
@@ -146,7 +146,7 @@ export const industryDetails: IndustryDetail[] = [
     slug: "law-firms",
     name: "Law firms",
     headline: "Take intake and document work off your fee-earners.",
-    intro: "Lawyers should not spend billable hours on intake forms and document chasing. We automate the process around the advice.",
+    intro: "Lawyers shouldn't spend billable hours on intake forms and chasing documents. We automate that admin so they can focus on the legal work.",
     pains: ["Intake calls that never become clients", "Documents chased by email", "Deadlines tracked in personal calendars"],
     automations: [
       { title: "Structured intake", body: "Enquiries are qualified with the right questions and routed to the right lawyer." },
@@ -170,7 +170,7 @@ export const industryDetails: IndustryDetail[] = [
   {
     slug: "education",
     name: "Education & coaching",
-    headline: "Enrol, remind and follow up — automatically.",
+    headline: "Enrolment and reminders, handled automatically.",
     intro: "Course creators and coaching businesses lose students in the gaps between enquiry, payment and the first session.",
     pains: ["Enquiries without follow-up", "Manual class reminders", "Student questions answered one by one"],
     automations: [
@@ -195,7 +195,7 @@ export const industryDetails: IndustryDetail[] = [
   {
     slug: "logistics",
     name: "Logistics",
-    headline: "Status updates that send themselves.",
+    headline: "Shipment updates sent automatically.",
     intro: "Shipments create a constant stream of updates, documents and questions. We automate the communication around them.",
     pains: ["Customers calling for status", "Delivery documents retyped", "Quotes taking a day to return"],
     automations: [

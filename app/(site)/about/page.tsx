@@ -9,14 +9,14 @@ import { founders } from "@/lib/content/proof";
 
 export const metadata: Metadata = {
   title: "About",
-  description: "Moonlabs is a small automation studio that builds AI agents, workflows and integrations for growing businesses.",
+  description: "Moonlabs is a small automation agency that builds AI agents, workflows and integrations for small and mid-sized businesses.",
 };
 
 const values = [
   { title: "Honest numbers", body: "We measure hours saved before and after. If something isn't worth automating, we say so in the audit." },
-  { title: "People stay in charge", body: "Automation handles the repetitive part; anything important still gets a human yes." },
+  { title: "People stay in charge", body: "Automation handles the repetitive part. Anything important still needs a person to approve it." },
   { title: "You own everything", body: "Built in your accounts, documented, and handed over. No lock-in." },
-  { title: "Built to last", body: "Monitoring, alerts and fallbacks are part of the build, not an afterthought." },
+  { title: "Built to last", body: "Monitoring, alerts and fallbacks are included in every build from the start." },
 ];
 
 const stack = [
@@ -29,23 +29,23 @@ export default function AboutPage() {
     <>
       <PageHeader
         eyebrow="About"
-        title="A small studio that automates the boring parts."
-        intro="Moonlabs started by automating our own business — finding leads, answering them, running servers that fail over by themselves at 3am. Now we build the same kind of systems for other teams."
+        title="A small team that automates routine work."
+        intro="Moonlabs started by automating our own business: finding leads, replying to them, and running servers that switch to a backup on their own when something fails. Now we build the same kind of systems for other teams."
       />
 
       <section className="mx-auto max-w-6xl px-6 pb-24 grid gap-10 lg:grid-cols-2 lg:items-center">
         <Reveal>
           <div className="space-y-5 text-lg leading-relaxed">
             <p>
-              Most businesses don&apos;t need more software. They need the software they already pay for to talk to each other —
-              and someone to take the copy-paste out of the week.
+              Most businesses don&apos;t need more software. They need the software they already pay for to share data, and someone
+              to take the copy-paste out of the week.
             </p>
             <p className="text-muted">
-              That&apos;s what we do. We sit with your team, find the work that repeats, and build automations that run quietly in the
-              background: careful where mistakes are costly, fast where they aren&apos;t.
+              That&apos;s what we do. We sit with your team, find the work that repeats, and build automations that run in the background.
+              Where a mistake would be costly, we add checks and approvals.
             </p>
             <p className="text-muted">
-              The name is a reminder of the goal: work that keeps running while you sleep.
+              The name comes from the idea of work that keeps running overnight while you sleep.
             </p>
           </div>
         </Reveal>
@@ -65,7 +65,7 @@ export default function AboutPage() {
             </ul>
           ) : (
             <div className="overflow-hidden rounded-2xl border border-border bg-surface/80 backdrop-blur-sm">
-              <p className="border-b border-border px-6 py-3 font-mono text-[11px] uppercase tracking-widest text-muted">
+              <p className="border-b border-border px-6 py-3 font-mono text-xs uppercase tracking-widest text-muted">
                 Systems we run for ourselves
               </p>
               <ul className="divide-y divide-border">
@@ -87,7 +87,7 @@ export default function AboutPage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-6 pb-24">
-        <SectionHeading eyebrow="What we believe" title="Four rules we don't bend." />
+        <SectionHeading eyebrow="What we believe" title="How we work with clients." />
         <div className="grid gap-5 sm:grid-cols-2">
           {values.map((v, i) => (
             <Reveal key={v.title} delay={(i % 2) * 0.08}>
@@ -102,7 +102,7 @@ export default function AboutPage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-6 pb-12">
-        <SectionHeading eyebrow="Toolbox" title="What we build with." intro="We pick the simplest tool that will still be reliable in a year — no-code when it fits, real code when it doesn't." />
+        <SectionHeading eyebrow="Toolbox" title="What we build with." intro="We pick the simplest tool that will still be reliable in a year. That means no-code where it fits and custom code where it doesn't." />
         <Reveal>
           <div className="flex flex-wrap gap-2">
             {stack.map((t) => (

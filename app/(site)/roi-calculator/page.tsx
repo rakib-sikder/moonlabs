@@ -13,8 +13,8 @@ export default function RoiCalculatorPage() {
     <>
       <PageHeader
         eyebrow="ROI calculator"
-        title="How much is the busywork costing you?"
-        intro="Move the sliders. The numbers update as you go — then book a free audit to replace the guesses with real ones."
+        title="Estimate what manual work costs you."
+        intro="Move the sliders and the numbers update as you go. A free audit replaces these guesses with measured figures."
       />
       <section className="mx-auto max-w-6xl px-6 pb-24">
         <RoiCalculator />

@@ -82,7 +82,7 @@ export function ContactForm({ fallbackEmail }: { fallbackEmail?: string }) {
                 <path d="M4 12.5 9.5 18 20 6" />
               </svg>
             </motion.div>
-            <h2 className="text-2xl font-semibold">Message received — we&apos;re on it.</h2>
+            <h2 className="text-2xl font-semibold">Thanks, we got your message.</h2>
             <p className="mt-3 max-w-sm text-muted">
               We reply within one working day with a few times for your free audit. Keep an eye on {data.email}.
             </p>
@@ -195,7 +195,7 @@ export function ContactForm({ fallbackEmail }: { fallbackEmail?: string }) {
                     Sending…
                   </>
                 ) : (
-                  <>Send — book my free audit →</>
+                  <>Send and book my free audit →</>
                 )}
               </button>
             </div>

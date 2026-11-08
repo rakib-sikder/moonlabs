@@ -24,7 +24,7 @@ export default function TermsPage() {
           title: "Payment",
           body: [
             "One-time projects are invoiced as agreed in the scope. Monthly plans are billed in advance each month.",
-            "Third-party costs — software subscriptions, ad spend, API usage, hosting — are paid by you directly to the provider unless agreed otherwise.",
+            "Third-party costs, such as software subscriptions, ad spend, API usage and hosting, are paid by you directly to the provider unless agreed otherwise.",
           ],
         },
         {

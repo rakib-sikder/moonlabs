@@ -43,7 +43,7 @@ export default async function FilesPage() {
                     <td className="max-w-[360px] font-medium">
                       <span className="line-clamp-1 break-all">{f.name}</span>
                     </td>
-                    <td className="text-muted">{f.project?.name ?? "—"}</td>
+                    <td className="text-muted">{f.project?.name ?? "-"}</td>
                     <td className="pt-kbd-muted whitespace-nowrap">{formatDate(f.created_at)}</td>
                     <td className="pt-num pt-kbd-muted">{formatBytes(f.size_bytes)}</td>
                     <td className="text-right">

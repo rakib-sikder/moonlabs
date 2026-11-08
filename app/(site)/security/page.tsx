@@ -5,16 +5,16 @@ import { Reveal, SectionHeading } from "@/components/ui/Section";
 
 export const metadata: Metadata = {
   title: "Security & privacy",
-  description: "How Moonlabs handles access, data and AI safely: least-privilege access, your own accounts, human approval and full logs.",
+  description: "How Moonlabs handles access, data and AI: minimal permissions, work done in your own accounts, human approval and run logs.",
 };
 
 const practices = [
-  { title: "Your accounts, not ours", body: "Automations run in tools you own. We work through invited access you can revoke at any time." },
-  { title: "Least privilege", body: "We ask only for the permissions a workflow needs — read-only wherever possible." },
-  { title: "No silent data hoarding", body: "Data passes through workflows to where it belongs. We don't copy your customer data to our own systems." },
-  { title: "Secrets kept secret", body: "API keys live in the platform's secure credential store, never in spreadsheets, chats or code repositories." },
-  { title: "Human approval for risk", body: "Customer-facing messages, payments and deletions wait for a person until you decide otherwise." },
-  { title: "Everything logged", body: "Each run records what happened and why, so any action can be traced and reversed." },
+  { title: "Built in your accounts", body: "Automations run in tools you own. We work through invited access you can revoke at any time." },
+  { title: "Least privilege", body: "We ask only for the permissions a workflow needs, and use read-only access wherever possible." },
+  { title: "No copies of your data", body: "Data passes through workflows to where it belongs. We don't copy your customer data to our own systems." },
+  { title: "Credentials stored properly", body: "API keys live in the platform's secure credential store, never in spreadsheets, chats or code repositories." },
+  { title: "Approval for risky steps", body: "Customer-facing messages, payments and deletions wait for a person until you decide otherwise." },
+  { title: "Everything logged", body: "Each run records what happened and why, so any action can be traced back." },
 ];
 
 const ai = [
@@ -29,8 +29,8 @@ export default function SecurityPage() {
     <>
       <PageHeader
         eyebrow="Security & privacy"
-        title="Automation you can trust with real data."
-        intro="Automation touches your inbox, your CRM and your customers. Here is exactly how we keep that safe."
+        title="How we handle your data."
+        intro="Automations work with your inbox, your CRM and your customers. These are the rules we follow to keep that safe."
       />
       <section className="mx-auto max-w-6xl px-6 pb-24">
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -47,7 +47,7 @@ export default function SecurityPage() {
       </section>
       <section className="mx-auto max-w-6xl px-6 pb-24 grid gap-10 lg:grid-cols-2">
         <div>
-          <SectionHeading eyebrow="AI safety" title="How we use AI responsibly." />
+          <SectionHeading eyebrow="AI safety" title="How we use AI." />
           <ul className="space-y-3">
             {ai.map((a) => (
               <li key={a} className="flex gap-3 rounded-xl border border-border bg-surface/80 px-5 py-4 text-sm backdrop-blur-sm">
@@ -61,7 +61,7 @@ export default function SecurityPage() {
           <SectionHeading eyebrow="Your website data" title="This site, too." />
           <div className="space-y-4 text-muted leading-relaxed">
             <p>
-              When you contact us, we receive your name, email, company and message — only to reply to you. We don&apos;t sell or share
+              When you contact us, we receive your name, email, company and message, and use them only to reply to you. We don&apos;t sell or share
               it, and we delete enquiries that don&apos;t become projects within 12 months.
             </p>
             <p>This website uses no advertising trackers. Ask us any time to see or delete what we hold about you.</p>

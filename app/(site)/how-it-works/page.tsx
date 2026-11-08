@@ -7,14 +7,14 @@ import { processStages } from "@/lib/content/company";
 
 export const metadata: Metadata = {
   title: "How it works",
-  description: "From a free 30-minute audit to automations running on their own — five clear stages, fixed prices, no surprises.",
+  description: "How we go from a free 30-minute audit to automations that run on their own. Five stages with a fixed price agreed up front.",
 };
 
 const principles = [
-  { title: "Humans approve the risky parts", body: "Anything customer-facing or costly waits for a one-tap approval until you decide it doesn't need to." },
+  { title: "Humans approve the risky parts", body: "Anything customer-facing or costly waits for your approval, until you decide it no longer needs it." },
   { title: "Built in your accounts", body: "Workflows, code and data live in tools you own. Nothing is locked inside our systems." },
-  { title: "Every action is logged", body: "You can see what ran, when, and why — and undo it." },
-  { title: "Start small, prove it", body: "We begin with one workflow and real numbers before suggesting the next." },
+  { title: "Every action is logged", body: "You can see what ran, when it ran and why, so problems are easy to trace." },
+  { title: "Start with one workflow", body: "We build one workflow and check the results before suggesting the next." },
 ];
 
 export default function HowItWorksPage() {
@@ -23,7 +23,7 @@ export default function HowItWorksPage() {
       <PageHeader
         eyebrow="How it works"
         title="From first call to running on its own."
-        intro="Five stages, a fixed price before we start, and a working automation in as little as a week."
+        intro="Five stages and a fixed price agreed before we start. Simple automations can be running within a week or two."
       />
 
       <section className="mx-auto max-w-5xl px-6 pb-24">
@@ -39,7 +39,7 @@ export default function HowItWorksPage() {
                   <div>
                     <div className="flex flex-wrap items-center gap-3">
                       <h2 className="text-2xl font-medium">{s.title}</h2>
-                      <span className="rounded-full border border-border px-2.5 py-0.5 font-mono text-[11px] text-muted">{s.when}</span>
+                      <span className="rounded-full border border-border px-2.5 py-0.5 font-mono text-xs text-muted">{s.when}</span>
                     </div>
                     <p className="mt-3 text-muted leading-relaxed">{s.body}</p>
                     <p className="mt-4 text-sm">
@@ -48,7 +48,7 @@ export default function HowItWorksPage() {
                     </p>
                   </div>
                   <div className="rounded-xl border border-border bg-background/40 p-5">
-                    <p className="mb-3 font-mono text-[11px] uppercase tracking-widest text-moon">You get</p>
+                    <p className="mb-3 font-mono text-xs uppercase tracking-widest text-moon">You get</p>
                     <ul className="space-y-2 text-sm">
                       {s.youGet.map((g) => (
                         <li key={g} className="flex gap-2.5">
@@ -66,7 +66,7 @@ export default function HowItWorksPage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-6 pb-24">
-        <SectionHeading eyebrow="Principles" title="How we build, every time." />
+        <SectionHeading eyebrow="Principles" title="Rules we follow on every build." />
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
           {principles.map((p, i) => (
             <Reveal key={p.title} delay={i * 0.06}>
@@ -90,7 +90,7 @@ export default function HowItWorksPage() {
         </p>
       </section>
 
-      <CtaBanner title="Stage one is free." />
+      <CtaBanner title="The first stage is free." />
     </>
   );
 }

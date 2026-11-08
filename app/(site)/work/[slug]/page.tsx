@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const c = caseStudies.find((x) => x.slug === slug);
   if (!c) return {};
-  return { title: `${c.name} — case study`, description: c.summary };
+  return { title: `${c.name} case study`, description: c.summary };
 }
 
 export default async function CaseStudyPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -33,13 +33,13 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
       <section className="mx-auto max-w-6xl px-6 pb-24 grid gap-6 lg:grid-cols-[1fr_1.4fr]">
         <Reveal>
           <div className="h-full rounded-2xl border border-border bg-surface/80 p-8 backdrop-blur-sm">
-            <p className="mb-4 font-mono text-[11px] uppercase tracking-widest text-moon">The problem</p>
+            <p className="mb-4 font-mono text-xs uppercase tracking-widest text-moon">The problem</p>
             <p className="text-lg leading-relaxed">{c.problem}</p>
           </div>
         </Reveal>
         <Reveal delay={0.08}>
           <div className="h-full rounded-2xl border border-border bg-surface/80 p-8 backdrop-blur-sm">
-            <p className="mb-4 font-mono text-[11px] uppercase tracking-widest text-moon">What we built</p>
+            <p className="mb-4 font-mono text-xs uppercase tracking-widest text-moon">What we built</p>
             <ol className="space-y-4">
               {c.solution.map((s, i) => (
                 <li key={s} className="flex gap-4">
@@ -87,7 +87,7 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
         </Link>
       </section>
 
-      <CtaBanner title="Want something like this?" />
+      <CtaBanner title="We can build one for you." />
     </>
   );
 }

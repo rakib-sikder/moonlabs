@@ -6,7 +6,6 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { useThemeColors } from "@/lib/useTheme";
 import { Magnetic } from "@/components/ui/Magnetic";
-import { automationServices as services } from "@/lib/site";
 import { CssMoon } from "./CssMoon";
 
 const MoonScene = dynamic(() => import("./MoonScene"), {
@@ -118,10 +117,10 @@ export function Hero() {
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 1.0, ease }}
-          className="mt-7 max-w-md text-muted leading-relaxed"
+          className="mt-7 max-w-md text-lg text-muted leading-relaxed"
         >
-          AI agents, workflows and integrations that handle your leads, support, invoices and data
-          entry — so your people do the work only people can do.
+          We build AI agents and workflows that answer leads, sort support email, chase invoices and
+          enter data. Your team gets those hours back.
         </motion.p>
 
         <motion.div
@@ -153,19 +152,6 @@ export function Hero() {
           </Magnetic>
         </motion.div>
 
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8, delay: 2.4 }}
-          className="mt-10 hidden items-center gap-3 text-xs text-muted lg:flex"
-        >
-          <span className="flex -space-x-1">
-            {services.slice(0, 5).map((s) => (
-              <span key={s.slug} className="h-2.5 w-2.5 rounded-full ring-2 ring-background" style={{ background: s.color }} />
-            ))}
-          </span>
-          Each planet is a service — hover one to explore.
-        </motion.p>
       </motion.div>
 
       {/* Scroll cue */}

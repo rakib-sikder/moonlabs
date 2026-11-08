@@ -10,7 +10,7 @@ import { Reveal } from "@/components/ui/Section";
 export const metadata: Metadata = {
   title: "Services",
   description:
-    "Automation and AI first — plus websites, mobile apps, web apps, databases, cloud, UI/UX design, SEO and marketing from the same team.",
+    "Automation and AI, plus websites, mobile apps, web apps, databases, cloud, UI/UX design, SEO and marketing from the same team.",
 };
 
 function ServiceCard({ service, compact = false }: { service: Service; compact?: boolean }) {
@@ -62,8 +62,8 @@ export default function ServicesPage() {
     <>
       <PageHeader
         eyebrow={`Services · ${total} across ${serviceCategories.length} sectors`}
-        title="Automation first. Everything around it, too."
-        intro="Automation is what we do best — and the website, app, data and marketing it connects to can come from the same team, built to work together from day one."
+        title="Automation, plus the work around it."
+        intro="Automation is our main work. The same team can also handle the website, app, data and marketing it connects to, so the pieces are built to fit together."
       />
 
       {/* Sector jump links */}
@@ -77,7 +77,7 @@ export default function ServicesPage() {
               >
                 <span className="h-2 w-2 rounded-full" style={{ background: c.color }} />
                 {c.name}
-                {c.core && <span className="font-mono text-[10px] uppercase tracking-widest text-moon">Core</span>}
+                {c.core && <span className="font-mono text-[11px] uppercase tracking-widest text-moon">Core</span>}
               </a>
             </li>
           ))}

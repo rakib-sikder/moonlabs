@@ -16,7 +16,7 @@ import {
 } from "@/lib/site";
 import { industryDetails } from "@/lib/content/industries";
 import { caseStudies } from "@/lib/content/company";
-import { categoryIcons, industryIcons, serviceIcons } from "@/lib/icons";
+import { categoryIcons, fallbackIcon, industryIcons, resourceIcons, serviceIcons } from "@/lib/icons";
 import { Logo } from "./Logo";
 
 type MenuId = NonNullable<NavItem["menu"]>;
@@ -28,7 +28,7 @@ function ServicesPanel() {
   return (
     <div className="grid grid-cols-[1.35fr_2fr]">
       <div className="border-r border-border p-5">
-        <Link href={`/services#${core.id}`} className="mb-3 flex items-center justify-between text-[11px] uppercase tracking-widest text-moon hover:text-foreground">
+        <Link href={`/services#${core.id}`} className="mb-3 flex items-center justify-between text-xs uppercase tracking-widest text-moon hover:text-foreground">
           Automation &amp; AI · core
           <ArrowRight className="h-3.5 w-3.5" />
         </Link>
@@ -40,7 +40,7 @@ function ServicesPanel() {
                 <Link href={`/services/${s.slug}`} className="group flex gap-3 rounded-lg px-2 py-1.5 transition-colors hover:bg-surface-2">
                   <Icon className="mt-0.5 h-4 w-4 shrink-0 text-muted group-hover:text-accent" strokeWidth={1.6} />
                   <span className="min-w-0">
-                    <span className="block text-[13px] font-medium leading-5">{s.name}</span>
+                    <span className="block text-sm font-medium leading-5">{s.name}</span>
                     <span className="block text-xs leading-snug text-muted">{s.short}</span>
                   </span>
                 </Link>
@@ -54,19 +54,25 @@ function ServicesPanel() {
           const CatIcon = categoryIcons[c.id];
           return (
             <div key={c.id}>
-              <Link href={`/services#${c.id}`} className="mb-2 flex items-center gap-2 text-[11px] uppercase tracking-widest text-moon hover:text-foreground">
+              <Link href={`/services#${c.id}`} className="mb-2 flex items-center gap-2 text-xs uppercase tracking-widest text-moon hover:text-foreground">
                 <CatIcon className="h-3.5 w-3.5" strokeWidth={1.6} />
                 {c.name}
               </Link>
               <ul className="space-y-0.5">
-                {servicesIn(c.id).map((s) => (
-                  <li key={s.slug}>
-                    <Link href={`/services/${s.slug}`} className="group block rounded-lg px-2 py-1 transition-colors hover:bg-surface-2">
-                      <span className="block text-[13px] font-medium leading-5">{s.name}</span>
-                      <span className="block text-xs leading-snug text-muted">{s.short}</span>
-                    </Link>
-                  </li>
-                ))}
+                {servicesIn(c.id).map((s) => {
+                  const Icon = serviceIcons[s.slug] ?? fallbackIcon;
+                  return (
+                    <li key={s.slug}>
+                      <Link href={`/services/${s.slug}`} className="group flex gap-3 rounded-lg px-2 py-1.5 transition-colors hover:bg-surface-2">
+                        <Icon className="mt-0.5 h-4 w-4 shrink-0 text-muted group-hover:text-accent" strokeWidth={1.6} />
+                        <span className="min-w-0">
+                          <span className="block text-sm font-medium leading-5">{s.name}</span>
+                          <span className="block text-xs leading-snug text-muted">{s.short}</span>
+                        </span>
+                      </Link>
+                    </li>
+                  );
+                })}
               </ul>
             </div>
           );
@@ -88,7 +94,7 @@ function SolutionsPanel() {
               <Link href={`/industries/${ind.slug}`} className="group flex gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-surface-2">
                 <Icon className="mt-0.5 h-4 w-4 shrink-0 text-muted group-hover:text-accent" strokeWidth={1.6} />
                 <span className="min-w-0">
-                  <span className="block text-[13px] font-medium leading-5">{ind.name}</span>
+                  <span className="block text-sm font-medium leading-5">{ind.name}</span>
                   <span className="block text-xs leading-snug text-muted">{ind.headline}</span>
                 </span>
               </Link>
@@ -98,7 +104,7 @@ function SolutionsPanel() {
       </ul>
       <Link href={`/work/${featured.slug}`} className="group m-3 flex flex-col justify-between rounded-xl border border-border bg-surface-2/60 p-5 transition-colors hover:border-accent/40">
         <div>
-          <p className="text-[11px] uppercase tracking-widest text-moon">Case study</p>
+          <p className="text-xs uppercase tracking-widest text-moon">Case study</p>
           <p className="mt-2 font-medium">{featured.name}</p>
           <p className="mt-1 text-xs leading-relaxed text-muted">{featured.summary}</p>
         </div>
@@ -114,14 +120,20 @@ function ResourcesPanel() {
   return (
     <div className="grid grid-cols-[2fr_1fr]">
       <ul className="grid grid-cols-2 gap-0.5 p-5">
-        {resourceLinks.map((l) => (
-          <li key={l.href}>
-            <Link href={l.href} className="block rounded-lg px-2 py-2 transition-colors hover:bg-surface-2">
-              <span className="block text-[13px] font-medium leading-5">{l.label}</span>
-              <span className="block text-xs text-muted">{l.desc}</span>
-            </Link>
-          </li>
-        ))}
+        {resourceLinks.map((l) => {
+          const Icon = resourceIcons[l.href] ?? fallbackIcon;
+          return (
+            <li key={l.href}>
+              <Link href={l.href} className="group flex gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-surface-2">
+                <Icon className="mt-0.5 h-4 w-4 shrink-0 text-muted group-hover:text-accent" strokeWidth={1.6} />
+                <span className="min-w-0">
+                  <span className="block text-sm font-medium leading-5">{l.label}</span>
+                  <span className="block text-xs leading-snug text-muted">{l.desc}</span>
+                </span>
+              </Link>
+            </li>
+          );
+        })}
       </ul>
       <Link href={signIn.href} className="group m-3 flex flex-col justify-between rounded-xl border border-border bg-surface-2/60 p-5 transition-colors hover:border-accent/40">
         <div>

@@ -13,10 +13,10 @@ export type ThemeColors = {
 
 const FALLBACK: ThemeColors = {
   isDark: true,
-  accent: "#9d8cff",
-  moon: "#cfd8ff",
+  accent: "#f5b24e",
+  moon: "#ece6d8",
   foreground: "#eef0f7",
-  muted: "#9097ad",
+  muted: "#a9adb6",
   border: "#1d2135",
 };
 

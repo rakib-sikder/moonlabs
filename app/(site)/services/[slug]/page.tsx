@@ -52,7 +52,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
 
       {/* Problems */}
       <section className="mx-auto max-w-6xl px-6 pb-24">
-        <SectionHeading eyebrow="Sound familiar?" title="The problems we take off your plate." />
+        <SectionHeading eyebrow="Common problems" title="What we usually hear." />
         <div className="grid gap-5 md:grid-cols-3">
           {detail.pains.map((p, i) => (
             <Reveal key={p.title} delay={i * 0.08}>
@@ -102,8 +102,8 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
                   <p className="text-xs uppercase tracking-widest text-moon mb-1">{isAutomation ? "Tools we connect" : "Tools we use"}</p>
                   <p className="text-muted text-sm">
                     {isAutomation
-                      ? "Plus almost anything with an API — and your existing spreadsheets."
-                      : "And everything we build can hook into your automations."}
+                      ? "Plus most tools with an API, and your existing spreadsheets."
+                      : "Anything we build can connect to your automations."}
                   </p>
                 </div>
               </div>
@@ -120,12 +120,12 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
       {/* FAQ + industries */}
       <section className="mx-auto max-w-6xl px-6 pb-24 grid gap-12 lg:grid-cols-[1.4fr_1fr]">
         <div>
-          <SectionHeading eyebrow="Questions" title="Before you ask." />
+          <SectionHeading eyebrow="Questions" title="Common questions." />
           <Accordion items={detail.faqs} />
         </div>
         {relatedIndustries.length > 0 && (
           <div>
-            <SectionHeading eyebrow="Popular with" title="Industries." />
+            <SectionHeading eyebrow="Useful for" title="Industries." />
             <ul className="space-y-3">
               {relatedIndustries.map((ind) => (
                 <li key={ind.slug}>
@@ -160,11 +160,11 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
       </section>
 
       {isAutomation ? (
-        <CtaBanner title={`Put ${service.name.toLowerCase()} on autopilot.`} />
+        <CtaBanner title={`Automate your ${service.name.toLowerCase()} work.`} />
       ) : (
         <CtaBanner
           title={`Let's talk about your ${service.name.toLowerCase()} project.`}
-          body="Book a free 30-minute call. We'll scope it with you and send a fixed quote — no obligation."
+          body="Book a free 30-minute call. We'll scope it with you and send a fixed quote, with no obligation."
         />
       )}
     </>

@@ -6,14 +6,14 @@ import { Reveal } from "@/components/ui/Section";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Contact — book a free audit",
-  description: "Tell us what eats your team's week. We reply within one working day with times for a free 30-minute automation audit.",
+  title: "Contact and free audit",
+  description: "Tell us which tasks take up your team's week. We reply within one working day with times for a free 30-minute automation audit.",
 };
 
 const next = [
-  { t: "We read it", d: "A real person reads your message and prepares questions — usually the same day." },
+  { t: "We read it", d: "One of us reads your message and prepares a few questions, usually the same day." },
   { t: "30-minute audit", d: "A video call to walk through a normal week and list what can be automated." },
-  { t: "Your plan", d: "Within 3 days: a written plan with a fixed price. No obligation." },
+  { t: "Your plan", d: "Within 3 days you get a written plan with a fixed price. You're under no obligation." },
 ];
 
 export default function ContactPage() {
@@ -23,7 +23,7 @@ export default function ContactPage() {
       <PageHeader
         eyebrow="Contact"
         title="Book a free automation audit."
-        intro="Tell us what eats your team's week. We reply within one working day."
+        intro="Tell us which tasks take up your team's week. We reply within one working day."
       />
       <section className="mx-auto max-w-6xl px-6 pb-28 grid gap-8 lg:grid-cols-[1.5fr_1fr] lg:items-start">
         <Reveal>
@@ -32,7 +32,7 @@ export default function ContactPage() {
         <Reveal delay={0.1}>
           <aside className="space-y-6">
             <div className="rounded-3xl border border-border bg-surface/80 p-8 backdrop-blur-sm">
-              <p className="mb-6 font-mono text-[11px] uppercase tracking-widest text-moon">What happens next</p>
+              <p className="mb-6 font-mono text-xs uppercase tracking-widest text-moon">What happens next</p>
               <ol className="space-y-6">
                 {next.map((n, i) => (
                   <li key={n.t} className="flex gap-4">
@@ -55,7 +55,7 @@ export default function ContactPage() {
                 className="group flex items-center justify-between rounded-3xl border border-border bg-surface/80 p-6 backdrop-blur-sm transition-colors hover:border-accent/40"
               >
                 <div>
-                  <p className="font-medium">Prefer to pick a time?</p>
+                  <p className="font-medium">Pick a time yourself</p>
                   <p className="text-sm text-muted">Book the audit straight into our calendar.</p>
                 </div>
                 <span className="text-accent transition-transform group-hover:translate-x-1">→</span>

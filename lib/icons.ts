@@ -3,6 +3,14 @@ import {
   AppWindow,
   Blocks,
   BookOpen,
+  Calculator,
+  CircleHelp,
+  FileText,
+  Info,
+  Mail,
+  Plug,
+  Route,
+  ShieldCheck,
   Briefcase,
   Building2,
   ChartColumn,
@@ -72,6 +80,17 @@ export const industryIcons: Record<string, LucideIcon> = {
   "law-firms": Scale,
   education: GraduationCap,
   logistics: Truck,
+};
+
+export const resourceIcons: Record<string, LucideIcon> = {
+  "/how-it-works": Route,
+  "/work": FileText,
+  "/integrations": Plug,
+  "/roi-calculator": Calculator,
+  "/security": ShieldCheck,
+  "/faq": CircleHelp,
+  "/about": Info,
+  "/contact": Mail,
 };
 
 export const fallbackIcon = BookOpen;

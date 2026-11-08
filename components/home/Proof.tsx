@@ -31,7 +31,7 @@ export function StatsRow() {
       <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border md:grid-cols-4">
         {stats.map((s) => (
           <div key={s.label} className="bg-surface p-6">
-            <dt className="text-[13px] text-muted">{s.label}</dt>
+            <dt className="text-sm text-muted">{s.label}</dt>
             <dd className="mt-1 text-3xl font-semibold tabular-nums tracking-tight">{s.value}</dd>
           </div>
         ))}

@@ -20,7 +20,7 @@ export default function PrivacyPage() {
           title: "What we collect",
           body: [
             "Contact form: your name, email, company (optional), the services you ticked, budget, timeline and message.",
-            "Client portal: your email address and sign-in details, and the project information we and your team add — projects, automation run logs, requests, files and invoices.",
+            "Client portal: your email address and sign-in details, and the project information we and your team add, such as projects, automation run logs, requests, files and invoices.",
             "We don't use advertising trackers on this website.",
           ],
         },
@@ -54,7 +54,7 @@ export default function PrivacyPage() {
         },
         {
           title: "Your rights",
-          body: [`You can ask to see, correct or delete your data at any time — ${contact}.`],
+          body: [`You can ask to see, correct or delete your data at any time. To do so, ${contact}.`],
         },
       ]}
     />

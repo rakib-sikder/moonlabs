@@ -16,8 +16,8 @@ export default function IndustriesPage() {
     <>
       <PageHeader
         eyebrow="Solutions"
-        title="Automation shaped around your industry."
-        intro="Every business has its own busywork. Pick yours to see the problems we usually find — and the automations that fix them."
+        title="Automation by industry."
+        intro="Each industry has its own repetitive work. Pick yours to see the problems we usually find and the automations we build for them."
       />
       <section className="mx-auto max-w-6xl px-6 pb-28 grid gap-5 sm:grid-cols-2">
         {industryDetails.map((ind, i) => (
@@ -56,7 +56,7 @@ export default function IndustriesPage() {
           </Reveal>
         ))}
       </section>
-      <CtaBanner title="Don't see your industry?" body="Most of what we automate — leads, support, paperwork, reporting — exists in every business. Book a free audit and we'll map yours." />
+      <CtaBanner title="Your industry isn't listed?" body="Leads, support, paperwork and reporting look much the same in most businesses. Book a free audit and we'll go through yours." />
     </>
   );
 }

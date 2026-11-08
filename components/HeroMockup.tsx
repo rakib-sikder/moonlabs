@@ -5,9 +5,9 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 
 const rows = [
-  { label: "New lead from website form → enriched, added to CRM", width: 72 },
-  { label: "Support email waiting 2h → reply drafted for approval", width: 58 },
-  { label: "Invoice 7 days overdue → reminder sent", width: 66 },
+  { label: "Website form lead enriched and added to CRM", width: 72 },
+  { label: "Reply drafted for a 2h-old support email", width: 58 },
+  { label: "Reminder sent for invoice 7 days overdue", width: 66 },
 ];
 
 export function HeroMockup() {
@@ -87,7 +87,7 @@ export function HeroMockup() {
               className="h-2 w-2 shrink-0 rounded-full bg-foreground/15"
             />
             <div className="min-w-0 flex-1">
-              <p className="mb-1.5 truncate text-[11px] text-muted">{row.label}</p>
+              <p className="mb-1.5 truncate text-xs text-muted">{row.label}</p>
               <div className="h-1.5 overflow-hidden rounded-full bg-foreground/[0.07]">
                 <div
                   ref={(el) => {

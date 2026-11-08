@@ -33,7 +33,7 @@ export function RunLog({ runs }: { runs: AutomationRun[] }) {
                 <Badge tone={runTone[r.status]}>{runStatusLabel[r.status]}</Badge>
               </td>
               <td className="pt-num pt-kbd-muted">{formatDuration(r.duration_ms)}</td>
-              <td className="pt-num pt-kbd-muted">{r.items_processed === null ? "—" : formatNumber(r.items_processed)}</td>
+              <td className="pt-num pt-kbd-muted">{r.items_processed === null ? "-" : formatNumber(r.items_processed)}</td>
               <td className="pt-num pt-kbd-muted">{formatNumber(r.minutes_saved)}</td>
               <td className="max-w-[360px] text-[12.5px] text-muted">
                 <span className="line-clamp-2">{r.message ?? ""}</span>

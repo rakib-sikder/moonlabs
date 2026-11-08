@@ -30,7 +30,7 @@ export function Footer() {
           {footerNav.map((col) => (
             <div key={col.title}>
               <p className="mb-3 text-xs font-medium uppercase tracking-widest text-foreground">{col.title}</p>
-              <ul className="space-y-2 text-[13px]">
+              <ul className="space-y-2 text-sm">
                 {col.links.map((l) => (
                   <li key={l.href}>
                     <Link href={l.href} className="text-muted transition-colors hover:text-foreground">

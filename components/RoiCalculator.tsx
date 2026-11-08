@@ -95,7 +95,7 @@ export function RoiCalculator() {
           step={5}
           onChange={setShare}
           format={(v) => `${v}%`}
-          hint="Most audits land between 40% and 70%. We'll give you a real number for free."
+          hint="Pick a cautious figure. The free audit gives you a measured one."
         />
       </div>
 
@@ -123,7 +123,7 @@ export function RoiCalculator() {
           <div className="col-span-2 rounded-2xl border border-border bg-background/40 p-4">
             <dt className="text-xs text-muted">Equivalent to</dt>
             <dd className="mt-1 text-lg">
-              <span className="font-semibold">{fte.toFixed(1)}</span> full-time people freed up for real work
+              <span className="font-semibold">{fte.toFixed(1)}</span> full-time employees
             </dd>
           </div>
         </dl>
@@ -135,7 +135,7 @@ export function RoiCalculator() {
           href="/contact"
           className="mt-6 inline-flex rounded-full bg-accent px-6 py-3 text-sm font-medium text-accent-ink transition-opacity hover:opacity-90"
         >
-          Get my real number — free audit
+          Book a free audit for real numbers
         </Link>
       </div>
     </div>

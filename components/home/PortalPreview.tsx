@@ -25,8 +25,8 @@ export function PortalPreview() {
     <section className="mx-auto max-w-6xl px-6 py-20">
       <SectionHead
         eyebrow="Client portal"
-        title="See everything we run for you, any time."
-        intro="Every client gets a sign-in to follow their projects and automations — no chasing us for updates."
+        title="Check on your projects any time."
+        intro="Every client gets a login to follow their projects and automations, so you don't have to email us for updates."
       />
       <div className="grid gap-8 lg:grid-cols-[1fr_1.5fr] lg:items-center">
         <div>
@@ -36,7 +36,7 @@ export function PortalPreview() {
                 <f.icon className="mt-0.5 h-5 w-5 shrink-0 text-accent" strokeWidth={1.6} />
                 <div>
                   <p className="text-sm font-medium">{f.title}</p>
-                  <p className="mt-0.5 text-[13px] text-muted">{f.body}</p>
+                  <p className="mt-0.5 text-sm text-muted">{f.body}</p>
                 </div>
               </li>
             ))}
@@ -59,8 +59,8 @@ export function PortalPreview() {
               <span className="h-2.5 w-2.5 rounded-full bg-border" />
               <span className="h-2.5 w-2.5 rounded-full bg-border" />
             </div>
-            <span className="font-mono text-[11px] text-muted">moonlabs · dashboard</span>
-            <span className="rounded bg-surface-2 px-1.5 py-0.5 text-[10px] uppercase tracking-wider text-muted">Sample data</span>
+            <span className="font-mono text-xs text-muted">moonlabs · dashboard</span>
+            <span className="rounded bg-surface-2 px-1.5 py-0.5 text-[11px] uppercase tracking-wider text-muted">Sample data</span>
           </div>
           <div className="grid grid-cols-2 gap-px bg-border sm:grid-cols-4">
             {[
@@ -70,20 +70,20 @@ export function PortalPreview() {
               ["Hours saved · month", "64 h"],
             ].map(([k, v]) => (
               <div key={k} className="bg-surface p-4">
-                <p className="text-[11px] text-muted">{k}</p>
+                <p className="text-xs text-muted">{k}</p>
                 <p className="mt-1 text-xl font-semibold tabular-nums">{v}</p>
               </div>
             ))}
           </div>
           <div className="border-t border-border">
-            <div className="grid grid-cols-[1.6fr_1fr_1fr_0.6fr] gap-2 px-4 py-2 font-mono text-[10px] uppercase tracking-wider text-muted">
+            <div className="grid grid-cols-[1.6fr_1fr_1fr_0.6fr] gap-2 px-4 py-2 font-mono text-[11px] uppercase tracking-wider text-muted">
               <span>Automation</span>
               <span>Status</span>
               <span>Last run</span>
               <span className="text-right">Success</span>
             </div>
             {runs.map((r) => (
-              <div key={r.name} className="grid grid-cols-[1.6fr_1fr_1fr_0.6fr] gap-2 border-t border-border px-4 py-2.5 text-[12px]">
+              <div key={r.name} className="grid grid-cols-[1.6fr_1fr_1fr_0.6fr] gap-2 border-t border-border px-4 py-2.5 text-[13px]">
                 <span className="truncate">{r.name}</span>
                 <span className="flex items-center gap-1.5">
                   <span className="h-1.5 w-1.5 rounded-full" style={{ background: statusColor[r.status] }} />

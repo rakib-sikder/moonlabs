@@ -49,7 +49,7 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
       </section>
 
       <section className="mx-auto max-w-6xl px-6 pb-24">
-        <SectionHeading eyebrow="What we automate" title="Four automations that pay for themselves first." />
+        <SectionHeading eyebrow="What we automate" title="Four automations we usually start with." />
         <div className="grid gap-5 sm:grid-cols-2">
           {ind.automations.map((a, i) => (
             <Reveal key={a.title} delay={(i % 2) * 0.08}>
@@ -69,15 +69,15 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
         <div>
           <SectionHeading
             eyebrow="A typical first project"
-            title="One workflow, start to finish."
-            intro="Most clients in this industry start here: it touches revenue directly and goes live in a couple of weeks."
+            title="One workflow from start to finish."
+            intro="A sensible place to start. It affects revenue directly and usually goes live in a couple of weeks."
           />
           {study && (
             <Link
               href={`/work/${study.slug}`}
               className="group block rounded-2xl border border-border bg-surface/80 p-6 backdrop-blur-sm transition-colors hover:border-accent/40"
             >
-              <p className="font-mono text-[11px] uppercase tracking-widest text-muted">Related case study</p>
+              <p className="font-mono text-xs uppercase tracking-widest text-muted">Related case study</p>
               <p className="mt-2 font-medium">{study.name}</p>
               <p className="mt-1 text-sm leading-relaxed text-muted">{study.summary}</p>
               <span className="mt-3 inline-block text-sm text-accent">

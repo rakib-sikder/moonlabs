@@ -76,7 +76,7 @@ export function WorkflowPipeline({
                   )}
                 </span>
                 <div>
-                  <p className="font-mono text-[11px] uppercase tracking-widest text-muted">{n.label}</p>
+                  <p className="font-mono text-xs uppercase tracking-widest text-muted">{n.label}</p>
                   <p className={`mt-1 ${last ? "text-lg font-medium" : ""}`}>{n.text}</p>
                 </div>
               </motion.li>

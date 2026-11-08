@@ -1,47 +1,52 @@
 @import "tailwindcss";
 
 /*
-  Moonlabs palette — night sky (dark) and daylight moon (light), switched automatically
-  by the OS setting. No manual toggle by design.
-  Neutrals step up background → surface → surface-2. One primary (accent) reserved for
-  primary actions; moon for eyebrows, numbers and highlights.
-  Dark contrast vs background: foreground 17.6, muted 6.9, moon 14.2, accent 7.3; ink on accent 7.1.
-  Light contrast vs background: foreground 17.4, muted 6.2, moon 8.6, accent 5.9; ink on accent 6.5.
+  Moonlabs palette: graphite night (dark) and paper daylight (light), switched
+  automatically by the OS setting. No manual toggle by design.
+  One warm amber accent, like lamplight from a lunar base, reserved for primary
+  actions and links; "moon" is a warm off-white (dark) / bronze (light) for eyebrows.
+  Contrast vs background, dark: foreground 17.5, muted 8.7, moon 15.7, accent 10.6; ink on accent 10.0.
+  Contrast vs background, light: foreground 17.5, muted 7.4, moon 6.9, accent 4.7; white on accent 5.0.
 */
 :root {
   color-scheme: dark;
-  --background: #07080f;
-  --surface: #0d0f1a;
-  --surface-2: #131627;
-  --border: #1d2135;
-  --foreground: #eef0f7;
-  --muted: #9097ad;
-  --accent: #9d8cff;
-  --accent-ink: #0b0920;
-  --accent-soft: rgba(157, 140, 255, 0.12);
-  --moon: #cfd8ff;
-  --grid-line: rgba(207, 216, 255, 0.045);
-  --grid-glow: rgba(157, 140, 255, 0.55);
-  --glow-strength: 0.28;
+  --background: #0b0c0f;
+  --surface: #121418;
+  --surface-2: #1a1d23;
+  --border: #272b33;
+  --foreground: #f3f2ef;
+  --muted: #a9adb6;
+  --accent: #f5b24e;
+  --accent-ink: #1a1206;
+  --accent-soft: rgba(245, 178, 78, 0.12);
+  --moon: #ece6d8;
+  --grid-line: rgba(255, 255, 255, 0.035);
+  --grid-glow: rgba(245, 178, 78, 0.35);
+  --glow-strength: 0.16;
 }
 
 @media (prefers-color-scheme: light) {
   :root {
     color-scheme: light;
-    --background: #f5f6fb;
+    --background: #f7f7f4;
     --surface: #ffffff;
-    --surface-2: #eceef7;
-    --border: #dde1ee;
-    --foreground: #0c0e1d;
-    --muted: #535a73;
-    --accent: #5a43e6;
+    --surface-2: #efefeb;
+    --border: #e2e2dc;
+    --foreground: #111214;
+    --muted: #4d5159;
+    --accent: #b45309;
     --accent-ink: #ffffff;
-    --accent-soft: rgba(90, 67, 230, 0.1);
-    --moon: #3b3f9a;
-    --grid-line: rgba(12, 14, 29, 0.055);
-    --grid-glow: rgba(90, 67, 230, 0.45);
-    --glow-strength: 0.16;
+    --accent-soft: rgba(180, 83, 9, 0.09);
+    --moon: #7a4b0c;
+    --grid-line: rgba(17, 18, 20, 0.05);
+    --grid-glow: rgba(180, 83, 9, 0.3);
+    --glow-strength: 0.12;
   }
+}
+
+/* Slightly larger base size: every rem-based size and spacing scales with it. */
+html {
+  font-size: 106.25%;
 }
 
 @theme inline {
@@ -164,14 +169,6 @@ html.lenis body {
   .text-moonlight {
     animation: none;
   }
-}
-
-/* Hero copy steps aside while the camera zooms to a clicked planet. */
-.hero-copy {
-  transition: opacity 0.35s ease;
-}
-html[data-zooming] .hero-copy {
-  opacity: 0 !important;
 }
 
 @keyframes fadein {

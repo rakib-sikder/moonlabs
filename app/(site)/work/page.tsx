@@ -8,7 +8,7 @@ import { caseStudies } from "@/lib/content/company";
 
 export const metadata: Metadata = {
   title: "Case studies",
-  description: "Automation systems we have built and run — lead generation engines, inbox automation and browser workstations.",
+  description: "Automation systems we have built and run, including lead generation, inbox automation and a multi-profile browser tool.",
 };
 
 export default function WorkPage() {
@@ -16,8 +16,8 @@ export default function WorkPage() {
     <>
       <PageHeader
         eyebrow="Case studies"
-        title="Systems we've built — and still run."
-        intro="We automate our own business first. These are production systems we designed, built and operate every day."
+        title="Systems we built and still run."
+        intro="We automate our own business first. These are systems we designed and built, and we still use them every day."
       />
       <section className="mx-auto max-w-6xl px-6 pb-28 space-y-6">
         {caseStudies.map((c, i) => (
@@ -40,7 +40,7 @@ export default function WorkPage() {
                 </span>
               </div>
               <div className="rounded-2xl border border-border bg-background/40 p-6">
-                <p className="mb-4 font-mono text-[11px] uppercase tracking-widest text-moon">Outcomes</p>
+                <p className="mb-4 font-mono text-xs uppercase tracking-widest text-moon">Outcomes</p>
                 <ul className="space-y-3">
                   {c.outcomes.map((o) => (
                     <li key={o} className="flex gap-3 text-sm">
@@ -59,7 +59,7 @@ export default function WorkPage() {
           </Reveal>
         ))}
       </section>
-      <CtaBanner title="Your system could be next." />
+      <CtaBanner title="Let's talk about yours." />
     </>
   );
 }

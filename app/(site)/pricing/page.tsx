@@ -9,7 +9,7 @@ import { Check as CheckIcon, Minus } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Pricing",
-  description: "A free audit, then a fixed-price project or a simple monthly plan. No hourly billing surprises.",
+  description: "A free audit, then a fixed-price project or a monthly plan. We don't bill by the hour.",
 };
 
 const phases = ["Crescent", "Half Moon", "Full Moon"];
@@ -38,8 +38,8 @@ export default function PricingPage() {
     <>
       <PageHeader
         eyebrow="Pricing"
-        title="Simple plans, no surprises."
-        intro="Every engagement starts with a free audit. Then pick a fixed-price project or a monthly plan — you see the price before any work starts."
+        title="Plans and prices"
+        intro="Every project starts with a free audit. After that you choose a fixed-price project or a monthly plan, and you see the price before any work starts."
       />
 
       <section className="mx-auto max-w-6xl px-6 pb-10">
@@ -47,10 +47,10 @@ export default function PricingPage() {
           <div className="flex flex-col items-start justify-between gap-4 rounded-2xl border border-dashed border-border bg-surface/60 p-6 backdrop-blur-sm sm:flex-row sm:items-center">
             <div>
               <p className="font-medium">Free automation audit</p>
-              <p className="text-sm text-muted">30 minutes · a list of what to automate · zero obligation</p>
+              <p className="text-sm text-muted">30 minutes · a list of what to automate · no obligation</p>
             </div>
             <Link href="/contact" className="rounded-full border border-border px-5 py-2 text-sm transition-colors hover:border-muted">
-              Book it — $0
+              Book it, free
             </Link>
           </div>
         </Reveal>
@@ -67,7 +67,7 @@ export default function PricingPage() {
             >
               {p.featured && (
                 <span className="absolute -top-3 left-8 rounded-full bg-accent px-3 py-1 text-xs font-medium text-accent-ink">
-                  Most popular
+                  Recommended
                 </span>
               )}
               <div className="flex items-center justify-between">
@@ -101,7 +101,7 @@ export default function PricingPage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-6 pb-24">
-        <SectionHeading eyebrow="Compare plans" title="Everything in each plan." />
+        <SectionHeading eyebrow="Compare plans" title="What each plan includes." />
         <div className="overflow-x-auto rounded-2xl border border-border bg-surface/80 backdrop-blur-sm">
           <table className="w-full min-w-[680px] text-left text-sm">
             <thead>
@@ -120,7 +120,7 @@ export default function PricingPage() {
             {planMatrix.map((g) => (
               <tbody key={g.group}>
                 <tr className="border-b border-border bg-surface-2/50">
-                  <th colSpan={4} className="px-4 py-2 font-mono text-[11px] font-normal uppercase tracking-wider text-moon sm:px-6">
+                  <th colSpan={4} className="px-4 py-2 font-mono text-xs font-normal uppercase tracking-wider text-moon sm:px-6">
                     {g.group}
                   </th>
                 </tr>
@@ -154,7 +154,7 @@ export default function PricingPage() {
               <p className="text-lg font-medium">Quoted per project, as a fixed price.</p>
               <p className="mt-2 text-sm text-muted leading-relaxed">
                 Development, data, design and growth work varies too much for one price list. After a short call you get a written
-                scope and a fixed quote — and it can be combined with any automation plan above.
+                scope and a fixed quote. It can be combined with any automation plan above.
               </p>
             </div>
             <Link

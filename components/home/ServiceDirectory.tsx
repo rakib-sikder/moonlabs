@@ -17,8 +17,8 @@ export function ServiceDirectory() {
     <section id="services" className="mx-auto max-w-6xl px-6 py-20">
       <SectionHead
         eyebrow="Services"
-        title="Automation at the core. Everything around it, from one team."
-        intro="Most clients come to us to automate something — then ask us for the website, app, dashboard or campaign it connects to."
+        title="Mostly automation, plus the work around it."
+        intro="Automation is our main work. We can also build the website, app, dashboard or campaign it connects to, so you deal with one team."
         link={{ href: "/services", label: "All services" }}
       />
 
@@ -27,7 +27,7 @@ export function ServiceDirectory() {
         <div className="border-b border-border p-6 lg:border-b-0 lg:border-r sm:p-8">
           <div className="mb-6 flex items-start justify-between gap-4">
             <div>
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-accent-soft px-2.5 py-1 text-[11px] font-medium text-accent">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-accent-soft px-2.5 py-1 text-xs font-medium text-accent">
                 Core focus
               </span>
               <h3 className="mt-3 text-xl font-semibold">{core.name}</h3>
@@ -49,9 +49,9 @@ export function ServiceDirectory() {
                     <span className="min-w-0 flex-1">
                       <span className="flex items-center justify-between gap-2 text-sm font-medium">
                         {s.name}
-                        <span className="font-mono text-[11px] font-normal text-muted">{serviceDetails[s.slug].setup}</span>
+                        <span className="font-mono text-xs font-normal text-muted">{serviceDetails[s.slug].setup}</span>
                       </span>
-                      <span className="mt-0.5 block text-[13px] leading-snug text-muted">{s.short}</span>
+                      <span className="mt-0.5 block text-sm leading-snug text-muted">{s.short}</span>
                     </span>
                   </Link>
                 </li>
@@ -78,7 +78,7 @@ export function ServiceDirectory() {
                     <li key={s.slug}>
                       <Link
                         href={`/services/${s.slug}`}
-                        className="inline-block rounded-full border border-border px-2.5 py-1 text-[12px] text-muted transition-colors hover:border-accent/40 hover:text-foreground"
+                        className="inline-block rounded-full border border-border px-2.5 py-1 text-[13px] text-muted transition-colors hover:border-accent/40 hover:text-foreground"
                       >
                         {s.name}
                       </Link>
