@@ -6,7 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { useThemeColors } from "@/lib/useTheme";
 import { Magnetic } from "@/components/ui/Magnetic";
-import { services } from "@/lib/site";
+import { automationServices as services } from "@/lib/site";
 import { CssMoon } from "./CssMoon";
 
 const MoonScene = dynamic(() => import("./MoonScene"), {
@@ -77,7 +77,7 @@ export function Hero() {
 
       <motion.div
         style={{ y: textY, opacity: textOpacity }}
-        className="pointer-events-none relative z-10 mx-auto flex min-h-[100svh] max-w-6xl flex-col justify-end px-6 pb-20 pt-[52svh] lg:justify-center lg:pt-24 lg:pb-0"
+        className="hero-copy pointer-events-none relative z-10 mx-auto flex min-h-[100svh] max-w-6xl flex-col justify-end px-6 pb-20 pt-[52svh] lg:justify-center lg:pt-24 lg:pb-0"
       >
         <motion.p
           initial={{ opacity: 0, y: 10 }}

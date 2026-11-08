@@ -184,6 +184,7 @@ export const faqs: { group: string; items: { q: string; a: string }[] }[] = [
     items: [
       { q: "What does the free audit include?", a: "A 30-minute call where we look at how a normal week runs, list what could be automated, and estimate hours saved. You keep the list whether or not you work with us." },
       { q: "We're a small business. Is this for us?", a: "Yes — small teams often feel the gain most, because the same person who answers emails also does sales and admin. Many projects start with one workflow." },
+      { q: "Do you only do automation?", a: "Automation is our core and most of our work, but the same team also builds websites, mobile apps and web apps, manages databases and servers, designs interfaces and brands, and runs SEO, ads and content. Clients like having one team that makes all of it work together." },
       { q: "Do we need to change our tools?", a: "Almost never. We connect the tools you already use. If something truly can't be connected, we'll tell you in the audit." },
     ],
   },

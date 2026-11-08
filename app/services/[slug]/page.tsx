@@ -7,7 +7,7 @@ import { Accordion } from "@/components/ui/Accordion";
 import { WorkflowPipeline } from "@/components/ui/WorkflowPipeline";
 import { Check, Chip, Reveal, SectionHeading } from "@/components/ui/Section";
 import { MiniOrbit } from "@/components/ui/MiniOrbit";
-import { services } from "@/lib/site";
+import { categoryOf, services, serviceTitle } from "@/lib/site";
 import { serviceDetails } from "@/lib/content/service-details";
 import { industryDetails } from "@/lib/content/industries";
 
@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const service = services.find((s) => s.slug === slug);
   if (!service) return {};
   return {
-    title: `${service.name} automation`,
+    title: serviceTitle(service),
     description: `${service.short} ${service.items.slice(0, 3).join(", ")}.`,
   };
 }
@@ -33,14 +33,19 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
   if (index === -1) notFound();
   const service = services[index];
   const detail = serviceDetails[slug];
-  const next = services[(index + 1) % services.length];
+  const category = categoryOf(service);
+  const isAutomation = category.id === "automation";
+  // "Next" stays inside the same sector so the reader keeps browsing related work.
+  const siblings = services.filter((s) => s.category === service.category);
+  const position = siblings.indexOf(service);
+  const next = siblings[(position + 1) % siblings.length];
   const relatedIndustries = industryDetails.filter((i) => i.services.includes(slug));
 
   return (
     <>
       <PageHeader
-        eyebrow={`Service ${String(index + 1).padStart(2, "0")} · Live in ${detail.setup}`}
-        title={`${service.name} automation`}
+        eyebrow={`${category.name} · ${isAutomation ? "Live in" : "Timeline"} ${detail.setup}`}
+        title={serviceTitle(service)}
         intro={service.short}
         accentColor={service.color}
       />
@@ -66,7 +71,10 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
       {/* What we automate + workflow */}
       <section className="mx-auto max-w-6xl px-6 pb-24 grid gap-12 lg:grid-cols-2 lg:items-start">
         <div>
-          <SectionHeading eyebrow="What we automate" title={`${service.items.length} things that can run on their own.`} />
+          <SectionHeading
+            eyebrow={category.itemsLabel}
+            title={isAutomation ? `${service.items.length} things that can run on their own.` : `${service.items.length} ways we can help.`}
+          />
           <ul className="space-y-3">
             {service.items.map((item, i) => (
               <Reveal key={item} delay={i * 0.04} y={10}>
@@ -79,7 +87,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
           </ul>
         </div>
         <div className="lg:sticky lg:top-28">
-          <WorkflowPipeline {...detail.workflow} color={service.color} />
+          <WorkflowPipeline {...detail.workflow} color={service.color} project={!isAutomation} />
         </div>
       </section>
 
@@ -91,8 +99,12 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
               <div className="flex items-center gap-5">
                 <MiniOrbit color={service.color} size={56} />
                 <div>
-                  <p className="text-xs uppercase tracking-widest text-moon mb-1">Tools we connect</p>
-                  <p className="text-muted text-sm">Plus almost anything with an API — and your existing spreadsheets.</p>
+                  <p className="text-xs uppercase tracking-widest text-moon mb-1">{isAutomation ? "Tools we connect" : "Tools we use"}</p>
+                  <p className="text-muted text-sm">
+                    {isAutomation
+                      ? "Plus almost anything with an API — and your existing spreadsheets."
+                      : "And everything we build can hook into your automations."}
+                  </p>
                 </div>
               </div>
               <div className="flex flex-wrap gap-2 md:max-w-md md:justify-end">
@@ -139,7 +151,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
           <div className="flex items-center gap-5">
             <MiniOrbit color={next.color} />
             <div>
-              <p className="text-xs uppercase tracking-widest text-muted mb-1">Next service</p>
+              <p className="text-xs uppercase tracking-widest text-muted mb-1">Next in {category.name}</p>
               <p className="text-2xl font-medium">{next.name}</p>
             </div>
           </div>
@@ -147,7 +159,14 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
         </Link>
       </section>
 
-      <CtaBanner title={`Put ${service.name.toLowerCase()} on autopilot.`} />
+      {isAutomation ? (
+        <CtaBanner title={`Put ${service.name.toLowerCase()} on autopilot.`} />
+      ) : (
+        <CtaBanner
+          title={`Let's talk about your ${service.name.toLowerCase()} project.`}
+          body="Book a free 30-minute call. We'll scope it with you and send a fixed quote — no obligation."
+        />
+      )}
     </>
   );
 }

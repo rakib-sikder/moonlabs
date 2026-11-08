@@ -1,4 +1,6 @@
 // Long-form content for each service page, keyed by service slug (see lib/site.ts).
+// For automation services `workflow` is an example automation; for the other sectors it
+// is how a typical project runs.
 
 export type ServiceDetail = {
   /** Three short example automations shown as chips on cards. */
@@ -212,6 +214,288 @@ export const serviceDetails: Record<string, ServiceDetail> = {
     faqs: [
       { q: "Who owns the code and workflows?", a: "You do. Everything is built in your accounts and handed over with documentation." },
       { q: "What if a tool changes its API?", a: "Our support plans include monitoring and fixes when a connected service changes." },
+    ],
+  },
+  // ---------- Web & App Development ----------
+  "web-development": {
+    tags: ["Business sites", "Online stores", "Landing pages"],
+    pains: [
+      { title: "The site looks dated", body: "Visitors judge you in seconds, and an old template tells them you might be out of business." },
+      { title: "It's slow on phones", body: "Most traffic is mobile, and every extra second of loading loses people before they read a word." },
+      { title: "Enquiries go nowhere", body: "Contact forms land in an inbox nobody checks, instead of in your CRM with an instant reply." },
+    ],
+    workflow: {
+      name: "From brief to live site",
+      trigger: "A 30-minute call about your business, customers and goals",
+      steps: [
+        "Sitemap and wireframes so the structure is agreed before design",
+        "Visual design in your brand, reviewed page by page",
+        "Build, content entry and speed and SEO basics",
+        "Forms wired into your CRM, email and automations",
+      ],
+      outcome: "A fast, editable website that sends every enquiry where it needs to go.",
+    },
+    tools: ["Next.js", "WordPress", "Webflow", "Shopify", "WooCommerce", "Vercel", "Cloudflare", "Google Analytics"],
+    setup: "2–5 weeks",
+    faqs: [
+      { q: "Can we edit the website ourselves?", a: "Yes. We set up an editor that fits your team — WordPress, Webflow or a simple CMS — and show you how to use it." },
+      { q: "Do you write the content?", a: "We can. Send us what you have and we'll shape it, or we write it from a short interview with you." },
+      { q: "What about hosting and domains?", a: "We set them up in your own accounts, so you own them. Ongoing care is available if you want us to look after updates and backups." },
+    ],
+  },
+  "app-development": {
+    tags: ["iOS + Android", "Booking apps", "Marketplaces"],
+    pains: [
+      { title: "Two apps cost twice", body: "Separate iOS and Android teams double the budget and the time for every change." },
+      { title: "Customers expect an app", body: "Repeat customers want bookings, orders and rewards in their pocket, not in a browser tab." },
+      { title: "Field staff work on paper", body: "Jobs, photos and signatures come back on paper or WhatsApp and get typed up later." },
+    ],
+    workflow: {
+      name: "App from idea to store",
+      trigger: "You share the idea, who it's for and what it must do first",
+      steps: [
+        "Scope a first version that does the important things well",
+        "UX flows and UI design, tested as a clickable prototype",
+        "Build for iOS and Android from one cross-platform codebase",
+        "Beta test with real users, then publish to both stores",
+      ],
+      outcome: "A live app in the App Store and Google Play, with a plan for the next release.",
+    },
+    tools: ["React Native", "Expo", "Flutter", "Firebase", "Supabase", "Stripe", "OneSignal", "App Store Connect"],
+    setup: "6–12 weeks",
+    faqs: [
+      { q: "Native or cross-platform?", a: "Most business apps are best built cross-platform (React Native or Flutter): one codebase, both stores, lower cost. We'll say so if your app needs native." },
+      { q: "Do you handle App Store approval?", a: "Yes — store listings, screenshots, privacy forms and review are part of the project." },
+      { q: "Can the app connect to our existing systems?", a: "Yes. Apps usually sit on top of your CRM, store or database, and we connect them with your automations." },
+    ],
+  },
+  "web-apps-and-saas": {
+    tags: ["SaaS MVPs", "Client portals", "Internal tools"],
+    pains: [
+      { title: "The process lives in spreadsheets", body: "The business has outgrown a tangle of sheets, and nobody trusts which copy is current." },
+      { title: "Off-the-shelf doesn't fit", body: "You pay for three tools that each do 60% of what you need." },
+      { title: "An idea with no product yet", body: "You know the problem well but need a team to turn it into software people pay for." },
+    ],
+    workflow: {
+      name: "SaaS MVP",
+      trigger: "A clear problem and a first group of users",
+      steps: [
+        "Agree the smallest version worth charging for",
+        "Design the core screens and data model",
+        "Build sign-up, the core feature, billing and an admin panel",
+        "Launch to first users, measure, and plan the next release",
+      ],
+      outcome: "A working product with paying users — and code you fully own.",
+    },
+    tools: ["Next.js", "React", "Node.js", "Python", "PostgreSQL", "Supabase", "Stripe", "OpenAI"],
+    setup: "4–10 weeks",
+    faqs: [
+      { q: "Who owns the code?", a: "You do. It lives in your repository and accounts from day one." },
+      { q: "Can you add AI features?", a: "Yes — chat assistants, search over your own documents, summaries and automatic data extraction are common additions." },
+      { q: "What happens after launch?", a: "We can stay on for new features, monitoring and fixes, or hand over to your own developers with documentation." },
+    ],
+  },
+  // ---------- Data & Cloud ----------
+  "database-management": {
+    tags: ["Postgres", "Migrations", "Backups"],
+    pains: [
+      { title: "Spreadsheets as a database", body: "Ten thousand rows, five editors and a formula someone broke last month." },
+      { title: "Everything is slow", body: "Pages and reports take seconds to load because the queries were never tuned." },
+      { title: "No tested backup", body: "Backups exist in theory — nobody has ever tried restoring one." },
+    ],
+    workflow: {
+      name: "Spreadsheet to database",
+      trigger: "Your data has outgrown sheets or Airtable",
+      steps: [
+        "Map what you store today and how it's used",
+        "Design a clean schema with the right relations and rules",
+        "Migrate, de-duplicate and verify every record",
+        "Set up access roles, backups and monitoring",
+      ],
+      outcome: "One reliable source of truth your apps, reports and automations all read from.",
+    },
+    tools: ["PostgreSQL", "MySQL", "MongoDB", "Supabase", "Firebase", "Redis", "Airtable", "Google Sheets"],
+    setup: "1–4 weeks",
+    faqs: [
+      { q: "Can we still use spreadsheets?", a: "Yes. We can keep a synced sheet or a simple admin view for the people who prefer it." },
+      { q: "Will there be downtime during migration?", a: "We plan migrations so the switch-over takes minutes, usually outside your working hours." },
+    ],
+  },
+  "data-and-analytics": {
+    tags: ["KPI dashboards", "Pipelines", "Auto reports"],
+    pains: [
+      { title: "Numbers in ten tabs", body: "Answering a simple question means exporting from four tools and pasting into a sheet." },
+      { title: "Reports are always late", body: "By the time the monthly report is ready, the month it describes is long gone." },
+      { title: "Nobody notices problems", body: "A drop in sales or a spike in refunds is spotted weeks later, if at all." },
+    ],
+    workflow: {
+      name: "Live business dashboard",
+      trigger: "Every hour, on a schedule",
+      steps: [
+        "Pull data from your CRM, store, ads and accounting tools",
+        "Clean and join it in one warehouse",
+        "Refresh dashboards with the KPIs you agreed",
+        "Send alerts when a number moves outside its normal range",
+      ],
+      outcome: "Up-to-date numbers on one screen, and a ping when something needs attention.",
+    },
+    tools: ["Looker Studio", "Power BI", "Metabase", "BigQuery", "PostgreSQL", "Python", "Google Sheets", "Slack"],
+    setup: "1–3 weeks",
+    faqs: [
+      { q: "Which dashboard tool should we use?", a: "Usually the one your team already opens. Looker Studio is free and fine for most; Power BI suits Microsoft shops." },
+      { q: "Can you collect data from websites?", a: "Yes, where the site's terms allow it — prices, listings, public directories and similar." },
+    ],
+  },
+  "cloud-and-devops": {
+    tags: ["Hosting", "CI/CD", "Monitoring"],
+    pains: [
+      { title: "Deploys are scary", body: "Updates go out by hand on a Friday evening, and sometimes take the site down." },
+      { title: "You hear about outages from customers", body: "There's no monitoring, so the first alert is an angry email." },
+      { title: "The cloud bill keeps growing", body: "Servers nobody remembers creating are still running and still billing." },
+    ],
+    workflow: {
+      name: "Safe, automatic deploys",
+      trigger: "A developer pushes a change",
+      steps: [
+        "Tests and checks run automatically",
+        "A preview copy is built for review",
+        "On approval it goes live with zero downtime",
+        "Health checks watch it, and a bad release rolls back by itself",
+      ],
+      outcome: "Releases become routine, and outages reach your phone before your customers.",
+    },
+    tools: ["AWS", "Google Cloud", "DigitalOcean", "Oracle Cloud", "Vercel", "Docker", "GitHub Actions", "Cloudflare"],
+    setup: "1–3 weeks",
+    faqs: [
+      { q: "Do you offer ongoing server management?", a: "Yes — monitoring, updates, backups and fixes are included in our monthly plans." },
+      { q: "Can you make our emails stop going to spam?", a: "Often, yes. Correct SPF, DKIM and DMARC records and a clean sending setup fix most deliverability problems." },
+    ],
+  },
+  // ---------- Design ----------
+  "ui-ux-design": {
+    tags: ["Figma", "Prototypes", "Design systems"],
+    pains: [
+      { title: "Users get lost", body: "Support tickets ask where things are, and sign-ups stall halfway through." },
+      { title: "Every screen looks different", body: "Features were added one at a time, and the product no longer feels like one thing." },
+      { title: "Building before testing", body: "Developers build screens nobody tested, then rebuild them after launch." },
+    ],
+    workflow: {
+      name: "Design sprint",
+      trigger: "A product, feature or flow that needs to work better",
+      steps: [
+        "Talk to users and review analytics to find where they struggle",
+        "Map the flows and sketch wireframes",
+        "Design high-fidelity screens in Figma on a shared design system",
+        "Test a clickable prototype with real users and refine",
+      ],
+      outcome: "Developer-ready designs your users have already proven they understand.",
+    },
+    tools: ["Figma", "FigJam", "Framer", "Maze", "Hotjar", "Google Analytics", "Storybook", "Tailwind CSS"],
+    setup: "2–4 weeks",
+    faqs: [
+      { q: "Can you design and also build it?", a: "Yes — our development team builds from the same design system, so nothing gets lost in hand-off." },
+      { q: "Do you do accessibility?", a: "Yes. We design to WCAG contrast and keyboard guidelines, and can audit what you already have." },
+    ],
+  },
+  branding: {
+    tags: ["Logos", "Brand kits", "Pitch decks"],
+    pains: [
+      { title: "You look smaller than you are", body: "A home-made logo and mismatched colours undersell a business that's doing well." },
+      { title: "Every post looks different", body: "Without templates, each graphic is designed from scratch, in a different style." },
+      { title: "Decks take days", body: "Every pitch or proposal starts from an old file and a lot of reformatting." },
+    ],
+    workflow: {
+      name: "Brand kit",
+      trigger: "A short questionnaire about your business, audience and taste",
+      steps: [
+        "Mood boards and direction options",
+        "Logo concepts, refined with your feedback",
+        "Colours, typography and voice written into brand guidelines",
+        "Social, deck and document templates in your new look",
+      ],
+      outcome: "A complete brand kit your team can use without calling a designer.",
+    },
+    tools: ["Figma", "Adobe Illustrator", "Photoshop", "Canva", "Google Slides", "PowerPoint", "After Effects"],
+    setup: "2–3 weeks",
+    faqs: [
+      { q: "Do we get the source files?", a: "Yes — every logo format, the editable files and the templates are yours." },
+      { q: "Can our team edit the templates?", a: "Yes. We build them in Canva or Google Slides when your team needs to edit them without design software." },
+    ],
+  },
+  // ---------- SEO & Growth ----------
+  seo: {
+    tags: ["Technical SEO", "Local SEO", "Content plans"],
+    pains: [
+      { title: "Competitors rank above you", body: "Customers search for exactly what you sell and find someone else first." },
+      { title: "Traffic but no leads", body: "The pages that do rank attract visitors who were never going to buy." },
+      { title: "Nobody knows what's working", body: "Blog posts go out, but nobody tracks which ones bring business." },
+    ],
+    workflow: {
+      name: "SEO programme",
+      trigger: "A technical and competitor audit of your site",
+      steps: [
+        "Fix the technical issues holding pages back",
+        "Pick keywords that buyers search, not just browsers",
+        "Optimise key pages and publish a steady content plan",
+        "Build local listings and reputable links",
+      ],
+      outcome: "Rankings and enquiries that grow month on month, with a report that shows it.",
+    },
+    tools: ["Google Search Console", "Google Analytics", "Ahrefs", "Semrush", "Screaming Frog", "Google Business Profile", "Surfer"],
+    setup: "Ongoing, results in 3–6 months",
+    faqs: [
+      { q: "How long until we see results?", a: "Technical fixes can help within weeks; meaningful ranking gains usually take three to six months." },
+      { q: "Do you guarantee first place?", a: "No — nobody honest can. We commit to the work, the reporting and a clear plan." },
+    ],
+  },
+  "paid-ads": {
+    tags: ["Google Ads", "Meta Ads", "Tracking"],
+    pains: [
+      { title: "Spend with no clear return", body: "Money goes out every day, but nobody can say which ads brought customers." },
+      { title: "Tracking is broken", body: "Conversions are double-counted or missing since the last site update." },
+      { title: "Ads point at the homepage", body: "Expensive clicks land on a page that wasn't built to convert them." },
+    ],
+    workflow: {
+      name: "Ads that pay back",
+      trigger: "An audit of your accounts, tracking and landing pages",
+      steps: [
+        "Fix conversion tracking so every lead and sale is counted",
+        "Build campaigns around the searches and audiences that buy",
+        "Launch with focused landing pages and A/B tests",
+        "Shift budget weekly toward what returns the most",
+      ],
+      outcome: "Ad spend you can tie to leads and revenue, reported every week.",
+    },
+    tools: ["Google Ads", "Meta Ads Manager", "LinkedIn Ads", "TikTok Ads", "GA4", "Google Tag Manager", "Looker Studio"],
+    setup: "1–2 weeks to launch",
+    faqs: [
+      { q: "Is ad spend included in your fee?", a: "No. Ad spend is paid directly by you to Google or Meta, so you always see exactly where it goes." },
+      { q: "What budget do we need?", a: "It depends on your market. We'll suggest a test budget in the audit, sized so the results mean something." },
+    ],
+  },
+  "content-and-social": {
+    tags: ["Social calendar", "Short video", "Newsletters"],
+    pains: [
+      { title: "Channels go quiet", body: "Posting stops whenever the team gets busy, which is most weeks." },
+      { title: "Content takes too long", body: "One post takes an afternoon of writing, designing and resizing." },
+      { title: "No consistent voice", body: "Every post sounds like whoever had time to write it." },
+    ],
+    workflow: {
+      name: "Monthly content engine",
+      trigger: "A monthly planning call",
+      steps: [
+        "Plan topics around your offers, seasons and questions customers ask",
+        "Write, design and edit posts, videos and emails",
+        "You approve the batch in one place",
+        "Everything is scheduled, and results are reviewed next month",
+      ],
+      outcome: "A full month of on-brand content out every week without taking your team's time.",
+    },
+    tools: ["Meta Business Suite", "Buffer", "Canva", "CapCut", "Premiere Pro", "Mailchimp", "Klaviyo", "Notion"],
+    setup: "First posts in 1–2 weeks",
+    faqs: [
+      { q: "Do we need to be on camera?", a: "No. Many formats work without a face — screen recordings, product shots, animated text and customer stories." },
+      { q: "Can AI help keep costs down?", a: "Yes — we use AI for drafts and repurposing, and a person edits everything before it goes out." },
     ],
   },
 };

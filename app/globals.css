@@ -166,6 +166,14 @@ html.lenis body {
   }
 }
 
+/* Hero copy steps aside while the camera zooms to a clicked planet. */
+.hero-copy {
+  transition: opacity 0.35s ease;
+}
+html[data-zooming] .hero-copy {
+  opacity: 0 !important;
+}
+
 @keyframes fadein {
   from {
     opacity: 0;

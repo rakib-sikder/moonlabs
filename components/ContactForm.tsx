@@ -2,7 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { services } from "@/lib/site";
+import { serviceCategories, servicesIn } from "@/lib/site";
 import { budgetOptions, LIMITS, timelineOptions, validateContact, type ContactPayload } from "@/lib/contact";
 
 type Status = "idle" | "sending" | "sent" | "error";
@@ -112,9 +112,13 @@ export function ContactForm({ fallbackEmail }: { fallbackEmail?: string }) {
             </div>
 
             <fieldset>
-              <legend className="mb-3 text-sm">What would you like to automate?</legend>
-              <div className="flex flex-wrap gap-2">
-                {services.map((s) => {
+              <legend className="mb-3 text-sm">What can we help with?</legend>
+              <div className="space-y-4">
+                {serviceCategories.map((c) => (
+                <div key={c.id}>
+                <p className="mb-2 text-xs uppercase tracking-widest text-muted">{c.name}</p>
+                <div className="flex flex-wrap gap-2">
+                {servicesIn(c.id).map((s) => {
                   const on = data.services.includes(s.name);
                   return (
                     <button
@@ -131,6 +135,9 @@ export function ContactForm({ fallbackEmail }: { fallbackEmail?: string }) {
                     </button>
                   );
                 })}
+                </div>
+                </div>
+                ))}
               </div>
             </fieldset>
 

@@ -1,14 +1,15 @@
 "use client";
 
-import { Suspense, useMemo, useRef, useState } from "react";
+import { Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Html, Line, useTexture } from "@react-three/drei";
 import * as THREE from "three";
-import { services } from "@/lib/site";
+import { automationServices as services } from "@/lib/site";
 import type { ThemeColors } from "@/lib/useTheme";
 import { MOON_COLOR_2K, MOON_HEIGHT } from "@/lib/moonTexture";
 import { PLANET_LOOKS, PlanetRing, tickPlanet, usePlanetMaterial, useTrail } from "./Planets";
+import { Meteors, Satellite } from "./SpaceTraffic";
 
 /* ---------- Moon surface: NASA LRO colour + LOLA elevation (public domain) ---------- */
 function MoonSurface({ meshRef, reduced }: { meshRef: React.RefObject<THREE.Mesh | null>; reduced: boolean }) {
@@ -91,6 +92,9 @@ function Planet({
   angle,
   intro,
   colors,
+  focused,
+  onSelect,
+  register,
 }: {
   index: number;
   spec: OrbitSpec;
@@ -99,8 +103,10 @@ function Planet({
   angle: React.RefObject<number>;
   intro: React.RefObject<number>;
   colors: ThemeColors;
+  focused: number | null;
+  onSelect: (i: number) => void;
+  register: (i: number, o: THREE.Object3D | null) => void;
 }) {
-  const router = useRouter();
   const spin = useRef<THREE.Group>(null);
   const trailGroup = useRef<THREE.Group>(null);
   const body = useRef<THREE.Group>(null);
@@ -108,8 +114,9 @@ function Planet({
   const service = services[index];
   const look = PLANET_LOOKS[index];
   const points = useMemo(() => circlePoints(spec.radius), [spec.radius]);
-  const isHover = hovered === index;
-  const dim = hovered !== null && !isHover;
+  const isFocus = focused === index;
+  const isHover = hovered === index || isFocus;
+  const dim = (hovered !== null || focused !== null) && !isHover;
   const light = useMemo<[number, number, number]>(() => (colors.isDark ? [-5, 2.2, 4.2] : [-3, 2.5, 6]), [colors.isDark]);
   const material = usePlanetMaterial(service.color, look, light, colors.isDark ? 0.05 : 0.32);
   const trail = useTrail(spec.radius, service.color);
@@ -123,7 +130,7 @@ function Planet({
     trailGroup.current.scale.setScalar(k);
     body.current.position.set(spec.radius * k, 0, 0);
     body.current.rotation.z = -a;
-    const target = isHover ? 1.8 : 1;
+    const target = isFocus ? 1.5 : isHover ? 1.8 : 1;
     const s = THREE.MathUtils.lerp(body.current.scale.x, target, 0.15);
     body.current.scale.setScalar(s * easeOut(intro.current * 1.4 - index * 0.06));
     if (globe.current) {
@@ -151,10 +158,16 @@ function Planet({
         <group ref={trailGroup}>
           <primitive object={trail} />
         </group>
-        <group ref={body}>
+        <group
+          ref={(o) => {
+            body.current = o;
+            register(index, o);
+          }}
+        >
           <mesh
             onPointerOver={(e) => {
               e.stopPropagation();
+              if (focused !== null) return;
               setHovered(index);
               document.body.style.cursor = "pointer";
             }}
@@ -162,7 +175,11 @@ function Planet({
               setHovered(null);
               document.body.style.cursor = "";
             }}
-            onClick={() => router.push(`/services/${service.slug}`)}
+            onClick={(e) => {
+              e.stopPropagation();
+              document.body.style.cursor = "";
+              onSelect(index);
+            }}
           >
             {/* Generous invisible hit area so small planets are easy to target. */}
             <sphereGeometry args={[look.size * 2.4, 12, 12]} />
@@ -172,7 +189,7 @@ function Planet({
             <sphereGeometry args={[look.size, 48, 48]} />
           </mesh>
           {look.ring && <PlanetRing size={look.size} color={service.color} />}
-          {isHover && (
+          {isHover && !isFocus && (
             <Html center position={[0, look.size * 3.6, 0]} style={{ pointerEvents: "none" }} zIndexRange={[20, 0]}>
               <div className="whitespace-nowrap rounded-full border border-border bg-surface/90 px-3 py-1.5 text-xs font-medium text-foreground shadow-lg backdrop-blur">
                 <span
@@ -190,8 +207,36 @@ function Planet({
   );
 }
 
+const FOCUS_SECONDS = 1.15;
+
 function System({ colors, reduced }: { colors: ThemeColors; reduced: boolean }) {
+  const router = useRouter();
   const root = useRef<THREE.Group>(null);
+  const bodies = useRef<(THREE.Object3D | null)[]>([]);
+  // Click-to-zoom: the camera flies to the clicked planet, then the page changes.
+  const focus = useRef<{ index: number; start: number; from: THREE.Vector3; done: boolean } | null>(null);
+  const [focused, setFocused] = useState<number | null>(null);
+  const clock = useThree((s) => s.clock);
+  const camera = useThree((s) => s.camera);
+  const tmp = useMemo(() => ({ planet: new THREE.Vector3(), eye: new THREE.Vector3(), look: new THREE.Vector3() }), []);
+
+  const register = (i: number, o: THREE.Object3D | null) => {
+    bodies.current[i] = o;
+  };
+
+  const select = (i: number) => {
+    const href = `/services/${services[i].slug}`;
+    if (reduced) {
+      router.push(href);
+      return;
+    }
+    if (focus.current) return;
+    router.prefetch(href);
+    // Lets the hero copy fade out while the camera flies in (see globals.css).
+    document.documentElement.dataset.zooming = "1";
+    focus.current = { index: i, start: clock.elapsedTime, from: camera.position.clone(), done: false };
+    setFocused(i);
+  };
   const moon = useRef<THREE.Mesh>(null);
   const angle = useRef(0);
   const speed = useRef(1);
@@ -214,9 +259,26 @@ function System({ colors, reduced }: { colors: ThemeColors; reduced: boolean }) 
     if (!reduced) {
       // Wall-clock based so the intro finishes on time even at a low frame rate.
       intro.current = Math.min(1, state.clock.elapsedTime / 2.4);
-      // Orbits slow to a stop while a planet is hovered.
-      speed.current = THREE.MathUtils.lerp(speed.current, hovered === null ? 1 : 0, 0.08);
+      // Orbits slow to a stop while a planet is hovered or being zoomed to.
+      speed.current = THREE.MathUtils.lerp(speed.current, hovered === null && focused === null ? 1 : 0, 0.08);
       angle.current += d * speed.current;
+    }
+    const f = focus.current;
+    const target = f ? bodies.current[f.index] : null;
+    if (f && target) {
+      const k = Math.min(1, (state.clock.elapsedTime - f.start) / FOCUS_SECONDS);
+      const e = k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2; // ease in-out cubic
+      target.getWorldPosition(tmp.planet);
+      // Stop just in front of the planet, on the side facing the original camera.
+      tmp.eye.copy(f.from).sub(tmp.planet).setLength(0.75).add(tmp.planet);
+      state.camera.position.lerpVectors(f.from, tmp.eye, e);
+      tmp.look.set(0, 0, 0).lerp(tmp.planet, Math.min(1, e * 1.4));
+      state.camera.lookAt(tmp.look);
+      if (k >= 1 && !f.done) {
+        f.done = true;
+        router.push(`/services/${services[f.index].slug}`);
+      }
+      return;
     }
     if (root.current) {
       const p = state.pointer;
@@ -254,8 +316,12 @@ function System({ colors, reduced }: { colors: ThemeColors; reduced: boolean }) 
           angle={angle}
           intro={intro}
           colors={colors}
+          focused={focused}
+          onSelect={select}
+          register={register}
         />
       ))}
+      {!reduced && <Satellite colors={colors} paused={focused !== null} />}
     </group>
   );
 }
@@ -269,6 +335,7 @@ export default function MoonScene({
   active: boolean;
   reduced: boolean;
 }) {
+  useEffect(() => () => void delete document.documentElement.dataset.zooming, []);
   return (
     <Canvas
       camera={{ position: [0, 0, 9], fov: 42 }}
@@ -285,6 +352,7 @@ export default function MoonScene({
       />
       {/* Cool rim light from behind. */}
       <directionalLight position={[5, -1, -4]} intensity={colors.isDark ? 0.55 : 0.2} color={colors.accent} />
+      {!reduced && <Meteors colors={colors} />}
       <System colors={colors} reduced={reduced} />
     </Canvas>
   );

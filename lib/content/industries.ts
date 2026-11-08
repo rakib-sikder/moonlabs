@@ -23,7 +23,7 @@ export const industryDetails: IndustryDetail[] = [
       { title: "Listing sync", body: "Update a property once and it changes on every portal." },
       { title: "Seller reports", body: "Owners get a weekly summary of views, enquiries and feedback." },
     ],
-    services: ["sales-and-leads", "voice-and-calls", "operations"],
+    services: ["sales-and-leads", "voice-and-calls", "operations", "web-development"],
   },
   {
     slug: "healthcare",
@@ -37,7 +37,7 @@ export const industryDetails: IndustryDetail[] = [
       { title: "Missed-call recovery", body: "Unanswered calls get an instant SMS with a booking link." },
       { title: "Review requests", body: "Happy patients are asked for a review after their visit." },
     ],
-    services: ["voice-and-calls", "operations", "marketing"],
+    services: ["voice-and-calls", "operations", "marketing", "app-development"],
   },
   {
     slug: "restaurants",
@@ -51,7 +51,7 @@ export const industryDetails: IndustryDetail[] = [
       { title: "Review engine", body: "Guests are asked for a review at the right moment." },
       { title: "Supplier reorders", body: "Low stock triggers a draft order to your supplier." },
     ],
-    services: ["customer-support", "marketing", "operations"],
+    services: ["customer-support", "marketing", "operations", "app-development"],
   },
   {
     slug: "e-commerce",
@@ -65,7 +65,7 @@ export const industryDetails: IndustryDetail[] = [
       { title: "Order updates", body: "Customers get proactive shipping updates by SMS or email." },
       { title: "Product uploads", body: "Bulk-create and update listings from a sheet or supplier feed." },
     ],
-    services: ["e-commerce", "customer-support", "marketing"],
+    services: ["e-commerce", "customer-support", "marketing", "paid-ads"],
   },
   {
     slug: "agencies",
@@ -79,7 +79,7 @@ export const industryDetails: IndustryDetail[] = [
       { title: "Outbound for your agency", body: "Targeted lead lists and outreach running in the background." },
       { title: "Approval workflows", body: "Content goes to clients for sign-off and comes back tracked." },
     ],
-    services: ["marketing", "sales-and-leads", "custom-build"],
+    services: ["marketing", "sales-and-leads", "custom-build", "web-apps-and-saas"],
   },
   {
     slug: "law-firms",
@@ -93,7 +93,7 @@ export const industryDetails: IndustryDetail[] = [
       { title: "Contract drafting", body: "First drafts are generated from templates and intake answers for review." },
       { title: "Deadline alerts", body: "Key dates are tracked centrally with reminders to the whole team." },
     ],
-    services: ["operations", "customer-support", "custom-build"],
+    services: ["operations", "customer-support", "custom-build", "seo"],
   },
   {
     slug: "education",
@@ -107,7 +107,7 @@ export const industryDetails: IndustryDetail[] = [
       { title: "Student help bot", body: "Common questions about schedules and materials answered instantly." },
       { title: "Progress check-ins", body: "Automatic nudges for students who fall behind." },
     ],
-    services: ["sales-and-leads", "customer-support", "marketing"],
+    services: ["sales-and-leads", "customer-support", "marketing", "app-development"],
   },
   {
     slug: "logistics",
@@ -121,6 +121,6 @@ export const industryDetails: IndustryDetail[] = [
       { title: "Fast quoting", body: "Quote requests are priced from your rate tables and sent for approval." },
       { title: "Exception alerts", body: "Delays and failed deliveries are flagged to your team immediately." },
     ],
-    services: ["operations", "customer-support", "custom-build"],
+    services: ["operations", "customer-support", "custom-build", "data-and-analytics"],
   },
 ];

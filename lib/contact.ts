@@ -29,7 +29,7 @@ export function validateContact(p: Partial<ContactPayload>): Record<string, stri
   else if (name.length > LIMITS.name) errors.name = "That name is a little long.";
   if (!EMAIL_RE.test(email) || email.length > LIMITS.email) errors.email = "Please enter a valid email address.";
   if ((p.company ?? "").length > LIMITS.company) errors.company = "Please shorten the company name.";
-  if (message.length < 10) errors.message = "A sentence or two about what you'd like to automate helps us prepare.";
+  if (message.length < 10) errors.message = "A sentence or two about what you need helps us prepare.";
   else if (message.length > LIMITS.message) errors.message = `Please keep it under ${LIMITS.message} characters.`;
   return errors;
 }

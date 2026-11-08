@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
-import { mainNav, primaryCta } from "@/lib/site";
+import { mainNav, primaryCta, serviceCategories, servicesIn } from "@/lib/site";
 import { Logo } from "./Logo";
 
 export function Nav() {
@@ -43,20 +43,58 @@ export function Nav() {
           </Link>
 
           <div className="hidden md:flex items-center gap-8 text-sm">
-            {mainNav.map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                aria-current={isActive(l.href) ? "page" : undefined}
-                className={
-                  isActive(l.href)
-                    ? "text-foreground"
-                    : "text-muted hover:text-foreground transition-colors"
-                }
-              >
-                {l.label}
-              </Link>
-            ))}
+            {mainNav.map((l) => {
+              const link = (
+                <Link
+                  key={l.href}
+                  href={l.href}
+                  aria-current={isActive(l.href) ? "page" : undefined}
+                  className={
+                    isActive(l.href)
+                      ? "text-foreground"
+                      : "text-muted hover:text-foreground transition-colors"
+                  }
+                >
+                  {l.label}
+                </Link>
+              );
+              if (l.href !== "/services") return link;
+              // Services opens a panel of every sector on hover or keyboard focus.
+              return (
+                <div key={l.href} className="group/menu">
+                  <div className="flex h-16 items-center gap-1">
+                    {link}
+                    <svg aria-hidden viewBox="0 0 12 12" className="h-3 w-3 text-muted transition-transform group-hover/menu:rotate-180 group-focus-within/menu:rotate-180">
+                      <path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" strokeWidth="1.4" />
+                    </svg>
+                  </div>
+                  <div className="invisible absolute inset-x-6 top-full -mt-2 pt-3 opacity-0 transition-all duration-200 group-hover/menu:visible group-hover/menu:opacity-100 group-focus-within/menu:visible group-focus-within/menu:opacity-100">
+                    <div className="grid grid-cols-5 gap-6 rounded-2xl border border-border bg-surface/95 p-6 shadow-2xl backdrop-blur-xl">
+                      {serviceCategories.map((c) => (
+                        <div key={c.id}>
+                          <Link href={`/services#${c.id}`} className="mb-3 flex items-center gap-2 text-xs uppercase tracking-widest text-moon hover:text-foreground">
+                            <span className="h-1.5 w-1.5 rounded-full" style={{ background: c.color }} />
+                            {c.core ? "Automation" : c.name}
+                          </Link>
+                          <ul className="space-y-1">
+                            {servicesIn(c.id).map((sv) => (
+                              <li key={sv.slug}>
+                                <Link
+                                  href={`/services/${sv.slug}`}
+                                  className="block rounded-md py-1 text-[13px] text-muted transition-colors hover:text-foreground"
+                                >
+                                  {sv.name}
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
 
           <div className="flex items-center gap-2">

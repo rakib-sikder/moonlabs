@@ -100,6 +100,27 @@ export default function PricingPage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-6 pb-24">
+        <Reveal>
+          <div className="flex flex-col gap-6 rounded-2xl border border-border bg-surface/80 p-8 backdrop-blur-sm md:flex-row md:items-center md:justify-between">
+            <div className="max-w-2xl">
+              <p className="text-xs uppercase tracking-widest text-moon mb-2">Websites, apps, design &amp; marketing</p>
+              <p className="text-lg font-medium">Quoted per project, as a fixed price.</p>
+              <p className="mt-2 text-sm text-muted leading-relaxed">
+                Development, data, design and growth work varies too much for one price list. After a short call you get a written
+                scope and a fixed quote — and it can be combined with any automation plan above.
+              </p>
+            </div>
+            <Link
+              href="/contact"
+              className="shrink-0 rounded-full border border-border px-5 py-2.5 text-sm font-medium transition-colors hover:border-muted"
+            >
+              Get a quote →
+            </Link>
+          </div>
+        </Reveal>
+      </section>
+
+      <section className="mx-auto max-w-6xl px-6 pb-24">
         <SectionHeading eyebrow="Compare" title="Moonlabs vs. hiring vs. freelancers." />
         <Reveal>
           <div className="overflow-x-auto rounded-2xl border border-border bg-surface/80 backdrop-blur-sm">

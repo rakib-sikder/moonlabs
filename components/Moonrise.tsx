@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, useAnimationFrame, useMotionValue, useReducedMotion, type MotionValue } from "framer-motion";
 import { loadMoonMaps, MOON_COLOR_2K, MOON_COLOR_4K, renderMoonSphere } from "@/lib/moonTexture";
-import { services } from "@/lib/site";
+import { automationServices as services } from "@/lib/site";
 
 const ORBITERS = [
   { color: services[0].color, size: 12, speed: 0.22, phase: 0.4, rx: 0.56, ry: 0.11 },

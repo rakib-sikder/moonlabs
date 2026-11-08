@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRef, type MouseEvent } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
-import { services, type Service } from "@/lib/site";
+import { automationServices, serviceCategories, servicesIn, type Service } from "@/lib/site";
 import { MiniOrbit } from "./ui/MiniOrbit";
 import { serviceDetails } from "@/lib/content/service-details";
 import { RevealText } from "./ui/RevealText";
@@ -109,7 +109,7 @@ export function ServicesGrid() {
         className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between mb-14"
       >
         <div className="max-w-xl">
-          <p className="text-xs uppercase tracking-widest text-moon mb-3">Services</p>
+          <p className="text-xs uppercase tracking-widest text-moon mb-3">Automation · our core</p>
           <RevealText
             text="If your team does it twice a week, we can automate it."
             highlight={["automate", "it."]}
@@ -128,9 +128,54 @@ export function ServicesGrid() {
         viewport={{ once: true, amount: 0.15 }}
         className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
       >
-        {services.map((s, i) => (
+        {automationServices.map((s, i) => (
           <ServiceCard key={s.slug} service={s} index={i} />
         ))}
+      </motion.div>
+
+      {/* Everything around the automation, from the same team. */}
+      <div className="mt-20 mb-8 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div className="max-w-xl">
+          <p className="text-xs uppercase tracking-widest text-moon mb-3">Beyond automation</p>
+          <h3 className="text-2xl sm:text-3xl font-semibold tracking-tight">The website, app and marketing around it — same team.</h3>
+        </div>
+      </div>
+      <motion.div
+        variants={container}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true, amount: 0.2 }}
+        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5"
+      >
+        {serviceCategories
+          .filter((c) => !c.core)
+          .map((c) => (
+            <motion.div key={c.id} variants={item} className="h-full">
+              <Link
+                href={`/services#${c.id}`}
+                className="group relative flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-surface/60 p-6 backdrop-blur-sm transition-colors hover:border-accent/40"
+              >
+                <span
+                  aria-hidden
+                  className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full blur-2xl opacity-20 transition-opacity duration-500 group-hover:opacity-40"
+                  style={{ background: c.color }}
+                />
+                <p className="relative font-medium">{c.name}</p>
+                <ul className="relative mt-4 flex-1 space-y-1.5 text-sm text-muted">
+                  {servicesIn(c.id).map((s) => (
+                    <li key={s.slug} className="flex items-center gap-2.5">
+                      <span aria-hidden className="h-1.5 w-1.5 rounded-full" style={{ background: s.color }} />
+                      {s.name}
+                    </li>
+                  ))}
+                </ul>
+                <span className="relative mt-5 text-xs text-accent">
+                  Explore
+                  <span className="ml-1 inline-block transition-transform duration-300 group-hover:translate-x-1">→</span>
+                </span>
+              </Link>
+            </motion.div>
+          ))}
       </motion.div>
     </section>
   );

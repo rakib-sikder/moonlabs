@@ -64,7 +64,7 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
 
       <section className="mx-auto max-w-6xl px-6 pb-12">
         <SectionHeading eyebrow="Related services" title="The services behind it." />
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-2">
           {related.map((s) => (
             <Link
               key={s.slug}

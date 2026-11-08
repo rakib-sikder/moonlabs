@@ -13,20 +13,23 @@ export function WorkflowPipeline({
   steps,
   outcome,
   color = "var(--accent)",
+  project = false,
 }: {
   name: string;
   trigger: string;
   steps: string[];
   outcome: string;
   color?: string;
+  /** Show it as how a project runs (kick-off → delivered) rather than an automation. */
+  project?: boolean;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start 75%", "end 55%"] });
   const fill = useSpring(scrollYProgress, { stiffness: 120, damping: 24 });
   const nodes = [
-    { label: "Trigger", text: trigger },
+    { label: project ? "Kick-off" : "Trigger", text: trigger },
     ...steps.map((s, i) => ({ label: `Step ${i + 1}`, text: s })),
-    { label: "Result", text: outcome },
+    { label: project ? "Delivered" : "Result", text: outcome },
   ];
 
   return (
@@ -36,7 +39,7 @@ export function WorkflowPipeline({
           <span className="absolute inline-flex h-full w-full animate-ping rounded-full opacity-60" style={{ background: color }} />
           <span className="relative inline-flex h-2.5 w-2.5 rounded-full" style={{ background: color }} />
         </span>
-        <p className="font-mono text-xs uppercase tracking-widest text-muted">Example workflow · {name}</p>
+        <p className="font-mono text-xs uppercase tracking-widest text-muted">{project ? "How a project runs" : "Example workflow"} · {name}</p>
       </div>
 
       <div className="relative">
