@@ -43,7 +43,7 @@ export default async function AdminAutomationPage({ params }: { params: Promise<
         description={`Last run ${formatRelative(a.last_run_at, now)} · ${a.runs7d} runs in 7 days · ${formatPercent(a.successRate7d)} success`}
       />
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
           <Panel title="Log a run">
             <ActionForm action={logRun} submitLabel="Log run" resetOnSuccess>

@@ -23,7 +23,7 @@ export default async function AdminPage() {
     <>
       <PageHeader title="Admin" description="Pick a client organization to manage its projects, automations, requests, files and invoices." />
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Panel title={`Organizations (${orgs.length})`} className="lg:col-span-2" bodyClassName={null}>
           {orgs.length === 0 ? (
             <EmptyState title="No organizations yet">Create the first client organization to get started.</EmptyState>

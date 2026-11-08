@@ -56,7 +56,7 @@ export default async function AdminProjectPage({ params }: { params: Promise<{ o
         }
       />
 
-      <div className="grid gap-6 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
           <Panel title="Stages" bodyClassName={null}>
             <div className="px-4 pb-2 pt-4">

@@ -25,7 +25,7 @@ export default async function BillingPage() {
     <>
       <PageHeader title="Billing" description="Your plan and invoices." />
 
-      <div className="mb-6 grid gap-6 lg:grid-cols-3">
+      <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Panel title="Current plan" className="lg:col-span-2">
           {org.plan === "none" ? (
             <p className="text-muted">No plan on file. Project work is billed per invoice below.</p>

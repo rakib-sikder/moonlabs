@@ -56,7 +56,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
         <StageTable stages={stages} />
       </Panel>
 
-      <div className="grid gap-6 lg:grid-cols-5">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-5">
         <Panel title="Updates" className="lg:col-span-3" bodyClassName={null}>
           <UpdatesTimeline updates={updates} />
         </Panel>

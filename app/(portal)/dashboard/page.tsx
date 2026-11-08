@@ -91,7 +91,7 @@ export default async function OverviewPage() {
         />
       </div>
 
-      <div className="mt-6 grid gap-6 lg:grid-cols-3">
+      <div className="mt-6 grid items-start grid-cols-1 gap-6 lg:grid-cols-3">
         <Panel
           title="Projects in progress"
           className="lg:col-span-2"

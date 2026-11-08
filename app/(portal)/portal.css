@@ -45,6 +45,8 @@
   border-radius: 4px;
 }
 
+/* Component classes live in a layer so Tailwind utilities (lg:hidden, h-7, w-28...) can override them. */
+@layer components {
 /* ---------- Cards / panels ---------- */
 .pt-panel {
   background: var(--surface);
@@ -71,6 +73,8 @@
 /* ---------- Tables ---------- */
 .pt-table-wrap {
   overflow-x: auto;
+  /* contain absolutely positioned .sr-only text so it cannot widen the page */
+  position: relative;
 }
 .pt-table {
   width: 100%;
@@ -329,4 +333,5 @@
 }
 .pt-stage[data-status="active"] .pt-stage-bar {
   background: var(--accent);
+}
 }

@@ -120,7 +120,7 @@ export default async function AdminOrgPage({
 async function SettingsTab({ ctx, org }: TabProps) {
   const { members, invites } = await listMembers(ctx.supabase, org.id);
   return (
-    <div className="grid gap-6 lg:grid-cols-3">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
       <div className="space-y-6 lg:col-span-2">
         <Panel title={`Members (${members.length})`} bodyClassName={null}>
           {members.length === 0 ? (
@@ -246,7 +246,7 @@ async function SettingsTab({ ctx, org }: TabProps) {
 async function ProjectsTab({ ctx, org }: TabProps) {
   const projects = await listProjects(ctx.supabase, org.id);
   return (
-    <div className="grid gap-6 lg:grid-cols-3">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
       <Panel title={`Projects (${projects.length})`} className="lg:col-span-2" bodyClassName={null}>
         {projects.length === 0 ? (
           <EmptyState title="No projects yet">Create one on the right. Its five stages are added automatically.</EmptyState>
@@ -320,7 +320,7 @@ async function AutomationsTab({ ctx, org }: TabProps) {
   const now = requestNow();
   const [automations, projects] = await Promise.all([listAutomations(ctx.supabase, org.id, now), listProjectOptions(ctx.supabase, org.id)]);
   return (
-    <div className="grid gap-6 lg:grid-cols-3">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
       <Panel title={`Automations (${automations.length})`} className="lg:col-span-2" bodyClassName={null}>
         {automations.length === 0 ? (
           <EmptyState title="No automations yet">Add one on the right, then log runs from its page.</EmptyState>
@@ -450,7 +450,7 @@ async function RequestsTab({ ctx, org }: TabProps) {
 async function FilesTab({ ctx, org }: TabProps) {
   const [files, projects] = await Promise.all([listFiles(ctx.supabase, org.id), listProjectOptions(ctx.supabase, org.id)]);
   return (
-    <div className="grid gap-6 lg:grid-cols-3">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
       <Panel title={`Files (${files.length})`} className="lg:col-span-2" bodyClassName={null}>
         {files.length === 0 ? (
           <EmptyState title="No files shared yet" />
@@ -505,7 +505,7 @@ async function FilesTab({ ctx, org }: TabProps) {
 async function InvoicesTab({ ctx, org }: TabProps) {
   const invoices = await listInvoices(ctx.supabase, org.id);
   return (
-    <div className="grid gap-6 lg:grid-cols-3">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
       <Panel title={`Invoices (${invoices.length})`} className="lg:col-span-2" bodyClassName={null}>
         {invoices.length === 0 ? (
           <EmptyState title="No invoices yet">Drafts are hidden from the client until you change their status.</EmptyState>
