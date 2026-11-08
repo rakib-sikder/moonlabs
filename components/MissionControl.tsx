@@ -28,13 +28,12 @@ export function MissionControl() {
   const enterScale = useTransform(scrollYProgress, [0, 1], [0.86, 1]);
 
   return (
-    <section ref={ref} className="relative mx-auto max-w-6xl px-6 py-28 grid gap-14 lg:grid-cols-[1fr_1.15fr] lg:items-center">
+    <section ref={ref} className="relative mx-auto max-w-6xl px-6 py-20 grid gap-14 lg:grid-cols-[1fr_1.15fr] lg:items-center">
       <div>
-        <p className="text-xs uppercase tracking-widest text-moon mb-3">Mission control</p>
+        <p className="font-mono text-xs uppercase tracking-widest text-moon mb-3">How an automation runs</p>
         <RevealText
           text="Watch the busywork disappear."
-          highlight={["disappear."]}
-          className="text-3xl sm:text-5xl font-semibold tracking-tight leading-[1.05]"
+          className="text-2xl sm:text-[2rem] font-semibold tracking-tight leading-tight"
         />
         <ul className="mt-10 space-y-6">
           {points.map((p, i) => (

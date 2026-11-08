@@ -1,21 +1,29 @@
 import { Hero } from "@/components/hero/Hero";
 import { Integrations } from "@/components/Integrations";
 import { MissionControl } from "@/components/MissionControl";
-import { HowItWorks } from "@/components/HowItWorks";
-import { ServicesGrid } from "@/components/ServicesGrid";
 import { CtaBanner } from "@/components/CtaBanner";
-import { IndustriesStrip, WorkPreview } from "@/components/HomeExtras";
+import { ServiceDirectory } from "@/components/home/ServiceDirectory";
+import { ProcessStrip } from "@/components/home/ProcessStrip";
+import { CaseStudies } from "@/components/home/CaseStudies";
+import { PortalPreview } from "@/components/home/PortalPreview";
+import { ClientLogos, StatsRow, Testimonials } from "@/components/home/Proof";
+import { HomeFaq, Solutions } from "@/components/home/SolutionsAndFaq";
 
 export default function Home() {
   return (
     <>
       <Hero />
+      <ClientLogos />
       <Integrations />
-      <ServicesGrid />
+      <ServiceDirectory />
       <MissionControl />
-      <HowItWorks />
-      <WorkPreview />
-      <IndustriesStrip />
+      <StatsRow />
+      <CaseStudies />
+      <Testimonials />
+      <ProcessStrip />
+      <Solutions />
+      <PortalPreview />
+      <HomeFaq />
       <CtaBanner />
     </>
   );

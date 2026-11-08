@@ -19,7 +19,7 @@ export function PageHeader({
 }) {
   const planet = accentColor ?? "var(--accent)";
   return (
-    <header className="relative overflow-hidden px-6 pt-36 pb-16">
+    <header className="relative mb-14 overflow-hidden border-b border-border px-6 pt-32 pb-14">
       <div
         aria-hidden
         className="pointer-events-none absolute -top-48 right-[-10%] h-[560px] w-[560px] rounded-full blur-3xl"
@@ -74,14 +74,14 @@ export function PageHeader({
         <RevealText
           as="h1"
           text={title}
-          className="max-w-3xl text-4xl sm:text-6xl font-semibold tracking-tight leading-[1.05]"
+          className="max-w-3xl text-4xl sm:text-5xl font-semibold tracking-tight leading-[1.08]"
         />
         {intro && (
           <motion.p
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.45, ease: [0.16, 1, 0.3, 1] }}
-            className="mt-6 max-w-2xl text-lg text-muted leading-relaxed"
+            className="mt-5 max-w-2xl text-lg text-muted leading-relaxed"
           >
             {intro}
           </motion.p>

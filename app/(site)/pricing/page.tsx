@@ -4,7 +4,8 @@ import { PageHeader } from "@/components/PageHeader";
 import { CtaBanner } from "@/components/CtaBanner";
 import { Accordion } from "@/components/ui/Accordion";
 import { Check, Reveal, SectionHeading } from "@/components/ui/Section";
-import { comparison, faqs, plans } from "@/lib/content/company";
+import { comparison, faqs, planMatrix, plans } from "@/lib/content/company";
+import { Check as CheckIcon, Minus } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Pricing",
@@ -97,6 +98,52 @@ export default function PricingPage() {
             </div>
           </Reveal>
         ))}
+      </section>
+
+      <section className="mx-auto max-w-6xl px-6 pb-24">
+        <SectionHeading eyebrow="Compare plans" title="Everything in each plan." />
+        <div className="overflow-x-auto rounded-2xl border border-border bg-surface/80 backdrop-blur-sm">
+          <table className="w-full min-w-[680px] text-left text-sm">
+            <thead>
+              <tr className="border-b border-border">
+                <th className="p-4 font-normal text-muted sm:px-6" />
+                {plans.map((p) => (
+                  <th key={p.name} className="p-4 sm:px-6">
+                    <span className={`block font-medium ${p.featured ? "text-accent" : ""}`}>{p.name}</span>
+                    <span className="block font-mono text-xs font-normal text-muted">
+                      {p.price} {p.unit.replace(", from", "")}
+                    </span>
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            {planMatrix.map((g) => (
+              <tbody key={g.group}>
+                <tr className="border-b border-border bg-surface-2/50">
+                  <th colSpan={4} className="px-4 py-2 font-mono text-[11px] font-normal uppercase tracking-wider text-moon sm:px-6">
+                    {g.group}
+                  </th>
+                </tr>
+                {g.rows.map((r) => (
+                  <tr key={r.label} className="border-b border-border last:border-0">
+                    <td className="p-4 text-muted sm:px-6">{r.label}</td>
+                    {r.values.map((v, i) => (
+                      <td key={i} className="p-4 sm:px-6">
+                        {v === true ? (
+                          <CheckIcon aria-label="Included" className="h-4 w-4 text-accent" />
+                        ) : v === false ? (
+                          <Minus aria-label="Not included" className="h-4 w-4 text-muted/50" />
+                        ) : (
+                          v
+                        )}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            ))}
+          </table>
+        </div>
       </section>
 
       <section className="mx-auto max-w-6xl px-6 pb-24">

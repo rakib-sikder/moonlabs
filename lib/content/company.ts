@@ -170,6 +170,37 @@ export const plans = [
   },
 ];
 
+/** Plan-by-plan feature matrix on the pricing page. `true` = included, `false` = not included. */
+export const planMatrix: { group: string; rows: { label: string; values: [string | boolean, string | boolean, string | boolean] }[] }[] = [
+  {
+    group: "Building",
+    rows: [
+      { label: "New automations", values: ["1 workflow", "Up to 2 per month", "Unlimited, one at a time"] },
+      { label: "Tools connected per workflow", values: ["Up to 3", "Any", "Any"] },
+      { label: "Custom AI agents & internal tools", values: [false, false, true] },
+      { label: "Built in your accounts — you own it", values: [true, true, true] },
+    ],
+  },
+  {
+    group: "Care",
+    rows: [
+      { label: "Monitoring & alerts", values: ["First 2 weeks", true, true] },
+      { label: "Fixes when a connected tool changes", values: ["First 2 weeks", true, true] },
+      { label: "Documentation & team training", values: [true, true, true] },
+    ],
+  },
+  {
+    group: "Support & reporting",
+    rows: [
+      { label: "Support channel", values: ["Email", "Slack or Telegram, priority", "Dedicated channel"] },
+      { label: "Reply time", values: ["2 working days", "Next working day", "Same day"] },
+      { label: "Hours-saved report", values: [false, "Monthly", "Monthly"] },
+      { label: "Automation roadmap", values: [false, false, "Quarterly"] },
+      { label: "Client portal access", values: [true, true, true] },
+    ],
+  },
+];
+
 export const comparison: { row: string; values: [string, string, string] }[] = [
   { row: "Cost to start", values: ["Free audit, then a fixed price", "Salary + hiring time", "Hourly, varies"] },
   { row: "Time to first result", values: ["1–2 weeks", "2–3 months", "Depends who you find"] },

@@ -7,7 +7,7 @@ import { industryDetails } from "@/lib/content/industries";
 import { services } from "@/lib/site";
 
 export const metadata: Metadata = {
-  title: "Industries",
+  title: "Solutions by industry",
   description: "Automation for real estate, clinics, restaurants, e-commerce, agencies, law firms, education and logistics.",
 };
 
@@ -15,7 +15,7 @@ export default function IndustriesPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Industries"
+        eyebrow="Solutions"
         title="Automation shaped around your industry."
         intro="Every business has its own busywork. Pick yours to see the problems we usually find — and the automations that fix them."
       />

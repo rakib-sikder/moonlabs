@@ -14,15 +14,29 @@ export const site = {
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://moonlabs.vercel.app",
 };
 
-export type NavLink = { href: string; label: string };
+export type NavLink = { href: string; label: string; desc?: string };
 
-export const mainNav: NavLink[] = [
-  { href: "/services", label: "Services" },
-  { href: "/industries", label: "Industries" },
-  { href: "/how-it-works", label: "How it works" },
-  { href: "/work", label: "Work" },
+export type NavItem = NavLink & { menu?: "services" | "solutions" | "resources" };
+
+export const mainNav: NavItem[] = [
+  { href: "/services", label: "Services", menu: "services" },
+  { href: "/industries", label: "Solutions", menu: "solutions" },
+  { href: "/how-it-works", label: "Resources", menu: "resources" },
   { href: "/pricing", label: "Pricing" },
 ];
+
+export const resourceLinks: NavLink[] = [
+  { href: "/how-it-works", label: "How we work", desc: "Five steps from free audit to monthly care" },
+  { href: "/work", label: "Case studies", desc: "Systems we built and still run every day" },
+  { href: "/integrations", label: "Integrations", desc: "The tools we connect, and what we do with each" },
+  { href: "/roi-calculator", label: "ROI calculator", desc: "Estimate the hours and money you'd save" },
+  { href: "/security", label: "Security", desc: "Access, data handling and approvals" },
+  { href: "/faq", label: "FAQ", desc: "Pricing, timelines, ownership and support" },
+  { href: "/about", label: "About", desc: "Who we are and how we work" },
+  { href: "/contact", label: "Contact", desc: "Book a free audit or ask a question" },
+];
+
+export const signIn: NavLink = { href: "/login", label: "Sign in" };
 
 export const primaryCta: NavLink = { href: "/contact", label: "Free audit" };
 
@@ -411,26 +425,34 @@ export const industries: Industry[] = industryDetails.map(({ slug, name }) => ({
 
 export const footerNav: { title: string; links: NavLink[] }[] = [
   {
-    title: "Services",
-    links: serviceCategories.map((c) => ({ href: `/services#${c.id}`, label: c.name })),
+    title: "Automation",
+    links: services
+      .filter((s) => s.category === "automation")
+      .map((s) => ({ href: `/services/${s.slug}`, label: s.name })),
+  },
+  {
+    title: "More services",
+    links: services
+      .filter((s) => s.category !== "automation")
+      .map((s) => ({ href: `/services/${s.slug}`, label: s.name })),
+  },
+  {
+    title: "Solutions",
+    links: industryDetails.map((i) => ({ href: `/industries/${i.slug}`, label: i.name })),
+  },
+  {
+    title: "Resources",
+    links: resourceLinks.filter((l) => !["/about", "/contact"].includes(l.href)),
   },
   {
     title: "Company",
     links: [
       { href: "/about", label: "About" },
-      { href: "/work", label: "Work" },
       { href: "/pricing", label: "Pricing" },
       { href: "/contact", label: "Contact" },
-    ],
-  },
-  {
-    title: "Resources",
-    links: [
-      { href: "/how-it-works", label: "How it works" },
-      { href: "/industries", label: "Industries" },
-      { href: "/security", label: "Security" },
-      { href: "/roi-calculator", label: "ROI calculator" },
-      { href: "/faq", label: "FAQ" },
+      signIn,
+      { href: "/privacy", label: "Privacy" },
+      { href: "/terms", label: "Terms" },
     ],
   },
 ];

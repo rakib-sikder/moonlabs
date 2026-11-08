@@ -7,7 +7,7 @@ import { MiniOrbit } from "@/components/ui/MiniOrbit";
 import { caseStudies } from "@/lib/content/company";
 
 export const metadata: Metadata = {
-  title: "Work",
+  title: "Case studies",
   description: "Automation systems we have built and run — lead generation engines, inbox automation and browser workstations.",
 };
 
@@ -15,7 +15,7 @@ export default function WorkPage() {
   return (
     <>
       <PageHeader
-        eyebrow="Work"
+        eyebrow="Case studies"
         title="Systems we've built — and still run."
         intro="We automate our own business first. These are production systems we designed, built and operate every day."
       />

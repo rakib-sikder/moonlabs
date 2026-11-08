@@ -6,7 +6,7 @@ import { CtaBanner } from "@/components/CtaBanner";
 import { Accordion } from "@/components/ui/Accordion";
 import { WorkflowPipeline } from "@/components/ui/WorkflowPipeline";
 import { Check, Chip, Reveal, SectionHeading } from "@/components/ui/Section";
-import { MiniOrbit } from "@/components/ui/MiniOrbit";
+import { IconTile } from "@/components/ui/IconTile";
 import { categoryOf, services, serviceTitle } from "@/lib/site";
 import { serviceDetails } from "@/lib/content/service-details";
 import { industryDetails } from "@/lib/content/industries";
@@ -97,7 +97,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
           <div className="rounded-2xl border border-border bg-surface/80 p-8 backdrop-blur-sm sm:p-10">
             <div className="flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
               <div className="flex items-center gap-5">
-                <MiniOrbit color={service.color} size={56} />
+                <IconTile slug={service.slug} size={52} />
                 <div>
                   <p className="text-xs uppercase tracking-widest text-moon mb-1">{isAutomation ? "Tools we connect" : "Tools we use"}</p>
                   <p className="text-muted text-sm">
@@ -149,7 +149,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
           className="group flex items-center justify-between rounded-2xl border border-border bg-surface/60 p-8 backdrop-blur-sm transition-colors hover:border-accent/40"
         >
           <div className="flex items-center gap-5">
-            <MiniOrbit color={next.color} />
+            <IconTile slug={next.slug} size={44} />
             <div>
               <p className="text-xs uppercase tracking-widest text-muted mb-1">Next in {category.name}</p>
               <p className="text-2xl font-medium">{next.name}</p>

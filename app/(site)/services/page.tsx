@@ -4,7 +4,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { CtaBanner } from "@/components/CtaBanner";
 import { serviceCategories, servicesIn, type Service } from "@/lib/site";
 import { serviceDetails } from "@/lib/content/service-details";
-import { MiniOrbit } from "@/components/ui/MiniOrbit";
+import { serviceIcons } from "@/lib/icons";
 import { Reveal } from "@/components/ui/Section";
 
 export const metadata: Metadata = {
@@ -16,6 +16,7 @@ export const metadata: Metadata = {
 function ServiceCard({ service, compact = false }: { service: Service; compact?: boolean }) {
   const detail = serviceDetails[service.slug];
   const shown = compact ? 3 : 4;
+  const Icon = serviceIcons[service.slug];
   return (
     <Link
       href={`/services/${service.slug}`}
@@ -27,7 +28,9 @@ function ServiceCard({ service, compact = false }: { service: Service; compact?:
         style={{ background: `linear-gradient(to right, transparent, ${service.color}, transparent)` }}
       />
       <div className="flex items-center gap-4">
-        <MiniOrbit color={service.color} size={40} />
+        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border bg-background/60 text-muted transition-colors group-hover:border-accent/40 group-hover:text-accent">
+          <Icon className="h-[18px] w-[18px]" strokeWidth={1.6} />
+        </span>
         <h3 className="text-lg font-medium">{service.name}</h3>
       </div>
       <p className="mt-3 text-sm text-muted leading-relaxed">{service.short}</p>
@@ -64,7 +67,7 @@ export default function ServicesPage() {
       />
 
       {/* Sector jump links */}
-      <nav aria-label="Service sectors" className="sticky top-16 z-30 mb-14 border-y border-border bg-background/80 backdrop-blur-md">
+      <nav aria-label="Service sectors" className="sticky top-16 z-30 -mt-14 mb-14 border-b border-border bg-background/80 backdrop-blur-md">
         <ul className="mx-auto flex max-w-6xl gap-2 overflow-x-auto px-6 py-3 text-sm [scrollbar-width:none]">
           {serviceCategories.map((c) => (
             <li key={c.id} className="shrink-0">

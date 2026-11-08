@@ -8,6 +8,10 @@ export type IndustryDetail = {
   pains: string[];
   automations: { title: string; body: string }[];
   services: string[];
+  /** One example automation for this industry, drawn as a pipeline. */
+  workflow: { name: string; trigger: string; steps: string[]; outcome: string };
+  /** Related case study slug (lib/content/company.ts), when one fits. */
+  caseStudy?: string;
 };
 
 export const industryDetails: IndustryDetail[] = [
@@ -24,6 +28,18 @@ export const industryDetails: IndustryDetail[] = [
       { title: "Seller reports", body: "Owners get a weekly summary of views, enquiries and feedback." },
     ],
     services: ["sales-and-leads", "voice-and-calls", "operations", "web-development"],
+    workflow: {
+      name: "Portal enquiry to booked viewing",
+      trigger: "An enquiry arrives from a property portal or your website",
+      steps: [
+        "The lead is matched to the listing and logged in your CRM",
+        "A personal reply with three viewing slots goes out within minutes",
+        "The buyer picks a slot and it lands in the agent's calendar",
+        "SMS reminders go out the day before and two hours before",
+      ],
+      outcome: "A confirmed viewing with no phone tag, and every enquiry tracked.",
+    },
+    caseStudy: "leadpilot",
   },
   {
     slug: "healthcare",
@@ -38,6 +54,17 @@ export const industryDetails: IndustryDetail[] = [
       { title: "Review requests", body: "Happy patients are asked for a review after their visit." },
     ],
     services: ["voice-and-calls", "operations", "marketing", "app-development"],
+    workflow: {
+      name: "Missed call to booked appointment",
+      trigger: "A patient calls while reception is busy",
+      steps: [
+        "A text goes out within a minute with a booking link",
+        "The patient picks a slot with the right practitioner",
+        "Intake forms are sent and attached to the record",
+        "Reminders cut no-shows and a waitlist fills cancellations",
+      ],
+      outcome: "Fewer missed bookings and a front desk that isn't buried.",
+    },
   },
   {
     slug: "restaurants",
@@ -52,6 +79,17 @@ export const industryDetails: IndustryDetail[] = [
       { title: "Supplier reorders", body: "Low stock triggers a draft order to your supplier." },
     ],
     services: ["customer-support", "marketing", "operations", "app-development"],
+    workflow: {
+      name: "Review and feedback loop",
+      trigger: "A reservation or order is completed",
+      steps: [
+        "The guest gets a thank-you message the next day",
+        "Happy guests are pointed to Google; complaints come to the manager privately",
+        "Every new review is posted to the team chat",
+        "A weekly summary shows ratings and recurring themes",
+      ],
+      outcome: "More reviews, and bad experiences caught before they go public.",
+    },
   },
   {
     slug: "e-commerce",
@@ -66,6 +104,17 @@ export const industryDetails: IndustryDetail[] = [
       { title: "Product uploads", body: "Bulk-create and update listings from a sheet or supplier feed." },
     ],
     services: ["e-commerce", "customer-support", "marketing", "paid-ads"],
+    workflow: {
+      name: "Order to delivered, hands-free",
+      trigger: "A new order is placed",
+      steps: [
+        "Stock is updated on every sales channel",
+        "The order goes to fulfilment and a shipping label is created",
+        "The customer gets tracking updates by email or WhatsApp",
+        "Abandoned carts and low stock trigger their own flows",
+      ],
+      outcome: "Accurate stock and far fewer 'where is my order?' emails.",
+    },
   },
   {
     slug: "agencies",
@@ -80,6 +129,18 @@ export const industryDetails: IndustryDetail[] = [
       { title: "Approval workflows", body: "Content goes to clients for sign-off and comes back tracked." },
     ],
     services: ["marketing", "sales-and-leads", "custom-build", "web-apps-and-saas"],
+    workflow: {
+      name: "Client reporting on autopilot",
+      trigger: "Every Monday at 8am",
+      steps: [
+        "Numbers are pulled from ads, analytics and CRM for each client",
+        "A branded report is generated per client",
+        "AI drafts a summary of what changed and why",
+        "The account manager approves it and it's sent",
+      ],
+      outcome: "Client reports in minutes instead of a day each month.",
+    },
+    caseStudy: "gmail-forwarding",
   },
   {
     slug: "law-firms",
@@ -94,6 +155,17 @@ export const industryDetails: IndustryDetail[] = [
       { title: "Deadline alerts", body: "Key dates are tracked centrally with reminders to the whole team." },
     ],
     services: ["operations", "customer-support", "custom-build", "seo"],
+    workflow: {
+      name: "Intake to engagement letter",
+      trigger: "A potential client completes the intake form",
+      steps: [
+        "Conflict-check details are extracted and logged",
+        "The matter is created in your practice system",
+        "An engagement letter is drafted from your template",
+        "It goes out for e-signature and is filed when signed",
+      ],
+      outcome: "New matters opened the same day, with nothing retyped.",
+    },
   },
   {
     slug: "education",
@@ -108,6 +180,17 @@ export const industryDetails: IndustryDetail[] = [
       { title: "Progress check-ins", body: "Automatic nudges for students who fall behind." },
     ],
     services: ["sales-and-leads", "customer-support", "marketing", "app-development"],
+    workflow: {
+      name: "Enquiry to enrolled",
+      trigger: "A student or parent enquires",
+      steps: [
+        "Course details and a trial-class link are sent instantly",
+        "Bookings go to the right teacher's calendar",
+        "Attendance and payments are tracked automatically",
+        "Reminders go out for renewals and unpaid fees",
+      ],
+      outcome: "More trials booked and fewer students lost between messages.",
+    },
   },
   {
     slug: "logistics",
@@ -122,5 +205,16 @@ export const industryDetails: IndustryDetail[] = [
       { title: "Exception alerts", body: "Delays and failed deliveries are flagged to your team immediately." },
     ],
     services: ["operations", "customer-support", "custom-build", "data-and-analytics"],
+    workflow: {
+      name: "Proof of delivery to invoice",
+      trigger: "A driver marks a delivery complete",
+      steps: [
+        "The photo and signature are attached to the job",
+        "The customer gets a delivery confirmation",
+        "An invoice is created in your accounting tool",
+        "Late or failed deliveries alert the dispatcher",
+      ],
+      outcome: "Invoices out the same day and no paperwork to chase.",
+    },
   },
 ];

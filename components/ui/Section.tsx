@@ -44,12 +44,12 @@ export function SectionHeading({
   center?: boolean;
 }) {
   return (
-    <div className={`mb-12 max-w-2xl ${center ? "mx-auto text-center" : ""}`}>
-      <p className="mb-3 text-xs uppercase tracking-widest text-moon">{eyebrow}</p>
+    <div className={`mb-10 max-w-2xl ${center ? "mx-auto text-center" : ""}`}>
+      <p className="mb-3 font-mono text-xs uppercase tracking-widest text-moon">{eyebrow}</p>
       <RevealText
         text={title}
         highlight={highlight}
-        className="text-3xl sm:text-4xl font-semibold tracking-tight leading-[1.1]"
+        className="text-2xl sm:text-[2rem] font-semibold tracking-tight leading-tight"
       />
       {intro && (
         <Reveal delay={0.15}>
