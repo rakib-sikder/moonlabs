@@ -1,176 +1,189 @@
-# Client portal setup
+# Client portal setup (Cloudflare)
 
-The client portal lives at `/login` and `/dashboard`. Clients sign in with an email link or
-Google and see their projects, automations, requests, files and invoices. Moonlabs staff
-manage everything from `/dashboard/admin`.
+The client portal lives at `/login` and `/dashboard`. Clients sign in with email and password
+(or Google, if you turn it on) and see their projects, automations, requests, files and
+invoices. Moonlabs staff manage everything from `/dashboard/admin`.
 
-It runs on [Supabase](https://supabase.com) (database, sign-in and file storage). Until the
-two environment variables below are set, `/login` and `/dashboard` show "Client portal not
-configured yet" and the rest of the site works normally.
+Everything runs on Cloudflare, inside the same Worker as the website:
 
-The app only ever uses the public **anon** key. Who can see and change what is enforced in
-the database by row-level security (RLS), so you never need the service-role key in this
-project. Do not add it.
+| Piece | What it uses |
+| --- | --- |
+| Data | D1 database `moonlabs-portal` (binding `DB`), schema in `migrations/` |
+| Sign-in | Our own code: PBKDF2 password hashes, session cookies, invite and reset links |
+| Files | Optional R2 bucket (binding `FILES`). Without it, deliverables are shared as links |
+| Google sign-in | Optional, only when `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` are set |
+
+If the `DB` binding is missing, `/login` and `/dashboard` show "Client portal not configured
+yet" and the rest of the site works normally.
 
 ---
 
-## 1. Create the Supabase project
+## How sign-in works
 
-1. Sign in at <https://supabase.com/dashboard> and click **New project**.
-2. Pick a name (e.g. `moonlabs-portal`), a strong database password (save it in your password
-   manager), and the region closest to your clients.
-3. Wait for it to finish provisioning (about two minutes).
+- **Passwords** are hashed with PBKDF2-SHA256 (100,000 iterations, the Workers maximum, with a
+  random salt per user) and stored as `pbkdf2$<iterations>$<salt>$<hash>`.
+- **Sessions**: signing in sets an httpOnly, SameSite=Lax cookie (`ml_session`, Secure on
+  https) holding a random 32-byte token. The database stores only its SHA-256 hash. Sessions
+  last 30 days and are extended while the person keeps using the portal. Sign out deletes the
+  session.
+- **Rate limiting**: 5 failed passwords per email and IP address (and 30 per IP address)
+  within 15 minutes blocks further attempts for that window.
+- **No public sign-up.** People get in only through an invite link from an admin.
+- **Who can see what** is checked in code (`lib/portal/access.ts`) on every page, action and
+  download:
 
-## 2. Run the migration
+| | Client | Org admin | Staff |
+| --- | --- | --- | --- |
+| See their organization's projects, automations, runs, files, invoices | yes | yes | all orgs |
+| See draft invoices | no | yes | yes |
+| Open requests, comment on requests (as themselves) | yes | yes | yes |
+| Change request status, edit everything else, add files | no | yes | yes |
+| Invite people, create reset links | no | own org | all orgs |
+| Create organizations, make someone staff | no | no | yes |
 
-1. In the project, open **SQL Editor** > **New query**.
-2. Paste the whole of `supabase/migrations/0001_portal.sql` and click **Run**.
-   It creates the tables, the security rules, and a private storage bucket called
-   `deliverables`.
-3. Do **not** run `supabase/seed.sql` on this project. It is fake demo data for local testing
-   only (see "Local testing" below).
+An org admin can create a password reset link only for people who are not staff and whose
+organizations they all administer.
 
-If you use the Supabase CLI instead: `supabase link --project-ref <ref>` then `supabase db push`.
+---
 
-## 3. Turn on sign-in methods
+## 1. Apply the database migrations
 
-### Email links (on by default)
+The database already exists (`moonlabs-portal`, bound as `DB` in `wrangler.jsonc`).
 
-**Authentication > Sign In / Providers > Email**: make sure Email is enabled.
-
-Recommended: make email links work on any device (the default link only works in the same
-browser that requested it). Go to **Authentication > Emails > Templates > Magic Link** and
-replace the link in the template with:
-
-```html
-<a href="{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=email">Sign in to Moonlabs</a>
+```bash
+npx wrangler d1 migrations apply moonlabs-portal --remote
 ```
 
-Do the same in the **Confirm signup** template (first sign-in of a new address) using
-`type=email` as well. The callback route handles both link styles.
+Run this again whenever a new file appears in `migrations/`. It only applies new ones.
+`migrations/` never contains demo data.
 
-The built-in email sender is rate-limited (a few emails per hour) and meant for testing.
-Before real clients use it, set up your own SMTP under **Authentication > Emails > SMTP
-Settings** (Resend, Postmark, SES, etc.).
+## 2. Deploy
 
-### Google
+```bash
+npm run deploy:cf
+```
 
-1. In Google Cloud Console, create a project (or use an existing one) and open
-   **APIs & Services > Credentials > Create credentials > OAuth client ID**.
-   - Application type: **Web application**.
-   - Authorised redirect URI: `https://<your-project-ref>.supabase.co/auth/v1/callback`
-     (copy the exact value from Supabase: **Authentication > Sign In / Providers > Google**).
-   - Configure the OAuth consent screen (app name "Moonlabs", your support email).
-2. Copy the Client ID and Client Secret into **Supabase > Authentication > Sign In /
-   Providers > Google**, enable it, and save.
+This builds the site with OpenNext and deploys the Worker to
+`https://moonlabs.sikdersmail.workers.dev`.
 
-## 4. Set the redirect URLs
+## 3. Create the first admin
 
-**Authentication > URL Configuration**:
+```bash
+node scripts/portal-create-admin.mjs you@example.com
+```
 
-- **Site URL**: your production address, e.g. `https://moonlabs.vercel.app` (or your custom
-  domain).
-- **Redirect URLs** (add each):
-  - `https://moonlabs.vercel.app/auth/callback`
-  - `https://*-<your-vercel-team>.vercel.app/auth/callback` (Vercel preview deploys, optional)
-  - `http://localhost:3000/auth/callback` (local development)
+It adds a one-time staff invite to the production database and prints a link like
+`https://moonlabs.sikdersmail.workers.dev/invite/...`. Open it (valid 7 days, works once), set
+your name and a password, and you are signed in as Moonlabs staff with access to every
+organization.
 
-If you later move to a custom domain, add its `/auth/callback` here and update Site URL.
+Options: `--base https://your-domain.com` to print a link for a custom domain, `--local` to
+write to the local database used by `wrangler dev`. The link cannot be shown again (only its
+hash is stored); if you lose it, run the script again.
 
-## 5. Set the environment variables
-
-Find both values in **Project Settings > API** (or **Connect** > App frameworks):
-
-| Variable | Value |
-| --- | --- |
-| `NEXT_PUBLIC_SUPABASE_URL` | Project URL, e.g. `https://abcd1234.supabase.co` |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | The `anon` / publishable key (not `service_role`) |
-
-**Locally:** copy `.env.example` to `.env.local` and fill them in. `.env*` files are
-git-ignored; never commit them.
-
-**On Vercel:** Project > **Settings > Environment Variables**, add both for Production (and
-Preview if you want previews to have a working portal), then **redeploy**. `NEXT_PUBLIC_`
-values are baked in at build time, so a redeploy is required after changing them.
-
-## 6. Make yourself an admin
-
-1. Open `/login` on the site and sign in once (email link or Google). This creates your
-   account and profile.
-2. In Supabase **SQL Editor**, run (with your email):
-
-   ```sql
-   update public.profiles set is_staff = true
-   where email = lower('you@moonlabs.example');
-   ```
-
-3. Reload `/dashboard`. You now see **Admin** in the sidebar and can see every organization.
-
-`is_staff` = Moonlabs staff with access to every client. For a teammate who should only
-manage one client, invite them to that organization with the **Admin (Moonlabs)** role
-instead.
-
-## 7. Invite a client
+## 4. Invite a client
 
 1. `/dashboard/admin` > **New organization**: the client's company name and plan.
-2. Open the organization > **Settings & people** > **Invite someone**: their email, role
-   **Client**. Add as many people from the client's team as you like.
-3. Tell them to go to `https://<your-site>/login` and sign in with **that same email**
-   (email link, or Google if it is a Google account). They are added to the organization
-   automatically on first sign-in. Pending invites are listed under the form until used.
-4. Fill in their workspace from the admin tabs: projects (the five stages are created for
+2. Open the organization > **Settings & people** > **Invite someone**: their email and role
+   (**Client**, or **Admin (Moonlabs)** for a teammate who should manage only this client).
+   Staff also see "Also make them Moonlabs staff".
+3. Click **Create invite link**, then **Copy link** and send it to them yourself (email,
+   WhatsApp, Slack). It is valid for 7 days, works once, and is not shown again. Creating a
+   new invite for the same email replaces the old link. Pending invites are listed under the
+   form and can be revoked.
+4. They open the link, enter their name and a password, and land in their dashboard. If they
+   already have an account (for example with another client), they confirm their existing
+   password instead and the new organization is added.
+5. Fill in their workspace from the admin tabs: projects (the five stages are created for
    you), milestones and updates, automations and run logs, files, invoices.
 
-Anyone can request a sign-in link, but a person who is not invited only sees "Your workspace
-is not set up yet". They cannot see any client data.
+## 5. Reset a password
 
-## What clients can and cannot do
+No emails are sent yet, so the "Forgot password?" page tells people to ask their Moonlabs
+contact.
 
-| | Client | Org admin / staff |
-| --- | --- | --- |
-| See their own organization's projects, automations, runs, files, invoices | yes | yes (all orgs for staff) |
-| See draft invoices | no | yes |
-| Open requests, comment on requests | yes | yes |
-| Change request status, edit anything else, upload files | no | yes |
-| Create organizations | no | staff only |
+1. Open the organization > **Settings & people** > **Reset a password**.
+2. Pick the person, click **Create reset link**, then **Copy link** and send it to them.
+3. They open it (valid 24 hours, works once) and choose a new password. All their other
+   sessions are signed out.
 
-All of this is enforced by the RLS policies in the migration, not just hidden in the UI.
+## 6. Files (deliverables)
 
-## Files
+**Without R2 (now):** Admin > Files > **Share a link**: a name and an `https://` link (Google
+Drive, Dropbox, Loom and so on). Clients see it under Files with an **Open** button.
 
-Deliverables go to the private `deliverables` bucket under `<organization id>/...`. Admins
-upload from **Admin > Files** (straight from the browser to Supabase, max 50 MB per file).
-Clients download through `/dashboard/files/<id>/download`, which issues a signed link that
-expires after 5 minutes.
+**With R2 (later):** uploads up to 50 MB go to a private R2 bucket and downloads go through
+`/dashboard/files/<id>/download`, which checks that the person belongs to the file's
+organization and streams the file back as an attachment.
 
-## Hours saved
+To turn R2 on:
 
-Each automation has "minutes saved per run". Every successful run logged gets that many
-minutes (or a custom number), and the overview shows the total for the current month (UTC).
+1. In the Cloudflare dashboard open **R2 Object Storage** and click **Get started** (R2 must be
+   enabled on the account once).
+2. `npx wrangler r2 bucket create moonlabs-portal-files`
+3. In `wrangler.jsonc`, uncomment the `r2_buckets` block (binding `FILES`).
+4. `npm run cf-typegen` (refreshes `cloudflare-env.d.ts`), then `npm run deploy:cf`.
+
+Admin > Files then shows **Upload a deliverable** next to **Share a link**.
+
+## 7. Optional: Google sign-in
+
+Google sign-in only signs in people who already have an account, or who have an open invite
+for the same (verified) Google address. It never creates accounts for strangers. The button
+is hidden until both secrets are set.
+
+1. Go to <https://console.cloud.google.com/>, pick or create a project.
+2. **APIs & Services > OAuth consent screen**: app name "Moonlabs", your support email, user
+   type External. Scopes: `openid`, `email`, `profile` (the defaults). Publish the app.
+3. **APIs & Services > Credentials > Create credentials > OAuth client ID**:
+   - Application type: **Web application**
+   - Authorized redirect URI: `https://moonlabs.sikdersmail.workers.dev/auth/google/callback`
+     (add one per domain if you use a custom domain, e.g.
+     `https://your-domain.com/auth/google/callback`)
+4. Copy the Client ID and Client secret, then:
+
+   ```bash
+   npx wrangler secret put GOOGLE_CLIENT_ID
+   npx wrangler secret put GOOGLE_CLIENT_SECRET
+   ```
+
+   Secrets take effect immediately; no redeploy needed. For local `wrangler dev`, put the
+   same two values in `.dev.vars` (git-ignored) and add
+   `http://localhost:8787/auth/google/callback` (or your local port) as another redirect URI.
+
+To turn it off again: `npx wrangler secret delete GOOGLE_CLIENT_ID`.
+
+---
 
 ## Local testing with demo data
 
-With the Supabase CLI and Docker:
-
 ```bash
-supabase init            # once, if there is no supabase/config.toml yet
-supabase start
-supabase db reset        # applies migrations/ and then seed.sql
+npx wrangler d1 migrations apply moonlabs-portal --local
+npx wrangler d1 execute moonlabs-portal --local --file=scripts/portal-seed-local.sql
+node scripts/portal-create-admin.mjs admin@example.com --local --base http://localhost:8787
+
+npx opennextjs-cloudflare build
+npx wrangler dev
 ```
 
-Use the local URL and anon key printed by `supabase start` in `.env.local`. Sign in as
-`demo-client@example.com` (the email shows up in the local mail viewer, Inbucket/Mailpit, at
-the URL printed by `supabase start`) to see the demo client "Demo Bakery Co. (DEMO)". Make a
-second account staff with the SQL in step 6 to try the admin side.
+Open the printed invite link to create a local staff account. The seed adds two fake client
+organizations and two invites with fixed tokens (local only):
+`/invite/local-demo-client-invite-0001` (Demo Bakery) and
+`/invite/local-demo-florist-invite-0001` (Demo Florist). Never run the seed with `--remote`.
+
+`npm run dev` (next dev) also works: `next.config.ts` calls `initOpenNextCloudflareForDev()`,
+which gives the app the same local D1 database.
 
 ## Troubleshooting
 
-- **"Client portal not configured yet" in production**: the env vars are missing or the
-  site was not redeployed after adding them.
-- **Email link says invalid or expired**: links are one-time and expire after an hour. With
-  the default template they also only work in the browser that requested them; use the
-  token-hash template from step 3.
-- **Google sign-in returns to /login with an error**: check the redirect URI in Google Cloud
-  and the Redirect URLs list in Supabase.
-- **Signed in but no workspace**: the invite email does not match the sign-in email exactly,
-  or no invite was created. Add the invite and have them sign in again.
+- **"Client portal not configured yet"**: the `DB` binding is missing from `wrangler.jsonc`, or
+  the Worker was deployed without it. Check the binding and redeploy.
+- **Errors like "no such table"**: the migrations were not applied to that database. Run
+  step 1 (`--remote` for production, `--local` for wrangler dev).
+- **Invite link says it does not work**: it was used, revoked, replaced by a newer invite, or
+  is older than 7 days. Create a new one.
+- **"Too many failed attempts"**: wait 15 minutes, or create a reset link for the person.
+- **Signed in but no workspace**: the person has an account but no membership. Invite them to
+  the organization (they confirm their password to accept).
+- **Google returns to /login with an error**: check the redirect URI in Google Cloud matches
+  the address exactly, and that the person has an account or open invite for that email.
