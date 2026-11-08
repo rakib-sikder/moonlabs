@@ -1,27 +1,19 @@
 "use client";
 
 import { useRef, useState, useTransition } from "react";
-import { createSupabaseBrowserClient } from "@/lib/supabase/browser";
-import { DELIVERABLES_BUCKET } from "@/lib/supabase/config";
+import { useRouter } from "next/navigation";
 import type { ActionState } from "@/lib/portal/types";
 
-const MAX_BYTES = 50 * 1024 * 1024; // matches the bucket limit in the migration
+const MAX_BYTES = 50 * 1024 * 1024; // matches the limit in /dashboard/files/upload
 
 /**
- * Uploads straight from the browser to the private Storage bucket (as the signed-in admin,
- * so storage RLS applies), then records the file through a server action. Going direct
- * avoids pushing large files through a server action's body-size limit.
+ * Sends the file as the raw request body to /dashboard/files/upload, which checks that the
+ * caller administers the organization and streams it into the R2 bucket. Only rendered when
+ * the FILES binding exists.
  */
-export function FileUploader({
-  orgId,
-  projects,
-  register,
-}: {
-  orgId: string;
-  projects: { id: string; name: string }[];
-  register: (formData: FormData) => Promise<ActionState>;
-}) {
+export function FileUploader({ orgId, projects }: { orgId: string; projects: { id: string; name: string }[] }) {
   const formRef = useRef<HTMLFormElement>(null);
+  const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [state, setState] = useState<ActionState | null>(null);
 
@@ -42,27 +34,25 @@ export function FileUploader({
     const displayName = ((form.elements.namedItem("name") as HTMLInputElement | null)?.value ?? "").trim() || file.name;
 
     startTransition(async () => {
-      const safe = file.name.replace(/[^\w.\-]+/g, "_").slice(-120) || "file";
-      const path = `${orgId}/${crypto.randomUUID()}-${safe}`;
-      const supabase = createSupabaseBrowserClient();
-      const { error } = await supabase.storage
-        .from(DELIVERABLES_BUCKET)
-        .upload(path, file, { contentType: file.type || "application/octet-stream", upsert: false });
-      if (error) {
-        startTransition(() => setState({ ok: false, message: `Upload failed: ${error.message}` }));
-        return;
+      const params = new URLSearchParams({ org_id: orgId, name: displayName });
+      if (projectId) params.set("project_id", projectId);
+      let result: ActionState;
+      try {
+        const res = await fetch(`/dashboard/files/upload?${params}`, {
+          method: "POST",
+          body: file,
+          headers: { "Content-Type": file.type || "application/octet-stream" },
+        });
+        result = ((await res.json().catch(() => null)) as ActionState | null) ?? { ok: false, message: `Upload failed (${res.status}).` };
+      } catch {
+        result = { ok: false, message: "Upload failed. Check your connection and try again." };
       }
-      const fd = new FormData();
-      fd.set("org_id", orgId);
-      fd.set("storage_path", path);
-      fd.set("name", displayName);
-      fd.set("size_bytes", String(file.size));
-      fd.set("content_type", file.type);
-      if (projectId) fd.set("project_id", projectId);
-      const result = await register(fd);
       startTransition(() => {
         setState(result);
-        if (result.ok) formRef.current?.reset();
+        if (result.ok) {
+          formRef.current?.reset();
+          router.refresh();
+        }
       });
     });
   }

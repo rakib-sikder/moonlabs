@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isPortalConfigured } from "@/lib/supabase/config";
-import { requireOrgAdmin } from "@/lib/supabase/session";
-import { getProject } from "@/lib/supabase/queries";
+import { isPortalConfigured } from "@/lib/portal/env";
+import { requireOrgAdmin } from "@/lib/portal/access";
+import { getProject } from "@/lib/portal/queries";
 import { isUuid } from "@/lib/portal/validate";
 import { STAGES, formatDate, formatShortDate, projectStatusLabel, stageLabel, stageStatusLabel } from "@/lib/portal/format";
 import type { ProjectStatus, StageStatus } from "@/lib/portal/types";
@@ -27,10 +27,10 @@ const STAGE_STATUSES: StageStatus[] = ["pending", "active", "done"];
 
 export default async function AdminProjectPage({ params }: { params: Promise<{ orgId: string; projectId: string }> }) {
   const { orgId, projectId } = await params;
-  if (!isPortalConfigured()) return null;
+  if (!(await isPortalConfigured())) return null;
   if (!isUuid(orgId) || !isUuid(projectId)) notFound();
   const { ctx, org } = await requireOrgAdmin(orgId);
-  const data = await getProject(ctx.supabase, org.id, projectId);
+  const data = await getProject(ctx, org.id, projectId);
   if (!data) notFound();
   const { project, stages, milestones, updates } = data;
   const stageByKey = new Map(stages.map((s) => [s.stage, s]));

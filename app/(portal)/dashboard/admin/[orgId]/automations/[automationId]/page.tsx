@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { isPortalConfigured } from "@/lib/supabase/config";
-import { requireOrgAdmin } from "@/lib/supabase/session";
-import { getAutomation, listProjectOptions, requestNow } from "@/lib/supabase/queries";
+import { isPortalConfigured } from "@/lib/portal/env";
+import { requireOrgAdmin } from "@/lib/portal/access";
+import { getAutomation, listProjectOptions, requestNow } from "@/lib/portal/queries";
 import { isUuid } from "@/lib/portal/validate";
 import { automationStatusLabel, formatPercent, formatRelative, runStatusLabel } from "@/lib/portal/format";
 import type { AutomationStatus, RunStatus } from "@/lib/portal/types";
@@ -18,13 +18,13 @@ const RUN_STATUSES: RunStatus[] = ["success", "failed", "running"];
 
 export default async function AdminAutomationPage({ params }: { params: Promise<{ orgId: string; automationId: string }> }) {
   const { orgId, automationId } = await params;
-  if (!isPortalConfigured()) return null;
+  if (!(await isPortalConfigured())) return null;
   if (!isUuid(orgId) || !isUuid(automationId)) notFound();
   const { ctx, org } = await requireOrgAdmin(orgId);
   const now = requestNow();
   const [data, projects] = await Promise.all([
-    getAutomation(ctx.supabase, org.id, automationId, now),
-    listProjectOptions(ctx.supabase, org.id),
+    getAutomation(ctx, org.id, automationId, now),
+    listProjectOptions(ctx, org.id),
   ]);
   if (!data) notFound();
   const { automation: a, runs } = data;

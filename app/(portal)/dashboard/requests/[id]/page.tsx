@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getOrgPage } from "@/lib/supabase/session";
-import { getRequest } from "@/lib/supabase/queries";
+import { getOrgPage } from "@/lib/portal/access";
+import { getRequest } from "@/lib/portal/queries";
 import { isUuid } from "@/lib/portal/validate";
 import { NoWorkspace, PageHeader } from "../../../_components/ui";
 import { RequestThread } from "../../../_components/request-thread";
@@ -16,7 +16,7 @@ export default async function RequestPage({ params }: { params: Promise<{ id: st
   if (!org) return <NoWorkspace canAdmin={ctx.canAdmin} />;
   if (!isUuid(id)) notFound();
 
-  const data = await getRequest(ctx.supabase, org.id, id);
+  const data = await getRequest(ctx, org.id, id);
   if (!data) notFound();
 
   return (

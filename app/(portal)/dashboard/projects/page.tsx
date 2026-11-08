@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getOrgPage } from "@/lib/supabase/session";
-import { listProjects } from "@/lib/supabase/queries";
+import { getOrgPage } from "@/lib/portal/access";
+import { listProjects } from "@/lib/portal/queries";
 import { formatShortDate, projectStatusLabel, projectTone } from "@/lib/portal/format";
 import { Badge, EmptyState, NoWorkspace, PageHeader, Panel, StageTracker, currentStageLabel } from "../../_components/ui";
 
@@ -13,7 +13,7 @@ export default async function ProjectsPage() {
   const { ctx, org } = page;
   if (!org) return <NoWorkspace canAdmin={ctx.canAdmin} />;
 
-  const projects = await listProjects(ctx.supabase, org.id);
+  const projects = await listProjects(ctx, org.id);
 
   return (
     <>

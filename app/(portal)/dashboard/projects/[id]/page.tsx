@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getOrgPage } from "@/lib/supabase/session";
-import { getProject } from "@/lib/supabase/queries";
+import { getOrgPage } from "@/lib/portal/access";
+import { getProject } from "@/lib/portal/queries";
 import { isUuid } from "@/lib/portal/validate";
 import { formatDate, projectStatusLabel, projectTone } from "@/lib/portal/format";
 import { Badge, NoWorkspace, PageHeader, Panel, StageTracker } from "../../../_components/ui";
@@ -18,7 +18,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   if (!org) return <NoWorkspace canAdmin={ctx.canAdmin} />;
   if (!isUuid(id)) notFound();
 
-  const data = await getProject(ctx.supabase, org.id, id);
+  const data = await getProject(ctx, org.id, id);
   if (!data) notFound();
   const { project, stages, milestones, updates } = data;
 

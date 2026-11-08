@@ -67,6 +67,7 @@ export function ActionForm({
       {state.message}
     </p>
   ) : null;
+  const link = state?.ok && state.link ? <CopyLink key={state.link} link={state.link} /> : null;
 
   const button = (
     <button
@@ -89,6 +90,7 @@ export function ActionForm({
           {button}
         </div>
         {message && <div className="mt-2">{message}</div>}
+        {link}
       </form>
     );
   }
@@ -100,6 +102,36 @@ export function ActionForm({
         {button}
         {message}
       </div>
+      {link}
     </form>
+  );
+}
+
+/** A one-time link returned by an action (invite, password reset) with a Copy button. */
+export function CopyLink({ link }: { link: string }) {
+  const [copied, setCopied] = useState(false);
+
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(link);
+      setCopied(true);
+    } catch {
+      setCopied(false);
+    }
+  }
+
+  return (
+    <div className="mt-3 flex flex-wrap items-center gap-2 rounded-md border border-border bg-surface-2 p-2">
+      <input
+        readOnly
+        value={link}
+        aria-label="One-time link"
+        className="pt-input h-8 min-w-0 flex-1 font-mono text-[12px]"
+        onFocus={(e) => e.currentTarget.select()}
+      />
+      <button type="button" className="pt-btn" data-size="sm" onClick={copy}>
+        {copied ? "Copied" : "Copy link"}
+      </button>
+    </div>
   );
 }

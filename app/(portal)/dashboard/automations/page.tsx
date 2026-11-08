@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getOrgPage } from "@/lib/supabase/session";
-import { listAutomations, requestNow } from "@/lib/supabase/queries";
+import { getOrgPage } from "@/lib/portal/access";
+import { listAutomations, requestNow } from "@/lib/portal/queries";
 import { automationStatusLabel, automationTone, formatNumber, formatPercent, formatRelative } from "@/lib/portal/format";
 import { Badge, EmptyState, NoWorkspace, PageHeader, Panel } from "../../_components/ui";
 
@@ -14,7 +14,7 @@ export default async function AutomationsPage() {
   if (!org) return <NoWorkspace canAdmin={ctx.canAdmin} />;
 
   const now = requestNow();
-  const automations = await listAutomations(ctx.supabase, org.id, now);
+  const automations = await listAutomations(ctx, org.id, now);
   const order = { failing: 0, warning: 1, healthy: 2, paused: 3 } as const;
   const sorted = [...automations].sort((a, b) => order[a.status] - order[b.status] || a.name.localeCompare(b.name));
 

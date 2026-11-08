@@ -1,14 +1,14 @@
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
-import { isPortalConfigured } from "@/lib/supabase/config";
-import { displayName, getPortalContext } from "@/lib/supabase/session";
+import { isPortalConfigured } from "@/lib/portal/env";
+import { displayName, getPortalContext } from "@/lib/portal/access";
 import { NotConfigured } from "../_components/ui";
 import { MobileNav, NavLinks, OrgSwitcher } from "../_components/shell";
 import { UserMenu } from "../_components/user-menu";
 
 /** Signed-in portal shell: compact top bar, sidebar on desktop, drawer on smaller screens. */
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
-  if (!isPortalConfigured()) {
+  if (!(await isPortalConfigured())) {
     return (
       <main className="flex min-h-dvh items-center justify-center">
         <NotConfigured />

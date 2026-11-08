@@ -3,10 +3,10 @@
 import { cookies } from "next/headers";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { getPortalContext } from "@/lib/supabase/session";
-import { ORG_COOKIE, isPortalConfigured } from "@/lib/supabase/config";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { dbFailure, guarded } from "@/lib/portal/action-utils";
+import { ORG_COOKIE } from "@/lib/portal/env";
+import { endSession } from "@/lib/portal/auth";
+import { assertAdmin, assertMember, getPortalContext } from "@/lib/portal/access";
+import { guarded } from "@/lib/portal/action-utils";
 import { oneOf, optionalText, optionalUuid, text, uuid } from "@/lib/portal/validate";
 import type { ActionState, RequestPriority, RequestStatus } from "@/lib/portal/types";
 
@@ -14,10 +14,7 @@ const PRIORITIES: RequestPriority[] = ["low", "normal", "high", "urgent"];
 const STATUSES: RequestStatus[] = ["open", "in_progress", "waiting", "resolved", "closed"];
 
 export async function signOut(): Promise<void> {
-  if (isPortalConfigured()) {
-    const supabase = await createSupabaseServerClient();
-    await supabase.auth.signOut();
-  }
+  await endSession();
   const cookieStore = await cookies();
   cookieStore.delete(ORG_COOKIE);
   redirect("/login");
@@ -34,6 +31,7 @@ export async function switchOrg(formData: FormData): Promise<ActionState> {
   });
 }
 
+/** Any member may open a request, always as themselves and always with status 'open'. */
 export async function createRequest(formData: FormData): Promise<ActionState> {
   return guarded(async () => {
     const orgId = uuid(formData, "org_id", "Organization");
@@ -43,46 +41,55 @@ export async function createRequest(formData: FormData): Promise<ActionState> {
     const projectId = optionalUuid(formData, "project_id", "Project");
 
     const ctx = await getPortalContext();
-    if (!ctx.orgs.some((o) => o.id === orgId)) return { ok: false, message: "You do not have access to that organization." };
+    assertMember(ctx, orgId);
+    if (projectId) {
+      const project = await ctx.db.prepare("SELECT 1 AS ok FROM projects WHERE id = ? AND org_id = ?").bind(projectId, orgId).first();
+      if (!project) return { ok: false, message: "That project was not found." };
+    }
 
-    const { data, error } = await ctx.supabase
-      .from("requests")
-      .insert({ org_id: orgId, created_by: ctx.userId, title, description, priority, project_id: projectId })
-      .select("id")
-      .single();
-    if (error || !data) return dbFailure(error, "Could not create the request.");
+    const id = crypto.randomUUID();
+    await ctx.db
+      .prepare(
+        "INSERT INTO requests (id, org_id, project_id, created_by, title, description, priority, status) VALUES (?, ?, ?, ?, ?, ?, ?, 'open')",
+      )
+      .bind(id, orgId, projectId, ctx.userId, title, description, priority)
+      .run();
     revalidatePath("/dashboard", "layout");
-    redirect(`/dashboard/requests/${data.id}`);
+    redirect(`/dashboard/requests/${id}`);
   });
 }
 
+/** Any member of the request's organization may comment, always as themselves. */
 export async function addComment(formData: FormData): Promise<ActionState> {
   return guarded(async () => {
     const requestId = uuid(formData, "request_id", "Request");
     const body = text(formData, "body", { label: "Comment", max: 10000 });
     const ctx = await getPortalContext();
 
-    const { error } = await ctx.supabase
-      .from("request_comments")
-      .insert({ request_id: requestId, author_id: ctx.userId, body });
-    if (error) return dbFailure(error, "Could not post the comment.");
+    const request = await ctx.db.prepare("SELECT org_id FROM requests WHERE id = ?").bind(requestId).first<{ org_id: string }>();
+    if (!request) return { ok: false, message: "That request was not found." };
+    assertMember(ctx, request.org_id);
+
+    await ctx.db
+      .prepare("INSERT INTO request_comments (id, request_id, org_id, author_id, body) VALUES (?, ?, ?, ?, ?)")
+      .bind(crypto.randomUUID(), requestId, request.org_id, ctx.userId, body)
+      .run();
     revalidatePath("/dashboard", "layout");
     return { ok: true, message: "Comment posted." };
   });
 }
 
-/** Admins only (RLS enforces it too). Lives here because the request thread is shared. */
+/** Org admins and staff only. Lives here because the request thread is shared. */
 export async function setRequestStatus(formData: FormData): Promise<ActionState> {
   return guarded(async () => {
     const requestId = uuid(formData, "request_id", "Request");
     const orgId = uuid(formData, "org_id", "Organization");
     const status = oneOf(formData, "status", STATUSES, "Status");
     const ctx = await getPortalContext();
-    const org = ctx.orgs.find((o) => o.id === orgId);
-    if (!org || !(ctx.isStaff || org.role === "admin")) return { ok: false, message: "Only Moonlabs staff can change the status." };
+    assertAdmin(ctx, orgId);
 
-    const { error } = await ctx.supabase.from("requests").update({ status }).eq("id", requestId).eq("org_id", orgId);
-    if (error) return dbFailure(error, "Could not update the status.");
+    const res = await ctx.db.prepare("UPDATE requests SET status = ? WHERE id = ? AND org_id = ?").bind(status, requestId, orgId).run();
+    if (!res.meta.changes) return { ok: false, message: "That request was not found." };
     revalidatePath("/dashboard", "layout");
     return { ok: true, message: "Status updated." };
   });

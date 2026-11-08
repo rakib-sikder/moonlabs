@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getOrgPage } from "@/lib/supabase/session";
-import { getOverview, requestNow } from "@/lib/supabase/queries";
+import { getOrgPage } from "@/lib/portal/access";
+import { getOverview, requestNow } from "@/lib/portal/queries";
 import type { ActivityItem } from "@/lib/portal/types";
 import {
   formatNumber,
@@ -41,7 +41,7 @@ export default async function OverviewPage() {
   if (!org) return <NoWorkspace canAdmin={ctx.canAdmin} />;
 
   const now = requestNow();
-  const data = await getOverview(ctx.supabase, org.id, now);
+  const data = await getOverview(ctx, org.id, now);
   const monthName = new Intl.DateTimeFormat("en-US", { month: "long", timeZone: "UTC" }).format(now);
 
   return (

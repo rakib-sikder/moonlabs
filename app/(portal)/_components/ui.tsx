@@ -161,8 +161,8 @@ export function NotConfigured({ compact = false }: { compact?: boolean }) {
           updates with you directly in the meantime.
         </p>
         <p className="mt-4 text-[12.5px] text-muted">
-          Site owner: set <code className="font-mono">NEXT_PUBLIC_SUPABASE_URL</code> and{" "}
-          <code className="font-mono">NEXT_PUBLIC_SUPABASE_ANON_KEY</code>, then redeploy. See{" "}
+          Site owner: add the D1 database binding <code className="font-mono">DB</code> in{" "}
+          <code className="font-mono">wrangler.jsonc</code>, apply the migrations, then redeploy. See{" "}
           <code className="font-mono">docs/PORTAL.md</code>.
         </p>
         <div className="mt-6 flex gap-2">
@@ -197,8 +197,8 @@ export function NoWorkspace({ canAdmin }: { canAdmin: boolean }) {
         }
       >
         {canAdmin
-          ? "Create the first client organization in the admin area, then invite the client by email."
-          : "You are signed in, but your account is not linked to a client organization. If you were invited, make sure you signed in with the same email address the invite was sent to."}
+          ? "Create the first client organization in the admin area, then send the client an invite link."
+          : "You are signed in, but your account is not linked to a client organization yet. Ask your Moonlabs contact for an invite link."}
       </EmptyState>
     </div>
   );

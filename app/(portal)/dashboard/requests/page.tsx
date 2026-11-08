@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getOrgPage } from "@/lib/supabase/session";
-import { listRequests } from "@/lib/supabase/queries";
+import { getOrgPage } from "@/lib/portal/access";
+import { listRequests } from "@/lib/portal/queries";
 import {
   OPEN_REQUEST_STATUSES,
   formatShortDate,
@@ -22,7 +22,7 @@ export default async function RequestsPage({ searchParams }: { searchParams: Pro
   const { ctx, org } = page;
   if (!org) return <NoWorkspace canAdmin={ctx.canAdmin} />;
 
-  const all = await listRequests(ctx.supabase, org.id);
+  const all = await listRequests(ctx, org.id);
   const showAll = show === "all";
   const openCount = all.filter((r) => OPEN_REQUEST_STATUSES.includes(r.status)).length;
   const rows = showAll ? all : all.filter((r) => OPEN_REQUEST_STATUSES.includes(r.status));

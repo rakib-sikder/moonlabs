@@ -1,14 +1,17 @@
 "use server";
 
-// Staff-only mutations. Each action re-checks that the caller administers the organization
-// (agency staff or a membership with role 'admin'); row-level security enforces the same
-// rule in the database, so a forged request cannot reach another client's data.
+// Admin mutations. Each action checks, through lib/portal/access.ts, that the caller is
+// agency staff or an admin member of the organization, and every write is scoped by org_id
+// so a forged id from another organization matches nothing.
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
-import { getPortalContext, type PortalContext } from "@/lib/supabase/session";
-import { DELIVERABLES_BUCKET } from "@/lib/supabase/config";
-import { dbFailure, guarded } from "@/lib/portal/action-utils";
+import { assertAdmin, assertStaff, getPortalContext, type PortalContext } from "@/lib/portal/access";
+import { INVITE_DAYS, RESET_HOURS, isoIn, requestOrigin } from "@/lib/portal/auth";
+import { randomToken, sha256Hex } from "@/lib/portal/crypto";
+import { getFilesBucket } from "@/lib/portal/env";
+import { resettableUsers } from "@/lib/portal/queries";
+import { guarded } from "@/lib/portal/action-utils";
 import {
   ValidationError,
   cents,
@@ -49,14 +52,22 @@ const INVOICE_STATUSES: InvoiceStatus[] = ["draft", "open", "paid", "overdue", "
 async function adminFor(formData: FormData): Promise<{ ctx: PortalContext; orgId: string }> {
   const orgId = uuid(formData, "org_id", "Organization");
   const ctx = await getPortalContext();
-  const org = ctx.orgs.find((o) => o.id === orgId);
-  if (!org || !(ctx.isStaff || org.role === "admin")) throw new ValidationError("You are not an admin of this organization.");
+  assertAdmin(ctx, orgId);
   return { ctx, orgId };
 }
 
 function done(message: string): ActionState {
   revalidatePath("/dashboard", "layout");
   return { ok: true, message };
+}
+
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+/** Checks that a project id belongs to the organization (or is null). */
+async function projectInOrg(ctx: PortalContext, orgId: string, projectId: string | null): Promise<void> {
+  if (!projectId) return;
+  const row = await ctx.db.prepare("SELECT 1 AS ok FROM projects WHERE id = ? AND org_id = ?").bind(projectId, orgId).first();
+  if (!row) throw new ValidationError("That project was not found in this organization.");
 }
 
 // ---------------------------------------------------------------------------
@@ -68,16 +79,12 @@ export async function createOrganization(formData: FormData): Promise<ActionStat
     const plan = oneOf(formData, "plan", PLANS, "Plan");
     const planStarted = optionalDate(formData, "plan_started_on", "Plan start");
     const ctx = await getPortalContext();
-    if (!ctx.isStaff) return { ok: false, message: "Only Moonlabs staff can create organizations." };
+    assertStaff(ctx);
 
-    const { data, error } = await ctx.supabase
-      .from("organizations")
-      .insert({ name, plan, plan_started_on: planStarted })
-      .select("id")
-      .single();
-    if (error || !data) return dbFailure(error, "Could not create the organization.");
+    const id = crypto.randomUUID();
+    await ctx.db.prepare("INSERT INTO organizations (id, name, plan, plan_started_on) VALUES (?, ?, ?, ?)").bind(id, name, plan, planStarted).run();
     revalidatePath("/dashboard", "layout");
-    redirect(`/dashboard/admin/${data.id}`);
+    redirect(`/dashboard/admin/${id}`);
   });
 }
 
@@ -87,22 +94,38 @@ export async function updateOrganization(formData: FormData): Promise<ActionStat
     const name = text(formData, "name", { label: "Name", max: 120 });
     const plan = oneOf(formData, "plan", PLANS, "Plan");
     const planStarted = optionalDate(formData, "plan_started_on", "Plan start");
-    const { error } = await ctx.supabase.from("organizations").update({ name, plan, plan_started_on: planStarted }).eq("id", orgId);
-    if (error) return dbFailure(error, "Could not save the organization.");
+    await ctx.db.prepare("UPDATE organizations SET name = ?, plan = ?, plan_started_on = ? WHERE id = ?").bind(name, plan, planStarted, orgId).run();
     return done("Organization saved.");
   });
 }
 
+/**
+ * Creates a one-time invite link (valid 7 days) for this email and organization. Any older
+ * unused invite for the same email and org is replaced. Only staff may invite staff.
+ */
 export async function inviteMember(formData: FormData): Promise<ActionState> {
   return guarded(async () => {
     const { ctx, orgId } = await adminFor(formData);
     const address = readEmail(formData, "email");
     const role = oneOf(formData, "role", ROLES, "Role");
-    const { error } = await ctx.supabase
-      .from("invites")
-      .upsert({ org_id: orgId, email: address, role, invited_by: ctx.userId, accepted_at: null }, { onConflict: "org_id,email" });
-    if (error) return dbFailure(error, "Could not save the invite.");
-    return done(`Invite saved. Ask ${address} to sign in at /login with this email; they join automatically.`);
+    const makeStaff = checkbox(formData, "is_staff");
+    if (makeStaff) assertStaff(ctx);
+
+    const token = randomToken(32);
+    await ctx.db.batch([
+      ctx.db.prepare("DELETE FROM invites WHERE org_id = ? AND email = ? AND used_at IS NULL").bind(orgId, address),
+      ctx.db
+        .prepare(
+          "INSERT INTO invites (id, token_hash, email, org_id, role, is_staff, expires_at, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+        )
+        .bind(crypto.randomUUID(), await sha256Hex(token), address, orgId, role, makeStaff ? 1 : 0, isoIn(INVITE_DAYS * DAY_MS), ctx.userId),
+    ]);
+    revalidatePath("/dashboard", "layout");
+    return {
+      ok: true,
+      message: `Invite link for ${address} (valid ${INVITE_DAYS} days, works once). Send it to them yourself; it is not shown again.`,
+      link: `${await requestOrigin()}/invite/${token}`,
+    };
   });
 }
 
@@ -110,9 +133,40 @@ export async function revokeInvite(formData: FormData): Promise<ActionState> {
   return guarded(async () => {
     const { ctx, orgId } = await adminFor(formData);
     const id = uuid(formData, "invite_id", "Invite");
-    const { error } = await ctx.supabase.from("invites").delete().eq("id", id).eq("org_id", orgId);
-    if (error) return dbFailure(error, "Could not revoke the invite.");
+    await ctx.db.prepare("DELETE FROM invites WHERE id = ? AND org_id = ? AND used_at IS NULL").bind(id, orgId).run();
     return done("Invite revoked.");
+  });
+}
+
+/**
+ * One-time password reset link (valid 24 hours) for a member. Staff can reset anyone; an org
+ * admin only people who are not staff and whose organizations they all administer.
+ */
+export async function createPasswordReset(formData: FormData): Promise<ActionState> {
+  return guarded(async () => {
+    const { ctx, orgId } = await adminFor(formData);
+    const userId = uuid(formData, "user_id", "Member");
+    const member = await ctx.db
+      .prepare("SELECT u.email FROM memberships m JOIN users u ON u.id = m.user_id WHERE m.org_id = ? AND m.user_id = ?")
+      .bind(orgId, userId)
+      .first<{ email: string }>();
+    if (!member) return { ok: false, message: "That person is not a member of this organization." };
+    if (!(await resettableUsers(ctx, [userId])).has(userId)) {
+      return { ok: false, message: "Only Moonlabs staff can reset this person's password." };
+    }
+
+    const token = randomToken(32);
+    await ctx.db.batch([
+      ctx.db.prepare("DELETE FROM password_resets WHERE user_id = ? AND used_at IS NULL").bind(userId),
+      ctx.db
+        .prepare("INSERT INTO password_resets (token_hash, user_id, expires_at, created_by) VALUES (?, ?, ?, ?)")
+        .bind(await sha256Hex(token), userId, isoIn(RESET_HOURS * 60 * 60 * 1000), ctx.userId),
+    ]);
+    return {
+      ok: true,
+      message: `Password reset link for ${member.email} (valid ${RESET_HOURS} hours, works once). It is not shown again.`,
+      link: `${await requestOrigin()}/reset/${token}`,
+    };
   });
 }
 
@@ -121,8 +175,7 @@ export async function updateMemberRole(formData: FormData): Promise<ActionState>
     const { ctx, orgId } = await adminFor(formData);
     const userId = uuid(formData, "user_id", "Member");
     const role = oneOf(formData, "role", ROLES, "Role");
-    const { error } = await ctx.supabase.from("memberships").update({ role }).eq("org_id", orgId).eq("user_id", userId);
-    if (error) return dbFailure(error, "Could not change the role.");
+    await ctx.db.prepare("UPDATE memberships SET role = ? WHERE org_id = ? AND user_id = ?").bind(role, orgId, userId).run();
     return done("Role updated.");
   });
 }
@@ -132,8 +185,7 @@ export async function removeMember(formData: FormData): Promise<ActionState> {
     const { ctx, orgId } = await adminFor(formData);
     const userId = uuid(formData, "user_id", "Member");
     if (userId === ctx.userId) return { ok: false, message: "You cannot remove yourself." };
-    const { error } = await ctx.supabase.from("memberships").delete().eq("org_id", orgId).eq("user_id", userId);
-    if (error) return dbFailure(error, "Could not remove the member.");
+    await ctx.db.prepare("DELETE FROM memberships WHERE org_id = ? AND user_id = ?").bind(orgId, userId).run();
     return done("Member removed.");
   });
 }
@@ -154,21 +206,22 @@ function projectFields(formData: FormData) {
 export async function createProject(formData: FormData): Promise<ActionState> {
   return guarded(async () => {
     const { ctx, orgId } = await adminFor(formData);
-    const fields = projectFields(formData);
-    const { data, error } = await ctx.supabase.from("projects").insert({ org_id: orgId, ...fields }).select("id").single();
-    if (error || !data) return dbFailure(error, "Could not create the project.");
-
-    const stages = STAGES.map((stage, i) => ({
-      project_id: data.id,
-      org_id: orgId,
-      stage,
-      status: i === 0 && fields.status === "active" ? "active" : "pending",
-      started_on: i === 0 && fields.status === "active" ? fields.started_on : null,
-    }));
-    const { error: stageError } = await ctx.supabase.from("project_stages").insert(stages);
-    if (stageError) return dbFailure(stageError, "Project created, but its stages could not be added.");
+    const f = projectFields(formData);
+    const id = crypto.randomUUID();
+    const stageInserts = STAGES.map((stage, i) => {
+      const first = i === 0 && f.status === "active";
+      return ctx.db
+        .prepare("INSERT INTO project_stages (id, project_id, org_id, stage, status, started_on) VALUES (?, ?, ?, ?, ?, ?)")
+        .bind(crypto.randomUUID(), id, orgId, stage, first ? "active" : "pending", first ? f.started_on : null);
+    });
+    await ctx.db.batch([
+      ctx.db
+        .prepare("INSERT INTO projects (id, org_id, name, summary, status, started_on, target_on) VALUES (?, ?, ?, ?, ?, ?, ?)")
+        .bind(id, orgId, f.name, f.summary, f.status, f.started_on, f.target_on),
+      ...stageInserts,
+    ]);
     revalidatePath("/dashboard", "layout");
-    redirect(`/dashboard/admin/${orgId}/projects/${data.id}`);
+    redirect(`/dashboard/admin/${orgId}/projects/${id}`);
   });
 }
 
@@ -176,8 +229,11 @@ export async function updateProject(formData: FormData): Promise<ActionState> {
   return guarded(async () => {
     const { ctx, orgId } = await adminFor(formData);
     const projectId = uuid(formData, "project_id", "Project");
-    const { error } = await ctx.supabase.from("projects").update(projectFields(formData)).eq("id", projectId).eq("org_id", orgId);
-    if (error) return dbFailure(error, "Could not save the project.");
+    const f = projectFields(formData);
+    await ctx.db
+      .prepare("UPDATE projects SET name = ?, summary = ?, status = ?, started_on = ?, target_on = ? WHERE id = ? AND org_id = ?")
+      .bind(f.name, f.summary, f.status, f.started_on, f.target_on, projectId, orgId)
+      .run();
     return done("Project saved.");
   });
 }
@@ -186,8 +242,7 @@ export async function deleteProject(formData: FormData): Promise<ActionState> {
   return guarded(async () => {
     const { ctx, orgId } = await adminFor(formData);
     const projectId = uuid(formData, "project_id", "Project");
-    const { error } = await ctx.supabase.from("projects").delete().eq("id", projectId).eq("org_id", orgId);
-    if (error) return dbFailure(error, "Could not delete the project.");
+    await ctx.db.prepare("DELETE FROM projects WHERE id = ? AND org_id = ?").bind(projectId, orgId).run();
     revalidatePath("/dashboard", "layout");
     redirect(`/dashboard/admin/${orgId}?tab=projects`);
   });
@@ -198,19 +253,23 @@ export async function updateStage(formData: FormData): Promise<ActionState> {
     const { ctx, orgId } = await adminFor(formData);
     const projectId = uuid(formData, "project_id", "Project");
     const stage = oneOf<StageKey>(formData, "stage", STAGES, "Stage");
-    const row = {
-      project_id: projectId,
-      org_id: orgId,
-      stage,
-      status: oneOf(formData, "status", STAGE_STATUSES, "Status"),
-      started_on: optionalDate(formData, "started_on", "Start date"),
-      due_on: optionalDate(formData, "due_on", "Due date"),
-      completed_on: optionalDate(formData, "completed_on", "Completed date"),
-      notes: optionalText(formData, "notes", { label: "Notes", max: 1000 }),
-    };
+    const status = oneOf(formData, "status", STAGE_STATUSES, "Status");
+    const startedOn = optionalDate(formData, "started_on", "Start date");
+    const dueOn = optionalDate(formData, "due_on", "Due date");
+    const completedOn = optionalDate(formData, "completed_on", "Completed date");
+    const notes = optionalText(formData, "notes", { label: "Notes", max: 1000 });
+    await projectInOrg(ctx, orgId, projectId);
     // Upsert so projects created outside the portal (missing stage rows) still work.
-    const { error } = await ctx.supabase.from("project_stages").upsert(row, { onConflict: "project_id,stage" });
-    if (error) return dbFailure(error, "Could not save the stage.");
+    await ctx.db
+      .prepare(
+        `INSERT INTO project_stages (id, project_id, org_id, stage, status, started_on, due_on, completed_on, notes)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+         ON CONFLICT (project_id, stage) DO UPDATE SET
+           status = excluded.status, started_on = excluded.started_on, due_on = excluded.due_on,
+           completed_on = excluded.completed_on, notes = excluded.notes`,
+      )
+      .bind(crypto.randomUUID(), projectId, orgId, stage, status, startedOn, dueOn, completedOn, notes)
+      .run();
     return done("Stage saved.");
   });
 }
@@ -219,17 +278,15 @@ export async function addMilestone(formData: FormData): Promise<ActionState> {
   return guarded(async () => {
     const { ctx, orgId } = await adminFor(formData);
     const projectId = uuid(formData, "project_id", "Project");
-    const stageRaw = formData.get("stage");
-    const stage = stageRaw ? oneOf<StageKey>(formData, "stage", STAGES, "Stage") : null;
-    const { error } = await ctx.supabase.from("project_milestones").insert({
-      project_id: projectId,
-      org_id: orgId,
-      title: text(formData, "title", { label: "Title", max: 200 }),
-      stage,
-      due_on: optionalDate(formData, "due_on", "Due date"),
-      position: int(formData, "position", { label: "Order", min: 0, max: 10000, fallback: 0 }),
-    });
-    if (error) return dbFailure(error, "Could not add the milestone.");
+    const stage = formData.get("stage") ? oneOf<StageKey>(formData, "stage", STAGES, "Stage") : null;
+    const title = text(formData, "title", { label: "Title", max: 200 });
+    const dueOn = optionalDate(formData, "due_on", "Due date");
+    const position = int(formData, "position", { label: "Order", min: 0, max: 10000, fallback: 0 });
+    await projectInOrg(ctx, orgId, projectId);
+    await ctx.db
+      .prepare("INSERT INTO project_milestones (id, project_id, org_id, stage, title, due_on, position) VALUES (?, ?, ?, ?, ?, ?, ?)")
+      .bind(crypto.randomUUID(), projectId, orgId, stage, title, dueOn, position)
+      .run();
     return done("Milestone added.");
   });
 }
@@ -238,12 +295,10 @@ export async function setMilestoneDone(formData: FormData): Promise<ActionState>
   return guarded(async () => {
     const { ctx, orgId } = await adminFor(formData);
     const id = uuid(formData, "milestone_id", "Milestone");
-    const { error } = await ctx.supabase
-      .from("project_milestones")
-      .update({ done: checkbox(formData, "done") })
-      .eq("id", id)
-      .eq("org_id", orgId);
-    if (error) return dbFailure(error, "Could not update the milestone.");
+    await ctx.db
+      .prepare("UPDATE project_milestones SET done = ? WHERE id = ? AND org_id = ?")
+      .bind(checkbox(formData, "done") ? 1 : 0, id, orgId)
+      .run();
     return done("Milestone updated.");
   });
 }
@@ -252,8 +307,7 @@ export async function deleteMilestone(formData: FormData): Promise<ActionState> 
   return guarded(async () => {
     const { ctx, orgId } = await adminFor(formData);
     const id = uuid(formData, "milestone_id", "Milestone");
-    const { error } = await ctx.supabase.from("project_milestones").delete().eq("id", id).eq("org_id", orgId);
-    if (error) return dbFailure(error, "Could not delete the milestone.");
+    await ctx.db.prepare("DELETE FROM project_milestones WHERE id = ? AND org_id = ?").bind(id, orgId).run();
     return done("Milestone deleted.");
   });
 }
@@ -261,14 +315,14 @@ export async function deleteMilestone(formData: FormData): Promise<ActionState> 
 export async function postUpdate(formData: FormData): Promise<ActionState> {
   return guarded(async () => {
     const { ctx, orgId } = await adminFor(formData);
-    const { error } = await ctx.supabase.from("project_updates").insert({
-      project_id: uuid(formData, "project_id", "Project"),
-      org_id: orgId,
-      author_id: ctx.userId,
-      title: text(formData, "title", { label: "Title", max: 200 }),
-      body: optionalText(formData, "body", { label: "Body", max: 10000 }),
-    });
-    if (error) return dbFailure(error, "Could not post the update.");
+    const projectId = uuid(formData, "project_id", "Project");
+    const title = text(formData, "title", { label: "Title", max: 200 });
+    const body = optionalText(formData, "body", { label: "Body", max: 10000 });
+    await projectInOrg(ctx, orgId, projectId);
+    await ctx.db
+      .prepare("INSERT INTO project_updates (id, project_id, org_id, author_id, title, body) VALUES (?, ?, ?, ?, ?, ?)")
+      .bind(crypto.randomUUID(), projectId, orgId, ctx.userId, title, body)
+      .run();
     return done("Update posted.");
   });
 }
@@ -277,8 +331,7 @@ export async function deleteUpdate(formData: FormData): Promise<ActionState> {
   return guarded(async () => {
     const { ctx, orgId } = await adminFor(formData);
     const id = uuid(formData, "update_id", "Update");
-    const { error } = await ctx.supabase.from("project_updates").delete().eq("id", id).eq("org_id", orgId);
-    if (error) return dbFailure(error, "Could not delete the update.");
+    await ctx.db.prepare("DELETE FROM project_updates WHERE id = ? AND org_id = ?").bind(id, orgId).run();
     return done("Update deleted.");
   });
 }
@@ -300,14 +353,17 @@ function automationFields(formData: FormData) {
 export async function createAutomation(formData: FormData): Promise<ActionState> {
   return guarded(async () => {
     const { ctx, orgId } = await adminFor(formData);
-    const { data, error } = await ctx.supabase
-      .from("automations")
-      .insert({ org_id: orgId, ...automationFields(formData) })
-      .select("id")
-      .single();
-    if (error || !data) return dbFailure(error, "Could not create the automation.");
+    const f = automationFields(formData);
+    await projectInOrg(ctx, orgId, f.project_id);
+    const id = crypto.randomUUID();
+    await ctx.db
+      .prepare(
+        "INSERT INTO automations (id, org_id, project_id, name, description, trigger_label, status, minutes_saved_per_run) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+      )
+      .bind(id, orgId, f.project_id, f.name, f.description, f.trigger_label, f.status, f.minutes_saved_per_run)
+      .run();
     revalidatePath("/dashboard", "layout");
-    redirect(`/dashboard/admin/${orgId}/automations/${data.id}`);
+    redirect(`/dashboard/admin/${orgId}/automations/${id}`);
   });
 }
 
@@ -315,8 +371,14 @@ export async function updateAutomation(formData: FormData): Promise<ActionState>
   return guarded(async () => {
     const { ctx, orgId } = await adminFor(formData);
     const id = uuid(formData, "automation_id", "Automation");
-    const { error } = await ctx.supabase.from("automations").update(automationFields(formData)).eq("id", id).eq("org_id", orgId);
-    if (error) return dbFailure(error, "Could not save the automation.");
+    const f = automationFields(formData);
+    await projectInOrg(ctx, orgId, f.project_id);
+    await ctx.db
+      .prepare(
+        "UPDATE automations SET project_id = ?, name = ?, description = ?, trigger_label = ?, status = ?, minutes_saved_per_run = ? WHERE id = ? AND org_id = ?",
+      )
+      .bind(f.project_id, f.name, f.description, f.trigger_label, f.status, f.minutes_saved_per_run, id, orgId)
+      .run();
     return done("Automation saved.");
   });
 }
@@ -325,8 +387,7 @@ export async function deleteAutomation(formData: FormData): Promise<ActionState>
   return guarded(async () => {
     const { ctx, orgId } = await adminFor(formData);
     const id = uuid(formData, "automation_id", "Automation");
-    const { error } = await ctx.supabase.from("automations").delete().eq("id", id).eq("org_id", orgId);
-    if (error) return dbFailure(error, "Could not delete the automation.");
+    await ctx.db.prepare("DELETE FROM automations WHERE id = ? AND org_id = ?").bind(id, orgId).run();
     revalidatePath("/dashboard", "layout");
     redirect(`/dashboard/admin/${orgId}?tab=automations`);
   });
@@ -337,55 +398,56 @@ export async function logRun(formData: FormData): Promise<ActionState> {
     const { ctx, orgId } = await adminFor(formData);
     const automationId = uuid(formData, "automation_id", "Automation");
     const status = oneOf(formData, "status", RUN_STATUSES, "Status");
-    const { data: automation } = await ctx.supabase
-      .from("automations")
-      .select("minutes_saved_per_run")
-      .eq("id", automationId)
-      .eq("org_id", orgId)
-      .maybeSingle();
+    const startedAt = optionalDateTime(formData, "started_at", "Start time") ?? new Date().toISOString();
+    const durationMs = optionalInt(formData, "duration_ms", { label: "Duration", min: 0, max: 86_400_000 });
+    const items = optionalInt(formData, "items_processed", { label: "Items", min: 0, max: 10_000_000 });
+    const minutes = optionalInt(formData, "minutes_saved", { label: "Minutes saved", min: 0, max: 100000 });
+    const message = optionalText(formData, "message", { label: "Message", max: 2000 });
+
+    const automation = await ctx.db
+      .prepare("SELECT minutes_saved_per_run FROM automations WHERE id = ? AND org_id = ?")
+      .bind(automationId, orgId)
+      .first<{ minutes_saved_per_run: number }>();
     if (!automation) return { ok: false, message: "Automation not found." };
 
-    const minutes = optionalInt(formData, "minutes_saved", { label: "Minutes saved", min: 0, max: 100000 });
-    const { error } = await ctx.supabase.from("automation_runs").insert({
-      automation_id: automationId,
-      org_id: orgId,
-      status,
-      started_at: optionalDateTime(formData, "started_at", "Start time") ?? new Date().toISOString(),
-      duration_ms: optionalInt(formData, "duration_ms", { label: "Duration", min: 0, max: 86_400_000 }),
-      items_processed: optionalInt(formData, "items_processed", { label: "Items", min: 0, max: 10_000_000 }),
-      minutes_saved: minutes ?? (status === "success" ? (automation.minutes_saved_per_run as number) : 0),
-      message: optionalText(formData, "message", { label: "Message", max: 2000 }),
-    });
-    if (error) return dbFailure(error, "Could not log the run.");
+    await ctx.db
+      .prepare(
+        `INSERT INTO automation_runs (id, automation_id, org_id, status, started_at, duration_ms, items_processed, minutes_saved, message)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      )
+      .bind(
+        crypto.randomUUID(),
+        automationId,
+        orgId,
+        status,
+        startedAt,
+        durationMs,
+        items,
+        minutes ?? (status === "success" ? automation.minutes_saved_per_run : 0),
+        message,
+      )
+      .run();
     return done("Run logged.");
   });
 }
 
 // ---------------------------------------------------------------------------
-// Files (bytes are uploaded from the browser straight to Storage; this records them)
+// Files. Uploads go through the /dashboard/files/upload route (R2); links are added here.
 // ---------------------------------------------------------------------------
-export async function registerFile(formData: FormData): Promise<ActionState> {
+export async function addFileLink(formData: FormData): Promise<ActionState> {
   return guarded(async () => {
     const { ctx, orgId } = await adminFor(formData);
-    const storagePath = text(formData, "storage_path", { label: "Storage path", max: 600 });
-    if (!storagePath.startsWith(`${orgId}/`) || storagePath.includes("..")) {
-      return { ok: false, message: "Invalid storage path." };
-    }
-    const { error } = await ctx.supabase.from("files").insert({
-      org_id: orgId,
-      project_id: optionalUuid(formData, "project_id", "Project"),
-      name: text(formData, "name", { label: "File name", max: 255 }),
-      storage_path: storagePath,
-      size_bytes: optionalInt(formData, "size_bytes", { label: "Size", min: 0, max: Number.MAX_SAFE_INTEGER }),
-      content_type: optionalText(formData, "content_type", { label: "Type", max: 200 }),
-      uploaded_by: ctx.userId,
-    });
-    if (error) {
-      // Do not leave an orphaned object behind.
-      await ctx.supabase.storage.from(DELIVERABLES_BUCKET).remove([storagePath]);
-      return dbFailure(error, "Could not save the file record.");
-    }
-    return done("File shared with the client.");
+    const name = text(formData, "name", { label: "Name", max: 255 });
+    const url = optionalUrl(formData, "url", "Link");
+    if (!url) return { ok: false, message: "Link is required." };
+    if (!url.startsWith("https://")) return { ok: false, message: "Use an https:// link." };
+    const projectId = optionalUuid(formData, "project_id", "Project");
+    await projectInOrg(ctx, orgId, projectId);
+    await ctx.db
+      .prepare("INSERT INTO files (id, org_id, project_id, name, external_url, uploaded_by) VALUES (?, ?, ?, ?, ?, ?)")
+      .bind(crypto.randomUUID(), orgId, projectId, name, url, ctx.userId)
+      .run();
+    return done("Link shared with the client.");
   });
 }
 
@@ -393,12 +455,13 @@ export async function deleteFile(formData: FormData): Promise<ActionState> {
   return guarded(async () => {
     const { ctx, orgId } = await adminFor(formData);
     const id = uuid(formData, "file_id", "File");
-    const { data: file } = await ctx.supabase.from("files").select("storage_path").eq("id", id).eq("org_id", orgId).maybeSingle();
+    const file = await ctx.db.prepare("SELECT r2_key FROM files WHERE id = ? AND org_id = ?").bind(id, orgId).first<{ r2_key: string | null }>();
     if (!file) return { ok: false, message: "File not found." };
-    const { error: storageError } = await ctx.supabase.storage.from(DELIVERABLES_BUCKET).remove([file.storage_path as string]);
-    if (storageError) return dbFailure(null, "Could not delete the stored file.");
-    const { error } = await ctx.supabase.from("files").delete().eq("id", id).eq("org_id", orgId);
-    if (error) return dbFailure(error, "Could not delete the file record.");
+    if (file.r2_key) {
+      const bucket = await getFilesBucket();
+      if (bucket) await bucket.delete(file.r2_key);
+    }
+    await ctx.db.prepare("DELETE FROM files WHERE id = ? AND org_id = ?").bind(id, orgId).run();
     return done("File deleted.");
   });
 }
@@ -411,18 +474,23 @@ export async function createInvoice(formData: FormData): Promise<ActionState> {
     const { ctx, orgId } = await adminFor(formData);
     const currency = text(formData, "currency", { label: "Currency", max: 3, min: 3 }).toUpperCase();
     if (!/^[A-Z]{3}$/.test(currency)) return { ok: false, message: "Currency must be a 3-letter code like USD." };
-    const { error } = await ctx.supabase.from("invoices").insert({
-      org_id: orgId,
-      number: text(formData, "number", { label: "Invoice number", max: 40 }),
-      issued_on: optionalDate(formData, "issued_on", "Issue date") ?? new Date().toISOString().slice(0, 10),
-      due_on: optionalDate(formData, "due_on", "Due date"),
-      amount_cents: cents(formData, "amount", "Amount"),
-      currency,
-      status: oneOf(formData, "status", INVOICE_STATUSES, "Status"),
-      url: optionalUrl(formData, "url", "Invoice link"),
-      notes: optionalText(formData, "notes", { label: "Notes", max: 2000 }),
-    });
-    if (error) return dbFailure(error, error.code === "23505" ? "That invoice number already exists." : "Could not add the invoice.");
+    const number = text(formData, "number", { label: "Invoice number", max: 40 });
+    const issuedOn = optionalDate(formData, "issued_on", "Issue date") ?? new Date().toISOString().slice(0, 10);
+    const dueOn = optionalDate(formData, "due_on", "Due date");
+    const amount = cents(formData, "amount", "Amount");
+    const status = oneOf(formData, "status", INVOICE_STATUSES, "Status");
+    const url = optionalUrl(formData, "url", "Invoice link");
+    const notes = optionalText(formData, "notes", { label: "Notes", max: 2000 });
+
+    const exists = await ctx.db.prepare("SELECT 1 AS ok FROM invoices WHERE org_id = ? AND number = ?").bind(orgId, number).first();
+    if (exists) return { ok: false, message: "That invoice number already exists." };
+    await ctx.db
+      .prepare(
+        `INSERT INTO invoices (id, org_id, number, issued_on, due_on, amount_cents, currency, status, url, notes)
+         VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      )
+      .bind(crypto.randomUUID(), orgId, number, issuedOn, dueOn, amount, currency, status, url, notes)
+      .run();
     return done("Invoice added.");
   });
 }
@@ -432,8 +500,7 @@ export async function setInvoiceStatus(formData: FormData): Promise<ActionState>
     const { ctx, orgId } = await adminFor(formData);
     const id = uuid(formData, "invoice_id", "Invoice");
     const status = oneOf(formData, "status", INVOICE_STATUSES, "Status");
-    const { error } = await ctx.supabase.from("invoices").update({ status }).eq("id", id).eq("org_id", orgId);
-    if (error) return dbFailure(error, "Could not update the invoice.");
+    await ctx.db.prepare("UPDATE invoices SET status = ? WHERE id = ? AND org_id = ?").bind(status, id, orgId).run();
     return done("Invoice updated.");
   });
 }

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
-import { getOrgPage } from "@/lib/supabase/session";
-import { listProjectOptions } from "@/lib/supabase/queries";
+import { getOrgPage } from "@/lib/portal/access";
+import { listProjectOptions } from "@/lib/portal/queries";
 import { isUuid } from "@/lib/portal/validate";
 import { requestPriorityLabel } from "@/lib/portal/format";
 import type { RequestPriority } from "@/lib/portal/types";
@@ -19,7 +19,7 @@ export default async function NewRequestPage({ searchParams }: { searchParams: P
   const { ctx, org } = page;
   if (!org) return <NoWorkspace canAdmin={ctx.canAdmin} />;
 
-  const projects = await listProjectOptions(ctx.supabase, org.id);
+  const projects = await listProjectOptions(ctx, org.id);
   const preselect = isUuid(project) && projects.some((p) => p.id === project) ? project : "";
 
   return (

@@ -1,4 +1,4 @@
-// Row shapes for the client portal. They mirror supabase/migrations/0001_portal.sql.
+// Row shapes for the client portal. They mirror migrations/0001_portal.sql (D1).
 // Keep the two in sync when the schema changes.
 
 export type MemberRole = "client" | "admin";
@@ -20,11 +20,11 @@ export type Organization = {
   created_at: string;
 };
 
+/** A portal user as shown in the UI (`users.name` is exposed as full_name). */
 export type Profile = {
   id: string;
   email: string | null;
   full_name: string | null;
-  avatar_url: string | null;
   is_staff: boolean;
 };
 
@@ -42,11 +42,13 @@ export type MemberWithProfile = Membership & { profile: PersonRef };
 
 export type Invite = {
   id: string;
-  org_id: string;
+  org_id: string | null;
   email: string;
   role: MemberRole;
+  is_staff: boolean;
   created_at: string;
-  accepted_at: string | null;
+  expires_at: string;
+  used_at: string | null;
 };
 
 export type Project = {
@@ -154,7 +156,10 @@ export type PortalFile = {
   org_id: string;
   project_id: string | null;
   name: string;
-  storage_path: string;
+  /** Object key in the FILES R2 bucket, or null for a link deliverable. */
+  r2_key: string | null;
+  /** https link for deliverables shared as a link instead of an upload. */
+  external_url: string | null;
   size_bytes: number | null;
   content_type: string | null;
   created_at: string;
@@ -187,4 +192,6 @@ export type ActivityItem = {
 export type ActionState = {
   ok: boolean;
   message?: string;
+  /** One-time link to show with a Copy button (invites, password resets). */
+  link?: string;
 };

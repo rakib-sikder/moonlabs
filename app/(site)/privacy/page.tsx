@@ -35,7 +35,7 @@ export default function PrivacyPage() {
           title: "Where it's stored",
           body: [
             "Contact form messages are delivered to our team's private messaging channel.",
-            "Client portal data is stored with our database and authentication provider (Supabase), with access limited to your organisation and our staff.",
+            "Client portal data is stored on Cloudflare (D1 database, and file storage when used), with access limited to your organisation and our staff.",
             "Automations we build run inside your own accounts wherever possible, so your business data stays with you.",
           ],
         },

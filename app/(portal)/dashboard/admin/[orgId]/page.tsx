@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { isPortalConfigured } from "@/lib/supabase/config";
-import { requireOrgAdmin } from "@/lib/supabase/session";
+import { getFilesBucket, isPortalConfigured } from "@/lib/portal/env";
+import { requireOrgAdmin } from "@/lib/portal/access";
 import {
   listAutomations,
   listFiles,
@@ -12,7 +12,7 @@ import {
   listProjects,
   listRequests,
   requestNow,
-} from "@/lib/supabase/queries";
+} from "@/lib/portal/queries";
 import { isUuid } from "@/lib/portal/validate";
 import {
   automationStatusLabel,
@@ -34,17 +34,18 @@ import {
   requestTone,
 } from "@/lib/portal/format";
 import type { AutomationStatus, InvoiceStatus, OrgPlan, ProjectStatus } from "@/lib/portal/types";
-import type { OrgAccess, PortalContext } from "@/lib/supabase/session";
+import type { OrgAccess, PortalContext } from "@/lib/portal/access";
 import { Badge, EmptyState, Field, PageHeader, Panel, currentStageLabel } from "../../../_components/ui";
 import { ActionForm } from "../../../_components/action-form";
 import { FileUploader } from "../../../_components/file-uploader";
 import {
+  addFileLink,
   createAutomation,
   createInvoice,
+  createPasswordReset,
   createProject,
   deleteFile,
   inviteMember,
-  registerFile,
   removeMember,
   revokeInvite,
   setInvoiceStatus,
@@ -79,7 +80,7 @@ export default async function AdminOrgPage({
   searchParams: Promise<{ tab?: string }>;
 }) {
   const [{ orgId }, { tab: tabParam }] = await Promise.all([params, searchParams]);
-  if (!isPortalConfigured()) return null;
+  if (!(await isPortalConfigured())) return null;
   if (!isUuid(orgId)) notFound();
   const { ctx, org } = await requireOrgAdmin(orgId);
   const tab: TabKey = TABS.some((t) => t.key === tabParam) ? (tabParam as TabKey) : "settings";
@@ -118,13 +119,13 @@ export default async function AdminOrgPage({
 
 // ---------------------------------------------------------------------------
 async function SettingsTab({ ctx, org }: TabProps) {
-  const { members, invites } = await listMembers(ctx.supabase, org.id);
+  const { members, invites } = await listMembers(ctx, org.id);
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
       <div className="space-y-6 lg:col-span-2">
         <Panel title={`Members (${members.length})`} bodyClassName={null}>
           {members.length === 0 ? (
-            <EmptyState title="No members yet">Invite the client below. They join when they first sign in.</EmptyState>
+            <EmptyState title="No members yet">Invite the client below. They join when they open their invite link.</EmptyState>
           ) : (
             <div className="pt-table-wrap">
               <table className="pt-table">
@@ -180,11 +181,36 @@ async function SettingsTab({ ctx, org }: TabProps) {
           )}
         </Panel>
 
+        {members.some((m) => m.canReset) && (
+          <Panel title="Reset a password">
+            <ActionForm action={createPasswordReset} submitLabel="Create reset link" variant="default" inline>
+              <input type="hidden" name="org_id" value={org.id} />
+              <div className="min-w-[14rem] flex-1">
+                <label htmlFor="reset-user" className="pt-label">
+                  Person
+                </label>
+                <select id="reset-user" name="user_id" className="pt-select">
+                  {members
+                    .filter((m) => m.canReset)
+                    .map((m) => (
+                      <option key={m.user_id} value={m.user_id}>
+                        {personName(m.profile)} ({m.profile?.email})
+                      </option>
+                    ))}
+                </select>
+              </div>
+            </ActionForm>
+            <p className="mt-2 text-[12.5px] text-muted">
+              You get a one-time link (valid 24 hours) to send them. Opening it lets them choose a new password and signs them out everywhere else.
+            </p>
+          </Panel>
+        )}
+
         <Panel title="Invite someone">
-          <ActionForm action={inviteMember} submitLabel="Save invite" resetOnSuccess>
+          <ActionForm action={inviteMember} submitLabel="Create invite link" resetOnSuccess>
             <input type="hidden" name="org_id" value={org.id} />
             <div className="grid gap-4 sm:grid-cols-[1fr_160px]">
-              <Field label="Email" htmlFor="invite-email" hint="They join this organization automatically the first time they sign in with this address.">
+              <Field label="Email" htmlFor="invite-email" hint="You get a one-time link (valid 7 days) to send them. They set a password and join this organization.">
                 <input id="invite-email" name="email" type="email" required className="pt-input" />
               </Field>
               <Field label="Role" htmlFor="invite-role">
@@ -194,6 +220,12 @@ async function SettingsTab({ ctx, org }: TabProps) {
                 </select>
               </Field>
             </div>
+            {ctx.isStaff && (
+              <label className="mt-3 flex items-center gap-2 text-[13px]">
+                <input type="checkbox" name="is_staff" className="h-4 w-4" />
+                Also make them Moonlabs staff (access to every organization)
+              </label>
+            )}
           </ActionForm>
           {invites.length > 0 && (
             <div className="mt-6 border-t border-border pt-4">
@@ -202,7 +234,11 @@ async function SettingsTab({ ctx, org }: TabProps) {
                 {invites.map((i) => (
                   <li key={i.id} className="flex flex-wrap items-center justify-between gap-2 py-2">
                     <span>
-                      {i.email} <span className="text-[12.5px] text-muted">· {i.role} · {formatShortDate(i.created_at)}</span>
+                      {i.email}{" "}
+                      <span className="text-[12.5px] text-muted">
+                        · {i.role}
+                        {i.is_staff ? " + staff" : ""} · expires {formatShortDate(i.expires_at)}
+                      </span>
                     </span>
                     <ActionForm action={revokeInvite} submitLabel="Revoke" size="sm" variant="ghost" submitAriaLabel={`Revoke invite for ${i.email}`}>
                       <input type="hidden" name="org_id" value={org.id} />
@@ -244,7 +280,7 @@ async function SettingsTab({ ctx, org }: TabProps) {
 
 // ---------------------------------------------------------------------------
 async function ProjectsTab({ ctx, org }: TabProps) {
-  const projects = await listProjects(ctx.supabase, org.id);
+  const projects = await listProjects(ctx, org.id);
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
       <Panel title={`Projects (${projects.length})`} className="lg:col-span-2" bodyClassName={null}>
@@ -318,7 +354,7 @@ async function ProjectsTab({ ctx, org }: TabProps) {
 // ---------------------------------------------------------------------------
 async function AutomationsTab({ ctx, org }: TabProps) {
   const now = requestNow();
-  const [automations, projects] = await Promise.all([listAutomations(ctx.supabase, org.id, now), listProjectOptions(ctx.supabase, org.id)]);
+  const [automations, projects] = await Promise.all([listAutomations(ctx, org.id, now), listProjectOptions(ctx, org.id)]);
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
       <Panel title={`Automations (${automations.length})`} className="lg:col-span-2" bodyClassName={null}>
@@ -403,7 +439,7 @@ async function AutomationsTab({ ctx, org }: TabProps) {
 
 // ---------------------------------------------------------------------------
 async function RequestsTab({ ctx, org }: TabProps) {
-  const requests = await listRequests(ctx.supabase, org.id);
+  const requests = await listRequests(ctx, org.id);
   return (
     <Panel title={`Requests (${requests.length})`} bodyClassName={null}>
       {requests.length === 0 ? (
@@ -448,7 +484,7 @@ async function RequestsTab({ ctx, org }: TabProps) {
 
 // ---------------------------------------------------------------------------
 async function FilesTab({ ctx, org }: TabProps) {
-  const [files, projects] = await Promise.all([listFiles(ctx.supabase, org.id), listProjectOptions(ctx.supabase, org.id)]);
+  const [files, projects, bucket] = await Promise.all([listFiles(ctx, org.id), listProjectOptions(ctx, org.id), getFilesBucket()]);
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
       <Panel title={`Files (${files.length})`} className="lg:col-span-2" bodyClassName={null}>
@@ -474,13 +510,19 @@ async function FilesTab({ ctx, org }: TabProps) {
                 {files.map((f) => (
                   <tr key={f.id}>
                     <td className="max-w-[260px]">
-                      <a href={`/dashboard/files/${f.id}/download`} className="pt-row-link line-clamp-1 break-all">
-                        {f.name}
-                      </a>
+                      {f.external_url ? (
+                        <a href={f.external_url} target="_blank" rel="noopener noreferrer" className="pt-row-link line-clamp-1 break-all">
+                          {f.name}
+                        </a>
+                      ) : (
+                        <a href={`/dashboard/files/${f.id}/download`} className="pt-row-link line-clamp-1 break-all">
+                          {f.name}
+                        </a>
+                      )}
                     </td>
                     <td className="text-muted">{f.project?.name ?? "-"}</td>
                     <td className="pt-kbd-muted whitespace-nowrap">{formatDate(f.created_at)}</td>
-                    <td className="pt-num pt-kbd-muted">{formatBytes(f.size_bytes)}</td>
+                    <td className="pt-num pt-kbd-muted">{f.external_url ? "Link" : formatBytes(f.size_bytes)}</td>
                     <td className="text-right">
                       <ActionForm action={deleteFile} submitLabel="Delete" size="sm" variant="danger" confirm={`Delete ${f.name}? The client loses access.`} submitAriaLabel={`Delete ${f.name}`}>
                         <input type="hidden" name="org_id" value={org.id} />
@@ -494,16 +536,47 @@ async function FilesTab({ ctx, org }: TabProps) {
           </div>
         )}
       </Panel>
-      <Panel title="Upload a deliverable">
-        <FileUploader orgId={org.id} projects={projects} register={registerFile} />
-      </Panel>
+      <div className="space-y-6">
+        {bucket && (
+          <Panel title="Upload a deliverable">
+            <FileUploader orgId={org.id} projects={projects} />
+          </Panel>
+        )}
+        <Panel title="Share a link">
+          <ActionForm action={addFileLink} submitLabel="Share link" resetOnSuccess>
+            <input type="hidden" name="org_id" value={org.id} />
+            <div className="space-y-4">
+              <Field label="Name" htmlFor="link-name">
+                <input id="link-name" name="name" required maxLength={255} className="pt-input" placeholder="Handover guide" />
+              </Field>
+              <Field
+                label="Link"
+                htmlFor="link-url"
+                hint={bucket ? "Google Drive, Dropbox, Loom and so on. https only." : "File uploads are off until R2 is turned on, so share deliverables as links (https only)."}
+              >
+                <input id="link-url" name="url" type="url" required className="pt-input" placeholder="https://" />
+              </Field>
+              <Field label="Project" htmlFor="link-project">
+                <select id="link-project" name="project_id" defaultValue="" className="pt-select">
+                  <option value="">None</option>
+                  {projects.map((p) => (
+                    <option key={p.id} value={p.id}>
+                      {p.name}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+            </div>
+          </ActionForm>
+        </Panel>
+      </div>
     </div>
   );
 }
 
 // ---------------------------------------------------------------------------
 async function InvoicesTab({ ctx, org }: TabProps) {
-  const invoices = await listInvoices(ctx.supabase, org.id);
+  const invoices = await listInvoices(ctx, org.id);
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
       <Panel title={`Invoices (${invoices.length})`} className="lg:col-span-2" bodyClassName={null}>

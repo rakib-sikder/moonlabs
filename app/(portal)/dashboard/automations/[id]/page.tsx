@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getOrgPage } from "@/lib/supabase/session";
-import { getAutomation, requestNow } from "@/lib/supabase/queries";
+import { getOrgPage } from "@/lib/portal/access";
+import { getAutomation, requestNow } from "@/lib/portal/queries";
 import { isUuid } from "@/lib/portal/validate";
 import { automationStatusLabel, automationTone, formatNumber, formatPercent, formatRelative } from "@/lib/portal/format";
 import { Badge, KpiTile, NoWorkspace, PageHeader, Panel } from "../../../_components/ui";
@@ -19,7 +19,7 @@ export default async function AutomationPage({ params }: { params: Promise<{ id:
   if (!isUuid(id)) notFound();
 
   const now = requestNow();
-  const data = await getAutomation(ctx.supabase, org.id, id, now);
+  const data = await getAutomation(ctx, org.id, id, now);
   if (!data) notFound();
   const { automation: a, runs, projectName } = data;
 

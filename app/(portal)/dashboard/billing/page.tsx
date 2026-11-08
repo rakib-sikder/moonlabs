@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getOrgPage } from "@/lib/supabase/session";
-import { listInvoices } from "@/lib/supabase/queries";
+import { getOrgPage } from "@/lib/portal/access";
+import { listInvoices } from "@/lib/portal/queries";
 import { plans } from "@/lib/content/company";
 import { formatDate, formatMoney, invoiceStatusLabel, invoiceTone, planLabel } from "@/lib/portal/format";
 import { Badge, EmptyState, NoWorkspace, PageHeader, Panel } from "../../_components/ui";
@@ -15,7 +15,7 @@ export default async function BillingPage() {
   const { ctx, org } = page;
   if (!org) return <NoWorkspace canAdmin={ctx.canAdmin} />;
 
-  const invoices = await listInvoices(ctx.supabase, org.id);
+  const invoices = await listInvoices(ctx, org.id);
   const plan = plans.find((p) => p.name === planLabel[org.plan]);
   const outstanding = invoices.filter((i) => i.status === "open" || i.status === "overdue");
   const outstandingByCurrency = new Map<string, number>();

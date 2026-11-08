@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { isPortalConfigured } from "@/lib/supabase/config";
-import { getPortalContext } from "@/lib/supabase/session";
+import { isPortalConfigured } from "@/lib/portal/env";
+import { getPortalContext } from "@/lib/portal/access";
 import { formatDate, planLabel } from "@/lib/portal/format";
 import type { OrgPlan } from "@/lib/portal/types";
 import { EmptyState, Field, PageHeader, Panel } from "../../_components/ui";
@@ -14,7 +14,7 @@ export const metadata: Metadata = { title: "Admin" };
 const PLANS: OrgPlan[] = ["none", "crescent", "half_moon", "full_moon", "custom"];
 
 export default async function AdminPage() {
-  if (!isPortalConfigured()) return null;
+  if (!(await isPortalConfigured())) return null;
   const ctx = await getPortalContext();
   if (!ctx.canAdmin) redirect("/dashboard");
   const orgs = ctx.orgs.filter((o) => ctx.isStaff || o.role === "admin");
@@ -81,7 +81,7 @@ export default async function AdminPage() {
           </Panel>
         ) : (
           <Panel title="New organization">
-            <p className="text-muted">Only global staff (profiles.is_staff) can create organizations.</p>
+            <p className="text-muted">Only Moonlabs staff can create organizations.</p>
           </Panel>
         )}
       </div>
