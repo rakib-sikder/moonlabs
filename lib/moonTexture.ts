@@ -84,20 +84,21 @@ function bilinear(get: (i: number) => number, W: number, H: number, u: number, v
 
 /**
  * Software-renders the top `portion` of a lit moon sphere. The sampling frame is turned
- * 90° about the view axis so the undistorted equator runs across the top of the disk;
+ * 90° about the view axis (unless `upright`) so the undistorted equator crowns the disk;
  * `centerLon` (radians) picks the longitude at the crown (0 = centre of the near side).
  */
 export function renderMoonSphere(
   m: MoonMaps,
   size: number,
-  opts: { portion?: number; light?: [number, number, number]; ambient?: number; centerLon?: number } = {}
+  opts: { portion?: number; light?: [number, number, number]; ambient?: number; centerLon?: number; upright?: boolean } = {}
 ) {
   const portion = opts.portion ?? 1;
   const [lx0, ly0, lz0] = opts.light ?? [-0.3, 0.9, 0.35];
   const ll = Math.hypot(lx0, ly0, lz0);
   const L = [lx0 / ll, ly0 / ll, lz0 / ll];
   const ambient = opts.ambient ?? 0.03;
-  const rot = Math.PI / 2 + (opts.centerLon ?? 0);
+  const upright = opts.upright ?? false;
+  const rot = (upright ? 0 : Math.PI / 2) + (opts.centerLon ?? 0);
   const rows = Math.ceil(size * portion);
   const c = document.createElement("canvas");
   c.width = size;
@@ -114,8 +115,9 @@ export function renderMoonSphere(
       const r2 = X * X + Y * Y;
       if (r2 > 1) continue;
       const Z = Math.sqrt(1 - r2);
-      const sx = -Y;
-      const sy = X;
+      // Upright: north is up. Otherwise the frame is turned so the equator crowns the disk.
+      const sx = upright ? X : -Y;
+      const sy = upright ? Y : X;
       const lon = Math.atan2(sx, Z) + rot;
       const lat = Math.asin(Math.max(-1, Math.min(1, sy)));
       const u = (((lon / (2 * Math.PI) + 0.5) % 1) + 1) % 1;
@@ -132,8 +134,8 @@ export function renderMoonSphere(
       const n2 = bilinear((i) => normal.nz[i], normal.W, normal.H, u, v);
       const ax = T0 * n0 + B0 * n1 + sx * n2;
       const ay = B1 * n1 + sy * n2;
-      let NX = ay;
-      let NY = -ax;
+      let NX = upright ? ax : ay;
+      let NY = upright ? ay : -ax;
       let NZ = T2 * n0 + B2 * n1 + Z * n2;
       const nl = Math.hypot(NX, NY, NZ) || 1;
       NX /= nl;

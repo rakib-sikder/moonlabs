@@ -3,6 +3,7 @@ import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
 import { CtaBanner } from "@/components/CtaBanner";
 import { Chip, Reveal, SectionHeading } from "@/components/ui/Section";
+import { MoonImage } from "@/components/ui/MoonImage";
 
 export const metadata: Metadata = {
   title: "About",
@@ -64,13 +65,9 @@ export default function AboutPage() {
                 />
               </div>
             ))}
-            <div
-              className="absolute inset-[34%] rounded-full"
-              style={{
-                background: "radial-gradient(circle at 35% 30%, #eef0f7, #a9abb5 45%, #4a4c5a 80%)",
-                boxShadow: "0 0 80px 10px color-mix(in srgb, var(--accent) 35%, transparent)",
-              }}
-            />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <MoonImage size={150} />
+            </div>
           </div>
         </Reveal>
       </section>

@@ -8,6 +8,7 @@ import * as THREE from "three";
 import { services } from "@/lib/site";
 import type { ThemeColors } from "@/lib/useTheme";
 import { MOON_COLOR_2K, MOON_HEIGHT } from "@/lib/moonTexture";
+import { PLANET_LOOKS, PlanetRing, tickPlanet, usePlanetMaterial, useTrail } from "./Planets";
 
 /* ---------- Moon surface: NASA LRO colour + LOLA elevation (public domain) ---------- */
 function MoonSurface({ meshRef, reduced }: { meshRef: React.RefObject<THREE.Mesh | null>; reduced: boolean }) {
@@ -51,23 +52,6 @@ const glowFragment = /* glsl */ `
   }
 `;
 
-// Soft radial dot used as the planets' glow (shared by all planets).
-let halo: THREE.CanvasTexture | null = null;
-function haloTexture() {
-  if (halo) return halo;
-  const c = document.createElement("canvas");
-  c.width = c.height = 64;
-  const g = c.getContext("2d")!;
-  const grad = g.createRadialGradient(32, 32, 0, 32, 32, 32);
-  grad.addColorStop(0, "rgba(255,255,255,0.9)");
-  grad.addColorStop(0.25, "rgba(255,255,255,0.35)");
-  grad.addColorStop(1, "rgba(255,255,255,0)");
-  g.fillStyle = grad;
-  g.fillRect(0, 0, 64, 64);
-  halo = new THREE.CanvasTexture(c);
-  return halo;
-}
-
 const easeOut = (t: number) => 1 - Math.pow(1 - Math.min(Math.max(t, 0), 1), 3);
 
 type OrbitSpec = {
@@ -76,7 +60,6 @@ type OrbitSpec = {
   tiltZ: number;
   speed: number;
   offset: number;
-  size: number;
 };
 
 function useOrbitSpecs(): OrbitSpec[] {
@@ -88,7 +71,6 @@ function useOrbitSpecs(): OrbitSpec[] {
         tiltZ: (i % 2 ? 1 : -1) * (0.16 + (i % 4) * 0.05),
         speed: 0.42 / (1 + i * 0.22),
         offset: i * 2.399, // golden angle spread
-        size: 0.085 + ((i * 37) % 5) * 0.012,
       })),
     [],
   );
@@ -119,20 +101,41 @@ function Planet({
   colors: ThemeColors;
 }) {
   const router = useRouter();
+  const spin = useRef<THREE.Group>(null);
+  const trailGroup = useRef<THREE.Group>(null);
   const body = useRef<THREE.Group>(null);
+  const globe = useRef<THREE.Mesh>(null);
   const service = services[index];
+  const look = PLANET_LOOKS[index];
   const points = useMemo(() => circlePoints(spec.radius), [spec.radius]);
   const isHover = hovered === index;
   const dim = hovered !== null && !isHover;
+  const light = useMemo<[number, number, number]>(() => (colors.isDark ? [-5, 2.2, 4.2] : [-3, 2.5, 6]), [colors.isDark]);
+  const material = usePlanetMaterial(service.color, look, light, colors.isDark ? 0.05 : 0.32);
+  const trail = useTrail(spec.radius, service.color);
 
-  useFrame(() => {
-    if (!body.current) return;
+  useFrame((state, dt) => {
+    if (!spin.current || !body.current || !trailGroup.current) return;
     const a = angle.current * spec.speed + spec.offset;
-    const r = spec.radius * (0.25 + 0.75 * easeOut(intro.current * 1.2 - index * 0.05));
-    body.current.position.set(Math.cos(a) * r, Math.sin(a) * r, 0);
-    const target = isHover ? 1.9 : 1;
+    const k = 0.25 + 0.75 * easeOut(intro.current * 1.2 - index * 0.05);
+    // The whole frame turns with the planet, so the trail always streams behind it.
+    spin.current.rotation.z = a;
+    trailGroup.current.scale.setScalar(k);
+    body.current.position.set(spec.radius * k, 0, 0);
+    body.current.rotation.z = -a;
+    const target = isHover ? 1.8 : 1;
     const s = THREE.MathUtils.lerp(body.current.scale.x, target, 0.15);
     body.current.scale.setScalar(s * easeOut(intro.current * 1.4 - index * 0.06));
+    if (globe.current) {
+      globe.current.rotation.y += dt * 0.25;
+      tickPlanet(globe.current.material as THREE.ShaderMaterial, state.clock.elapsedTime, isHover);
+    }
+    // Reach the trail through the scene graph (not the hook value) to fade it.
+    const line = trailGroup.current.children[0] as THREE.Line | undefined;
+    if (!line) return;
+    const tm = line.material as THREE.LineBasicMaterial;
+    const want = isHover ? 1 : dim ? 0.12 : colors.isDark ? 0.75 : 0.9;
+    tm.opacity += (want - tm.opacity) * 0.1;
   });
 
   return (
@@ -140,57 +143,48 @@ function Planet({
       <Line
         points={points}
         color={isHover ? service.color : colors.isDark ? colors.moon : colors.muted}
-        lineWidth={isHover ? 1.6 : 1}
+        lineWidth={1}
         transparent
-        opacity={isHover ? 0.75 : dim ? 0.06 : colors.isDark ? 0.14 : 0.28}
+        opacity={isHover ? 0.45 : dim ? 0.03 : colors.isDark ? 0.06 : 0.12}
       />
-      <group ref={body}>
-        <mesh
-          onPointerOver={(e) => {
-            e.stopPropagation();
-            setHovered(index);
-            document.body.style.cursor = "pointer";
-          }}
-          onPointerOut={() => {
-            setHovered(null);
-            document.body.style.cursor = "";
-          }}
-          onClick={() => router.push(`/services/${service.slug}`)}
-        >
-          {/* Generous invisible hit area so small planets are easy to target. */}
-          <sphereGeometry args={[spec.size * 2.6, 12, 12]} />
-          <meshBasicMaterial transparent opacity={0} depthWrite={false} />
-        </mesh>
-        <mesh>
-          <sphereGeometry args={[spec.size, 32, 32]} />
-          <meshStandardMaterial
-            color={service.color}
-            emissive={service.color}
-            emissiveIntensity={isHover ? 1.2 : 0.55}
-            roughness={0.5}
-          />
-        </mesh>
-        <sprite scale={spec.size * (isHover ? 9 : 6)}>
-          <spriteMaterial
-            map={haloTexture()}
-            color={service.color}
-            transparent
-            opacity={isHover ? 0.75 : 0.45}
-            depthWrite={false}
-          />
-        </sprite>
-        {isHover && (
-          <Html center position={[0, spec.size * 4.2, 0]} style={{ pointerEvents: "none" }} zIndexRange={[20, 0]}>
-            <div className="whitespace-nowrap rounded-full border border-border bg-surface/90 px-3 py-1.5 text-xs font-medium text-foreground shadow-lg backdrop-blur">
-              <span
-                className="mr-2 inline-block h-1.5 w-1.5 rounded-full align-middle"
-                style={{ background: service.color }}
-              />
-              {service.name}
-              <span className="ml-2 text-accent">→</span>
-            </div>
-          </Html>
-        )}
+      <group ref={spin}>
+        <group ref={trailGroup}>
+          <primitive object={trail} />
+        </group>
+        <group ref={body}>
+          <mesh
+            onPointerOver={(e) => {
+              e.stopPropagation();
+              setHovered(index);
+              document.body.style.cursor = "pointer";
+            }}
+            onPointerOut={() => {
+              setHovered(null);
+              document.body.style.cursor = "";
+            }}
+            onClick={() => router.push(`/services/${service.slug}`)}
+          >
+            {/* Generous invisible hit area so small planets are easy to target. */}
+            <sphereGeometry args={[look.size * 2.4, 12, 12]} />
+            <meshBasicMaterial transparent opacity={0} depthWrite={false} />
+          </mesh>
+          <mesh ref={globe} material={material} rotation={[0.35, 0, 0.2]}>
+            <sphereGeometry args={[look.size, 48, 48]} />
+          </mesh>
+          {look.ring && <PlanetRing size={look.size} color={service.color} />}
+          {isHover && (
+            <Html center position={[0, look.size * 3.6, 0]} style={{ pointerEvents: "none" }} zIndexRange={[20, 0]}>
+              <div className="whitespace-nowrap rounded-full border border-border bg-surface/90 px-3 py-1.5 text-xs font-medium text-foreground shadow-lg backdrop-blur">
+                <span
+                  className="mr-2 inline-block h-1.5 w-1.5 rounded-full align-middle"
+                  style={{ background: service.color }}
+                />
+                {service.name}
+                <span className="ml-2 text-accent">→</span>
+              </div>
+            </Html>
+          )}
+        </group>
       </group>
     </group>
   );

@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import { RevealText } from "./ui/RevealText";
+import { MoonImage } from "./ui/MoonImage";
 
 /** Shared header for inner pages, with a slowly turning orbit system on the right. */
 export function PageHeader({
@@ -43,23 +44,22 @@ export function PageHeader({
               animationDirection: i % 2 ? "reverse" : "normal",
             }}
           >
+            {/* Small shaded planet riding the ring */}
             <span
-              className="absolute left-1/2 -top-1.5 h-3 w-3 -translate-x-1/2 rounded-full"
+              className="absolute left-1/2 -translate-x-1/2 rounded-full"
               style={{
-                background: i === 0 ? planet : "var(--moon)",
-                boxShadow: `0 0 18px 4px color-mix(in srgb, ${i === 0 ? planet : "var(--moon)"} 50%, transparent)`,
+                width: [14, 9, 7][i],
+                height: [14, 9, 7][i],
+                top: -[7, 4.5, 3.5][i],
+                background: `radial-gradient(circle at 32% 30%, color-mix(in srgb, ${[planet, "#5ee0d0", "#ffc76b"][i]} 45%, white), ${[planet, "#5ee0d0", "#ffc76b"][i]} 55%, color-mix(in srgb, ${[planet, "#5ee0d0", "#ffc76b"][i]} 35%, black))`,
+                boxShadow: `0 0 14px 2px color-mix(in srgb, ${[planet, "#5ee0d0", "#ffc76b"][i]} 45%, transparent)`,
               }}
             />
           </div>
         ))}
-        <div
-          className="absolute left-1/2 top-1/2 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full"
-          style={{
-            background:
-              "radial-gradient(circle at 35% 30%, color-mix(in srgb, var(--moon) 80%, white), var(--surface-2) 70%)",
-            boxShadow: `0 0 60px 8px color-mix(in srgb, ${planet} 35%, transparent)`,
-          }}
-        />
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+          <MoonImage size={120} glow={planet} />
+        </div>
       </div>
 
       <div className="relative mx-auto max-w-6xl">
