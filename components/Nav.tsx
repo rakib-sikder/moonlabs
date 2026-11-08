@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
 import { mainNav, primaryCta, serviceCategories, servicesIn } from "@/lib/site";
 import { Logo } from "./Logo";
@@ -14,6 +14,19 @@ export function Nav() {
   const [openOn, setOpenOn] = useState<string | null>(null);
   const open = openOn === pathname;
   const setOpen = (value: boolean) => setOpenOn(value ? pathname : null);
+  // Services panel: opens on mouse enter (with a short grace period on leave so the
+  // pointer can travel into it), on keyboard focus, and closes on navigation.
+  const [menuOn, setMenuOn] = useState<string | null>(null);
+  const menuOpen = menuOn === pathname;
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const openMenu = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setMenuOn(pathname);
+  };
+  const closeMenuSoon = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    closeTimer.current = setTimeout(() => setMenuOn(null), 180);
+  };
   const { scrollY } = useScroll();
   const borderOpacity = useTransform(scrollY, [0, 120], [0, 1]);
 
@@ -61,14 +74,26 @@ export function Nav() {
               if (l.href !== "/services") return link;
               // Services opens a panel of every sector on hover or keyboard focus.
               return (
-                <div key={l.href} className="group/menu">
+                <div
+                  key={l.href}
+                  onMouseEnter={openMenu}
+                  onMouseLeave={closeMenuSoon}
+                  onFocus={openMenu}
+                  onBlur={(e) => {
+                    if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setMenuOn(null);
+                  }}
+                  onKeyDown={(e) => e.key === "Escape" && setMenuOn(null)}
+                  onClick={() => setMenuOn(null)}
+                >
                   <div className="flex h-16 items-center gap-1">
                     {link}
-                    <svg aria-hidden viewBox="0 0 12 12" className="h-3 w-3 text-muted transition-transform group-hover/menu:rotate-180 group-focus-within/menu:rotate-180">
+                    <svg aria-hidden viewBox="0 0 12 12" className={`h-3 w-3 text-muted transition-transform ${menuOpen ? "rotate-180" : ""}`}>
                       <path d="M3 4.5 6 7.5 9 4.5" fill="none" stroke="currentColor" strokeWidth="1.4" />
                     </svg>
                   </div>
-                  <div className="invisible absolute inset-x-6 top-full -mt-2 pt-3 opacity-0 transition-all duration-200 group-hover/menu:visible group-hover/menu:opacity-100 group-focus-within/menu:visible group-focus-within/menu:opacity-100">
+                  <div className={`absolute inset-x-6 top-full -mt-2 pt-3 transition-[opacity,visibility,translate] duration-200 ${
+                      menuOpen ? "visible translate-y-0 opacity-100" : "invisible -translate-y-1 opacity-0"
+                    }`}>
                     <div className="grid grid-cols-5 gap-6 rounded-2xl border border-border bg-surface/95 p-6 shadow-2xl backdrop-blur-xl">
                       {serviceCategories.map((c) => (
                         <div key={c.id}>
