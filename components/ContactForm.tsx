@@ -46,7 +46,7 @@ export function ContactForm({ fallbackEmail }: { fallbackEmail?: string }) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      const json = await res.json().catch(() => ({}));
+      const json = (await res.json().catch(() => ({}))) as { ok?: boolean; errors?: Record<string, string>; error?: string };
       if (res.ok && json.ok) {
         setStatus("sent");
         return;

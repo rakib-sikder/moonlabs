@@ -15,5 +15,28 @@
       "service": "moonlabs"
     }
   ],
+  // Client portal database (/login, /dashboard). Schema lives in migrations/.
+  //   npx wrangler d1 migrations apply moonlabs-portal --local    (local dev)
+  //   npx wrangler d1 migrations apply moonlabs-portal --remote   (production)
+  // Without this binding the portal shows "not configured" and the rest of the site works.
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "moonlabs-portal",
+      "database_id": "bc89c77d-c8fb-4165-a1b3-61af5949ea3b",
+      "migrations_dir": "migrations"
+    }
+  ],
+  // Optional: file uploads for deliverables (R2). Without it, admins share deliverables as
+  // links instead. To turn it on:
+  //   1. Enable R2 in the Cloudflare dashboard (R2 Object Storage > Get started).
+  //   2. npx wrangler r2 bucket create moonlabs-portal-files
+  //   3. Uncomment the block below, then `npm run cf-typegen` and `npm run deploy:cf`.
+  // "r2_buckets": [
+  //   {
+  //     "binding": "FILES",
+  //     "bucket_name": "moonlabs-portal-files"
+  //   }
+  // ],
   "observability": { "enabled": true }
 }
