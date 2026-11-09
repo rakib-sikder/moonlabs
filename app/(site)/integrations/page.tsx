@@ -6,6 +6,7 @@ import { toolCount, toolGroups } from "@/lib/content/integrations";
 import { services } from "@/lib/site";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/integrations" },
   title: "Integrations",
   description: "The CRMs, inboxes, AI models, accounting, e-commerce and cloud tools Moonlab connects, and what we do with each one.",
 };

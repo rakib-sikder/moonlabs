@@ -8,11 +8,25 @@ export const site = {
   tagline: "Automation agency",
   description:
     "Moonlab builds AI agents, workflows and integrations that take repetitive work off your team. We also build the websites, apps, data and marketing around them.",
-  /** Public contact address â€” set NEXT_PUBLIC_CONTACT_EMAIL; hidden everywhere when empty. */
+  /** Public contact address - set NEXT_PUBLIC_CONTACT_EMAIL; hidden everywhere when empty. */
   email: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "",
   /** Canonical origin for SEO (sitemap, Open Graph). */
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://moonlab.space",
+  founder: "Rakibul Hasan",
+  /** Office address: shown on the contact page and in structured data for local search. */
+  address: {
+    street: "H-152/K, 3rd Floor, Green Road",
+    locality: "Kalabagan, Dhaka",
+    country: "Bangladesh",
+    countryCode: "BD",
+  },
+  /** Google Search Console "HTML tag" verification code (the content="..." value). Empty until set. */
+  googleVerification: "",
+  /** Bing Webmaster Tools verification code. Empty until set. */
+  bingVerification: "",
 };
+
+export const fullAddress = `${site.address.street}, ${site.address.locality}, ${site.address.country}`;
 
 export type NavLink = { href: string; label: string; desc?: string };
 
@@ -28,6 +42,7 @@ export const mainNav: NavItem[] = [
 export const resourceLinks: NavLink[] = [
   { href: "/how-it-works", label: "How we work", desc: "Five steps from free audit to monthly care" },
   { href: "/work", label: "Case studies", desc: "Systems we built and still run" },
+  { href: "/guides", label: "Guides", desc: "Practical how-tos on automation, booking and websites" },
   { href: "/integrations", label: "Integrations", desc: "The tools we connect, and what we do with each" },
   { href: "/roi-calculator", label: "ROI calculator", desc: "Estimate the hours and money you'd save" },
   { href: "/security", label: "Security", desc: "Access, data handling and approvals" },
@@ -49,7 +64,7 @@ export type ServiceCategory = {
   /** Heading above a service's list of items on its detail page. */
   itemsLabel: string;
   color: string;
-  /** The studio's main focus â€” shown first and larger everywhere. */
+  /** The studio's main focus - shown first and larger everywhere. */
   core?: boolean;
 };
 
@@ -409,7 +424,7 @@ export const services: Service[] = [
   ...beyond,
 ];
 
-/** The core automation services â€” one planet each in the hero scene. */
+/** The core automation services - one planet each in the hero scene. */
 export const automationServices = services.filter((s) => s.category === "automation");
 
 export const categoryOf = (s: Service) => serviceCategories.find((c) => c.id === s.category)!;

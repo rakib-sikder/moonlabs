@@ -26,6 +26,13 @@ export const metadata: Metadata = {
     description: site.description,
     siteName: site.name,
     type: "website",
+    url: site.url,
+  },
+  twitter: { card: "summary_large_image", title: `${site.name} · Automation agency`, description: site.description },
+  robots: { index: true, follow: true },
+  verification: {
+    ...(site.googleVerification ? { google: site.googleVerification } : {}),
+    ...(site.bingVerification ? { other: { "msvalidate.01": site.bingVerification } } : {}),
   },
 };
 

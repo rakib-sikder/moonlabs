@@ -85,6 +85,7 @@ export const industryIcons: Record<string, LucideIcon> = {
 export const resourceIcons: Record<string, LucideIcon> = {
   "/how-it-works": Route,
   "/work": FileText,
+  "/guides": BookOpen,
   "/integrations": Plug,
   "/roi-calculator": Calculator,
   "/security": ShieldCheck,

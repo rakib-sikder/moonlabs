@@ -3,6 +3,7 @@ import { LegalPage } from "@/components/LegalPage";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/privacy" },
   title: "Privacy policy",
   description: "What Moonlab collects through this website and the client portal, why, and how long we keep it.",
 };

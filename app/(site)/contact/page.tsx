@@ -6,6 +6,7 @@ import { Reveal } from "@/components/ui/Section";
 import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/contact" },
   title: "Contact and free audit",
   description: "Tell us which tasks take up your team's week. We reply within one working day with times for a free 30-minute automation audit.",
 };
@@ -31,6 +32,21 @@ export default function ContactPage() {
         </Reveal>
         <Reveal delay={0.1}>
           <aside className="space-y-6">
+            <address className="not-italic rounded-3xl border border-border bg-surface/80 p-8 backdrop-blur-sm">
+              <p className="mb-3 font-mono text-xs uppercase tracking-widest text-moon">Office</p>
+              <p className="font-medium">{site.name}</p>
+              <p className="mt-1 text-sm leading-relaxed text-muted">
+                {site.address.street}
+                <br />
+                {site.address.locality}, {site.address.country}
+              </p>
+              {site.email && (
+                <a href={`mailto:${site.email}`} className="mt-3 inline-block text-sm text-accent hover:underline">
+                  {site.email}
+                </a>
+              )}
+              <p className="mt-3 text-sm text-muted">We work with clients online across Bangladesh and the US.</p>
+            </address>
             <div className="rounded-3xl border border-border bg-surface/80 p-8 backdrop-blur-sm">
               <p className="mb-6 font-mono text-xs uppercase tracking-widest text-moon">What happens next</p>
               <ol className="space-y-6">

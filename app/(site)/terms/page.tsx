@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { LegalPage } from "@/components/LegalPage";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/terms" },
   title: "Terms of service",
   description: "The terms that apply to Moonlab projects, monthly plans and the client portal.",
 };

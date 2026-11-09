@@ -6,6 +6,7 @@ import { Reveal } from "@/components/ui/Section";
 import { faqs } from "@/lib/content/company";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/faq" },
   title: "FAQ",
   description: "Answers about pricing, timelines, data security and what happens after an automation goes live.",
 };

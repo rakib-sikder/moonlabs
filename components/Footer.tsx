@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { footerNav, primaryCta, site } from "@/lib/site";
+import { footerNav, fullAddress, primaryCta, site } from "@/lib/site";
 import { Logo } from "./Logo";
 
 export function Footer() {
@@ -10,6 +10,7 @@ export function Footer() {
           <div className="max-w-md">
             <Logo />
             <p className="mt-3 text-sm leading-relaxed text-muted">{site.description}</p>
+            <address className="mt-3 text-[13px] not-italic text-muted">{fullAddress}</address>
           </div>
           <div className="flex shrink-0 items-center gap-3">
             {site.email && (

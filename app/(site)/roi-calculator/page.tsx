@@ -4,6 +4,7 @@ import { CtaBanner } from "@/components/CtaBanner";
 import { RoiCalculator } from "@/components/RoiCalculator";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/roi-calculator" },
   title: "ROI calculator",
   description: "Estimate the hours and money automation could give back to your team in under a minute.",
 };

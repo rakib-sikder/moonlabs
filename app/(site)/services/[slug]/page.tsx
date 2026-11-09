@@ -8,10 +8,17 @@ import { WorkflowPipeline } from "@/components/ui/WorkflowPipeline";
 import { Check, Chip, Reveal, SectionHeading } from "@/components/ui/Section";
 import { IconTile } from "@/components/ui/IconTile";
 import { categoryOf, services, serviceTitle } from "@/lib/site";
+import { JsonLd, breadcrumbLd, serviceLd } from "@/lib/seo";
 import { serviceDetails } from "@/lib/content/service-details";
 import { industryDetails } from "@/lib/content/industries";
 
 export const dynamicParams = false;
+
+/** Shortens to the last whole word under `max` characters. */
+function clip(text: string, max: number) {
+  if (text.length <= max) return text;
+  return text.slice(0, text.lastIndexOf(" ", max - 1)).replace(/[,;:]$/, "") + ".";
+}
 
 export function generateStaticParams() {
   return services.map((s) => ({ slug: s.slug }));
@@ -23,7 +30,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!service) return {};
   return {
     title: serviceTitle(service),
-    description: `${service.short} ${service.items.slice(0, 3).join(", ")}.`,
+    alternates: { canonical: `/services/${service.slug}` },
+    // Keep it under ~160 characters so search results don't cut it off mid-sentence.
+    description: [
+      `${service.short} ${serviceTitle(service)} for businesses in Bangladesh and the US.`,
+      `${service.short} ${serviceTitle(service)} for small businesses.`,
+    ].find((d) => d.length <= 158) ?? clip(service.short, 158),
   };
 }
 
@@ -43,6 +55,16 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
 
   return (
     <>
+      <JsonLd
+        data={[
+          ...serviceLd(service, serviceTitle(service), detail.faqs),
+          breadcrumbLd([
+            { name: "Home", path: "/" },
+            { name: "Services", path: "/services" },
+            { name: service.name, path: `/services/${service.slug}` },
+          ]),
+        ]}
+      />
       <PageHeader
         eyebrow={`${category.name} · ${isAutomation ? "Live in" : "Timeline"} ${detail.setup}`}
         title={serviceTitle(service)}

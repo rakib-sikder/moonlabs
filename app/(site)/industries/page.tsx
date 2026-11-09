@@ -7,6 +7,7 @@ import { industryDetails } from "@/lib/content/industries";
 import { services } from "@/lib/site";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/industries" },
   title: "Solutions by industry",
   description: "Automation for real estate, clinics, restaurants, e-commerce, agencies, law firms, education and logistics.",
 };

@@ -8,6 +8,7 @@ import { comparison, faqs, planMatrix, plans } from "@/lib/content/company";
 import { Check as CheckIcon, Minus } from "lucide-react";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/pricing" },
   title: "Pricing",
   description: "A free audit, then a fixed-price project or a monthly plan. We don't bill by the hour.",
 };

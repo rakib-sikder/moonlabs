@@ -4,6 +4,7 @@ import { CtaBanner } from "@/components/CtaBanner";
 import { Reveal, SectionHeading } from "@/components/ui/Section";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/security" },
   title: "Security & privacy",
   description: "How Moonlab handles access, data and AI: minimal permissions, work done in your own accounts, human approval and run logs.",
 };

@@ -8,6 +8,7 @@ import { caseStudies } from "@/lib/content/company";
 import { founders } from "@/lib/content/proof";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/about" },
   title: "About",
   description: "Moonlab is a small automation agency that builds AI agents, workflows and integrations for small and mid-sized businesses.",
 };

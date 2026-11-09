@@ -6,6 +6,7 @@ import { Check, Reveal, SectionHeading } from "@/components/ui/Section";
 import { processStages } from "@/lib/content/company";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/how-it-works" },
   title: "How it works",
   description: "How we go from a free 30-minute audit to automations that run on their own. Five stages with a fixed price agreed up front.",
 };

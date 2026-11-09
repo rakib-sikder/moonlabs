@@ -16,7 +16,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const c = caseStudies.find((x) => x.slug === slug);
   if (!c) return {};
-  return { title: `${c.name} case study`, description: c.summary };
+  return { title: `${c.name} case study`, description: c.summary, alternates: { canonical: `/work/${c.slug}` } };
 }
 
 export default async function CaseStudyPage({ params }: { params: Promise<{ slug: string }> }) {

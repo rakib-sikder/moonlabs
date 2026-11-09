@@ -7,6 +7,7 @@ import { MiniOrbit } from "@/components/ui/MiniOrbit";
 import { caseStudies } from "@/lib/content/company";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/work" },
   title: "Case studies",
   description: "Automation systems we have built and run, including lead generation, inbox automation and a multi-profile browser tool.",
 };

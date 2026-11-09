@@ -8,6 +8,7 @@ import { serviceIcons } from "@/lib/icons";
 import { Reveal } from "@/components/ui/Section";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "/services" },
   title: "Services",
   description:
     "Automation and AI, plus websites, mobile apps, web apps, databases, cloud, UI/UX design, SEO and marketing from the same team.",
