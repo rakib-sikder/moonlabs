@@ -16,12 +16,12 @@ export default function ForgotPasswordPage() {
       }
     >
       <div className="pt-prose mt-4 space-y-3 text-[13.5px]">
-        <p>Ask your Moonlabs contact for a password reset link. They can create one for you in a minute.</p>
+        <p>Ask your Moonlab contact for a password reset link. They can create one for you in a minute.</p>
         <p>The link works once and expires after 24 hours. Open it, choose a new password, and you are signed in.</p>
       </div>
       <div className="mt-6 flex flex-wrap gap-2">
         <Link href="/contact" className="pt-btn" data-variant="primary">
-          Contact Moonlabs
+          Contact Moonlab
         </Link>
         <Link href="/login" className="pt-btn" data-variant="ghost">
           Back to sign in

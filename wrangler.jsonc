@@ -38,5 +38,15 @@
   //     "bucket_name": "moonlabs-portal-files"
   //   }
   // ],
-  "observability": { "enabled": true }
+  "observability": { "enabled": true },
+  // Keep the old workers.dev address alive; next.config.ts redirects it to moonlab.space.
+  "workers_dev": true,
+  "preview_urls": false,
+  // moonlab.space is the canonical address; the others redirect to it (see next.config.ts).
+  "routes": [
+    { "pattern": "moonlab.space", "custom_domain": true },
+    { "pattern": "www.moonlab.space", "custom_domain": true },
+    { "pattern": "moonlab.best", "custom_domain": true },
+    { "pattern": "www.moonlab.best", "custom_domain": true }
+  ]
 }

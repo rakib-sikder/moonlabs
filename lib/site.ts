@@ -4,14 +4,14 @@
 import { industryDetails } from "./content/industries";
 
 export const site = {
-  name: "Moonlabs",
+  name: "Moonlab",
   tagline: "Automation agency",
   description:
-    "Moonlabs builds AI agents, workflows and integrations that take repetitive work off your team. We also build the websites, apps, data and marketing around them.",
+    "Moonlab builds AI agents, workflows and integrations that take repetitive work off your team. We also build the websites, apps, data and marketing around them.",
   /** Public contact address â€” set NEXT_PUBLIC_CONTACT_EMAIL; hidden everywhere when empty. */
   email: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "",
   /** Canonical origin for SEO (sitemap, Open Graph). */
-  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://moonlabs.sikdersmail.workers.dev",
+  url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://moonlab.space",
 };
 
 export type NavLink = { href: string; label: string; desc?: string };

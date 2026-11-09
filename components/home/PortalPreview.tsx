@@ -59,7 +59,7 @@ export function PortalPreview() {
               <span className="h-2.5 w-2.5 rounded-full bg-border" />
               <span className="h-2.5 w-2.5 rounded-full bg-border" />
             </div>
-            <span className="font-mono text-xs text-muted">moonlabs · dashboard</span>
+            <span className="font-mono text-xs text-muted">moonlab · dashboard</span>
             <span className="rounded bg-surface-2 px-1.5 py-0.5 text-[11px] uppercase tracking-wider text-muted">Sample data</span>
           </div>
           <div className="grid grid-cols-2 gap-px bg-border sm:grid-cols-4">

@@ -24,7 +24,7 @@ export default async function ResetPasswordPage({ params }: { params: Promise<{ 
   if (!reset) {
     return (
       <AuthCard title="This reset link does not work" description="It may have been used already, or it expired (links last 24 hours).">
-        <p className="mt-4 text-[13.5px]">Ask your Moonlabs contact for a new password reset link.</p>
+        <p className="mt-4 text-[13.5px]">Ask your Moonlab contact for a new password reset link.</p>
         <div className="mt-6">
           <Link href="/login" className="pt-btn" data-variant="primary">
             Back to sign in

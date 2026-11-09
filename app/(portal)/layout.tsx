@@ -5,7 +5,7 @@ import "./portal.css";
 // starfield, smooth scroll or cursor effects from the marketing layout. The signed-in shell
 // (top bar + sidebar) lives in dashboard/layout.tsx so /login stays a simple centred card.
 export const metadata: Metadata = {
-  title: { default: "Client portal", template: "%s · Moonlabs portal" },
+  title: { default: "Client portal", template: "%s · Moonlab portal" },
   robots: { index: false, follow: false },
 };
 

@@ -24,10 +24,10 @@ export function UserMenu({ name, email, staff }: { name: string; email: string |
         <div className="border-b border-border px-3 py-2">
           <p className="truncate font-medium">{name}</p>
           {email && <p className="truncate text-[12.5px] text-muted">{email}</p>}
-          {staff && <p className="mt-1 text-[12px] text-moon">Moonlabs staff</p>}
+          {staff && <p className="mt-1 text-[12px] text-moon">Moonlab staff</p>}
         </div>
         <Link href="/" className="pt-nav-link mt-1">
-          Back to moonlabs site
+          Back to moonlab site
         </Link>
         <form action={signOut}>
           <button type="submit" className="pt-nav-link w-full text-left">

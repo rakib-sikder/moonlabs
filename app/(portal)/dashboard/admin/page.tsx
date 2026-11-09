@@ -23,6 +23,19 @@ export default async function AdminPage() {
     <>
       <PageHeader title="Admin" description="Pick a client organization to manage its projects, automations, requests, files and invoices." />
 
+      {ctx.isStaff && (
+        <Link
+          href="/dashboard/admin/enquiries"
+          className="mb-6 flex items-center justify-between rounded-xl border border-border bg-surface px-5 py-4 text-sm transition-colors hover:border-accent/40"
+        >
+          <span>
+            <span className="font-medium">Website enquiries</span>
+            <span className="text-muted"> · messages from the contact form</span>
+          </span>
+          <span className="text-accent">Open →</span>
+        </Link>
+      )}
+
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Panel title={`Organizations (${orgs.length})`} className="lg:col-span-2" bodyClassName={null}>
           {orgs.length === 0 ? (
@@ -81,7 +94,7 @@ export default async function AdminPage() {
           </Panel>
         ) : (
           <Panel title="New organization">
-            <p className="text-muted">Only Moonlabs staff can create organizations.</p>
+            <p className="text-muted">Only Moonlab staff can create organizations.</p>
           </Panel>
         )}
       </div>

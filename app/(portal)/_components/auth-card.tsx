@@ -15,7 +15,7 @@ export function AuthCard({
 }) {
   return (
     <main className="flex min-h-dvh flex-col items-center justify-center px-4 py-12">
-      <Link href="/" className="mb-8 text-[15px]" aria-label="Moonlabs home">
+      <Link href="/" className="mb-8 text-[15px]" aria-label="Moonlab home">
         <Logo />
       </Link>
       <div className="pt-panel w-full max-w-sm p-6">

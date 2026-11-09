@@ -152,7 +152,7 @@ export async function createPasswordReset(formData: FormData): Promise<ActionSta
       .first<{ email: string }>();
     if (!member) return { ok: false, message: "That person is not a member of this organization." };
     if (!(await resettableUsers(ctx, [userId])).has(userId)) {
-      return { ok: false, message: "Only Moonlabs staff can reset this person's password." };
+      return { ok: false, message: "Only Moonlab staff can reset this person's password." };
     }
 
     const token = randomToken(32);

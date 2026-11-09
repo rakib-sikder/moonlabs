@@ -215,7 +215,7 @@ export function Nav() {
         <motion.div style={{ opacity: borderOpacity }} className="absolute bottom-0 inset-x-0 h-px bg-border" />
         <div className="relative mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
           <div className="flex items-center gap-10">
-            <Link href="/" aria-label="Moonlabs home">
+            <Link href="/" aria-label="Moonlab home">
               <Logo />
             </Link>
             <ul className="hidden items-center gap-1 text-sm md:flex">

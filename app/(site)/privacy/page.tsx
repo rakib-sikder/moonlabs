@@ -4,7 +4,7 @@ import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Privacy policy",
-  description: "What Moonlabs collects through this website and the client portal, why, and how long we keep it.",
+  description: "What Moonlab collects through this website and the client portal, why, and how long we keep it.",
 };
 
 const contact = site.email ? `email us at ${site.email}` : "use the contact form on this site";

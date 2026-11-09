@@ -31,7 +31,7 @@ export default async function RequestsPage({ searchParams }: { searchParams: Pro
     <>
       <PageHeader
         title="Requests"
-        description="Changes, fixes and questions for the Moonlabs team."
+        description="Changes, fixes and questions for the Moonlab team."
         actions={
           <Link href="/dashboard/requests/new" className="pt-btn" data-variant="primary">
             New request

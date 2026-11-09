@@ -13,7 +13,7 @@ export const metadata: Metadata = { title: "Sign in" };
 
 const ERRORS: Record<string, string> = {
   google: "Google sign-in was cancelled or failed. Try again.",
-  google_no_account: "There is no portal account or open invite for that Google address. Ask your Moonlabs contact for an invite.",
+  google_no_account: "There is no portal account or open invite for that Google address. Ask your Moonlab contact for an invite.",
   google_unverified: "That Google address is not verified. Use email and password instead.",
 };
 

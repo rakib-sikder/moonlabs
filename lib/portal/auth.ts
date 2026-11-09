@@ -302,5 +302,5 @@ export async function requestOrigin(): Promise<string> {
     const proto = h.get("x-forwarded-proto") ?? (local ? "http" : "https");
     return `${proto}://${host}`;
   }
-  return process.env.NEXT_PUBLIC_SITE_URL ?? "https://moonlabs.sikdersmail.workers.dev";
+  return process.env.NEXT_PUBLIC_SITE_URL ?? "https://moonlab.space";
 }

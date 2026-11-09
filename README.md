@@ -1,6 +1,6 @@
-# Moonlabs — Automation agency website
+# Moonlab — Automation agency website
 
-Marketing site for Moonlabs, an agency that automates repetitive business work: leads,
+Marketing site for Moonlab, an agency that automates repetitive business work: leads,
 support, invoices, data entry, custom AI agents and more. Space/moon themed, motion-heavy.
 
 (Formerly the "Orbit" animation showcase — the GSAP and Framer Motion work carries over.)

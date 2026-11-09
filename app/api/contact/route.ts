@@ -1,5 +1,6 @@
 import { budgetOptions, timelineOptions, validateContact, type ContactPayload } from "@/lib/contact";
 import { services } from "@/lib/site";
+import { getDb } from "@/lib/portal/env";
 
 // Best-effort in-memory rate limit: 5 submissions per IP per 10 minutes, per server instance.
 const WINDOW_MS = 10 * 60 * 1000;
@@ -41,42 +42,70 @@ export async function POST(request: Request) {
   const budget = budgetOptions.includes(body.budget as (typeof budgetOptions)[number]) ? body.budget! : "-";
   const timeline = timelineOptions.includes(body.timeline as (typeof timelineOptions)[number]) ? body.timeline! : "-";
 
+  const name = body.name!.trim();
+  const email = body.email!.trim();
+  const company = body.company?.trim() || null;
+  const message = body.message!.trim();
+
+  // 1. Store it. This is the source of truth; staff read enquiries in the portal admin.
+  let stored = false;
+  const id = crypto.randomUUID();
+  const db = await getDb();
+  if (db) {
+    try {
+      await db
+        .prepare(
+          `INSERT INTO enquiries (id, name, email, company, services, budget, timeline, message, created_at)
+           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        )
+        .bind(id, name, email, company, picked.join(", ") || null, budget, timeline, message, new Date().toISOString())
+        .run();
+      stored = true;
+    } catch (err) {
+      console.error("[contact] could not store enquiry:", err);
+    }
+  }
+
+  // 2. Notify on Telegram when configured (best effort).
+  let notified = false;
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;
-  if (!token || !chatId) {
-    console.error("[contact] TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID not set, message not delivered");
+  if (token && chatId) {
+    const text = [
+      "🌙 <b>New Moonlab enquiry</b>",
+      "",
+      `<b>Name:</b> ${esc(name)}`,
+      `<b>Email:</b> ${esc(email)}`,
+      company ? `<b>Company:</b> ${esc(company)}` : null,
+      `<b>Interested in:</b> ${picked.length ? esc(picked.join(", ")) : "-"}`,
+      `<b>Budget:</b> ${esc(budget)}`,
+      `<b>Timeline:</b> ${esc(timeline)}`,
+      "",
+      esc(message),
+    ]
+      .filter((l) => l !== null)
+      .join("\n");
+    try {
+      const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ chat_id: chatId, text, parse_mode: "HTML", disable_web_page_preview: true }),
+      });
+      notified = res.ok;
+      if (!res.ok) console.error(`[contact] Telegram responded ${res.status}`);
+    } catch (err) {
+      console.error("[contact] Telegram delivery failed:", err);
+    }
+    if (stored && notified && db) {
+      await db.prepare("UPDATE enquiries SET notified = 1 WHERE id = ?").bind(id).run().catch(() => {});
+    }
+  }
+
+  if (!stored && !notified) {
     return Response.json(
-      { ok: false, error: "The form isn't working right now. Please try again shortly." },
-      { status: 503 }
+      { ok: false, error: "We couldn't send your message just now. Please try again in a few minutes." },
+      { status: 503 },
     );
   }
-
-  const text = [
-    "🌙 <b>New Moonlabs enquiry</b>",
-    "",
-    `<b>Name:</b> ${esc(body.name!.trim())}`,
-    `<b>Email:</b> ${esc(body.email!.trim())}`,
-    body.company?.trim() ? `<b>Company:</b> ${esc(body.company.trim())}` : null,
-    `<b>Interested in:</b> ${picked.length ? esc(picked.join(", ")) : "-"}`,
-    `<b>Budget:</b> ${esc(budget)}`,
-    `<b>Timeline:</b> ${esc(timeline)}`,
-    "",
-    esc(body.message!.trim()),
-  ]
-    .filter((l) => l !== null)
-    .join("\n");
-
-  try {
-    const res = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ chat_id: chatId, text, parse_mode: "HTML", disable_web_page_preview: true }),
-    });
-    if (!res.ok) throw new Error(`Telegram responded ${res.status}`);
-  } catch (err) {
-    console.error("[contact] delivery failed:", err);
-    return Response.json({ ok: false, error: "We couldn't send your message just now. Please try again or email us." }, { status: 502 });
-  }
-
   return Response.json({ ok: true });
 }

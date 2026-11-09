@@ -7,7 +7,7 @@ import { services } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Integrations",
-  description: "The CRMs, inboxes, AI models, accounting, e-commerce and cloud tools Moonlabs connects, and what we do with each one.",
+  description: "The CRMs, inboxes, AI models, accounting, e-commerce and cloud tools Moonlab connects, and what we do with each one.",
 };
 
 const nameOf = (slug: string) => services.find((s) => s.slug === slug)?.name ?? slug;

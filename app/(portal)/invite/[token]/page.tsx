@@ -24,13 +24,13 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
   if (!invite) {
     return (
       <AuthCard title="This invite link does not work" description="It may have been used already, revoked, or it expired (links last 7 days).">
-        <p className="mt-4 text-[13.5px]">Ask your Moonlabs contact for a new invite link.</p>
+        <p className="mt-4 text-[13.5px]">Ask your Moonlab contact for a new invite link.</p>
         <div className="mt-6 flex flex-wrap gap-2">
           <Link href="/login" className="pt-btn" data-variant="primary">
             Sign in
           </Link>
           <Link href="/contact" className="pt-btn" data-variant="ghost">
-            Contact Moonlabs
+            Contact Moonlab
           </Link>
         </div>
       </AuthCard>
@@ -41,11 +41,11 @@ export default async function InvitePage({ params }: { params: Promise<{ token: 
     getSessionUser(),
     db.prepare("SELECT id, password_hash FROM users WHERE email = ?").bind(invite.email).first<{ id: string; password_hash: string | null }>(),
   ]);
-  const where = invite.org_name ? `the ${invite.org_name} workspace` : "the Moonlabs portal as staff";
+  const where = invite.org_name ? `the ${invite.org_name} workspace` : "the Moonlab portal as staff";
   const signedInAsInvitee = Boolean(current && existing && current.id === existing.id);
 
   return (
-    <AuthCard title="Join the Moonlabs client portal" description={<>You were invited to {where}.</>}>
+    <AuthCard title="Join the Moonlab client portal" description={<>You were invited to {where}.</>}>
       <p className="mt-4 rounded-md border border-border bg-surface-2 px-3 py-2 text-[13px]">
         Invite for <span className="font-medium">{invite.email}</span>
       </p>

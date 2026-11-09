@@ -216,14 +216,14 @@ async function SettingsTab({ ctx, org }: TabProps) {
               <Field label="Role" htmlFor="invite-role">
                 <select id="invite-role" name="role" defaultValue="client" className="pt-select">
                   <option value="client">Client</option>
-                  <option value="admin">Admin (Moonlabs)</option>
+                  <option value="admin">Admin (Moonlab)</option>
                 </select>
               </Field>
             </div>
             {ctx.isStaff && (
               <label className="mt-3 flex items-center gap-2 text-[13px]">
                 <input type="checkbox" name="is_staff" className="h-4 w-4" />
-                Also make them Moonlabs staff (access to every organization)
+                Also make them Moonlab staff (access to every organization)
               </label>
             )}
           </ActionForm>

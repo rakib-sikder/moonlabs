@@ -168,14 +168,14 @@ export default function PricingPage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-6 pb-24">
-        <SectionHeading eyebrow="Compare" title="Moonlabs vs. hiring vs. freelancers." />
+        <SectionHeading eyebrow="Compare" title="Moonlab vs. hiring vs. freelancers." />
         <Reveal>
           <div className="overflow-x-auto rounded-2xl border border-border bg-surface/80 backdrop-blur-sm">
             <table className="w-full min-w-[640px] text-left text-sm">
               <thead>
                 <tr className="border-b border-border">
                   <th className="p-5 font-normal text-muted" />
-                  <th className="p-5 font-medium text-moon">Moonlabs</th>
+                  <th className="p-5 font-medium text-moon">Moonlab</th>
                   <th className="p-5 font-medium">In-house hire</th>
                   <th className="p-5 font-medium">Freelancer</th>
                 </tr>

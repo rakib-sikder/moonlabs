@@ -58,7 +58,7 @@ export function RequestThread({
                     <div className="min-w-0 flex-1">
                       <p className="flex flex-wrap items-baseline gap-x-2">
                         <span className="font-medium">{name}</span>
-                        {staff && <span className="text-[12px] text-moon">Moonlabs</span>}
+                        {staff && <span className="text-[12px] text-moon">Moonlab</span>}
                         <time dateTime={c.created_at} className="text-[12px] text-muted tabular-nums">
                           {formatDateTime(c.created_at)}
                         </time>

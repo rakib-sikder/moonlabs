@@ -9,7 +9,7 @@ import { founders } from "@/lib/content/proof";
 
 export const metadata: Metadata = {
   title: "About",
-  description: "Moonlabs is a small automation agency that builds AI agents, workflows and integrations for small and mid-sized businesses.",
+  description: "Moonlab is a small automation agency that builds AI agents, workflows and integrations for small and mid-sized businesses.",
 };
 
 const values = [
@@ -30,7 +30,7 @@ export default function AboutPage() {
       <PageHeader
         eyebrow="About"
         title="A small team that automates routine work."
-        intro="Moonlabs started by automating our own business: finding leads, replying to them, and running servers that switch to a backup on their own when something fails. Now we build the same kind of systems for other teams."
+        intro="Moonlab started by automating our own business: finding leads, replying to them, and running servers that switch to a backup on their own when something fails. Now we build the same kind of systems for other teams."
       />
 
       <section className="mx-auto max-w-6xl px-6 pb-24 grid gap-10 lg:grid-cols-2 lg:items-center">

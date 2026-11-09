@@ -157,7 +157,7 @@ export function NotConfigured({ compact = false }: { compact?: boolean }) {
         <p className="text-[12px] font-medium uppercase tracking-wider text-muted">Client portal</p>
         <h1 className="mt-2 text-lg font-semibold">Client portal not configured yet</h1>
         <p className="mt-2 text-muted">
-          Sign-in is not switched on for this site yet. If you are a Moonlabs client, your project lead can share
+          Sign-in is not switched on for this site yet. If you are a Moonlab client, your project lead can share
           updates with you directly in the meantime.
         </p>
         <p className="mt-4 text-[12.5px] text-muted">
@@ -191,14 +191,14 @@ export function NoWorkspace({ canAdmin }: { canAdmin: boolean }) {
             </Link>
           ) : (
             <Link href="/contact" className="pt-btn">
-              Contact Moonlabs
+              Contact Moonlab
             </Link>
           )
         }
       >
         {canAdmin
           ? "Create the first client organization in the admin area, then send the client an invite link."
-          : "You are signed in, but your account is not linked to a client organization yet. Ask your Moonlabs contact for an invite link."}
+          : "You are signed in, but your account is not linked to a client organization yet. Ask your Moonlab contact for an invite link."}
       </EmptyState>
     </div>
   );

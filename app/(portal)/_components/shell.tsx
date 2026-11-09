@@ -52,7 +52,7 @@ export function NavLinks({ canAdmin, onNavigate }: { canAdmin: boolean; onNaviga
       </ul>
       {canAdmin && (
         <>
-          <p className="mb-1 mt-6 px-2.5 text-[11px] font-medium uppercase tracking-wider text-muted">Moonlabs staff</p>
+          <p className="mb-1 mt-6 px-2.5 text-[11px] font-medium uppercase tracking-wider text-muted">Moonlab staff</p>
           <ul>
             <li>
               <Link

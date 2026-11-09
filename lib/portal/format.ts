@@ -96,7 +96,7 @@ export function formatBytes(bytes: number | null): string {
 }
 
 export function personName(p: { full_name: string | null; email: string | null; is_staff?: boolean } | null): string {
-  if (!p) return "Moonlabs team";
+  if (!p) return "Moonlab team";
   return p.full_name?.trim() || p.email || "Unknown";
 }
 

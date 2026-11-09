@@ -5,7 +5,7 @@ import { Reveal, SectionHeading } from "@/components/ui/Section";
 
 export const metadata: Metadata = {
   title: "Security & privacy",
-  description: "How Moonlabs handles access, data and AI: minimal permissions, work done in your own accounts, human approval and run logs.",
+  description: "How Moonlab handles access, data and AI: minimal permissions, work done in your own accounts, human approval and run logs.",
 };
 
 const practices = [

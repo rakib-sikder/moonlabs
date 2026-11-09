@@ -1,6 +1,6 @@
 import { ImageResponse } from "next/og";
 
-export const alt = "Moonlabs, an automation agency";
+export const alt = "Moonlab, an automation agency";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -34,7 +34,7 @@ export default function OpengraphImage() {
           }}
         />
         <div style={{ display: "flex", flexDirection: "column", justifyContent: "space-between", width: 700 }}>
-          <div style={{ display: "flex", fontSize: 34, fontWeight: 600, letterSpacing: -1 }}>moonlabs</div>
+          <div style={{ display: "flex", fontSize: 34, fontWeight: 600, letterSpacing: -1 }}>moonlab</div>
           <div style={{ display: "flex", flexDirection: "column" }}>
             <div style={{ fontSize: 26, color: "#cfd8ff", letterSpacing: 4, marginBottom: 20 }}>AUTOMATION AGENCY</div>
             <div style={{ fontSize: 68, fontWeight: 700, lineHeight: 1.05, letterSpacing: -2 }}>

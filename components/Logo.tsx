@@ -12,7 +12,7 @@ export function Logo({ className = "" }: { className?: string }) {
         <circle cx="12" cy="12" r="9" fill="var(--moon)" mask="url(#crescent-mask)" />
         <circle cx="19" cy="5" r="1.4" fill="var(--accent)" />
       </svg>
-      <span className="font-semibold tracking-tight">moonlabs</span>
+      <span className="font-semibold tracking-tight">moonlab</span>
     </span>
   );
 }

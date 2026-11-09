@@ -2,7 +2,7 @@
 
 The client portal lives at `/login` and `/dashboard`. Clients sign in with email and password
 (or Google, if you turn it on) and see their projects, automations, requests, files and
-invoices. Moonlabs staff manage everything from `/dashboard/admin`.
+invoices. Moonlab staff manage everything from `/dashboard/admin`.
 
 Everything runs on Cloudflare, inside the same Worker as the website:
 
@@ -64,7 +64,7 @@ npm run deploy:cf
 ```
 
 This builds the site with OpenNext and deploys the Worker to
-`https://moonlabs.sikdersmail.workers.dev`.
+`https://moonlab.space`.
 
 ## 3. Create the first admin
 
@@ -73,8 +73,8 @@ node scripts/portal-create-admin.mjs you@example.com
 ```
 
 It adds a one-time staff invite to the production database and prints a link like
-`https://moonlabs.sikdersmail.workers.dev/invite/...`. Open it (valid 7 days, works once), set
-your name and a password, and you are signed in as Moonlabs staff with access to every
+`https://moonlab.space/invite/...`. Open it (valid 7 days, works once), set
+your name and a password, and you are signed in as Moonlab staff with access to every
 organization.
 
 Options: `--base https://your-domain.com` to print a link for a custom domain, `--local` to
@@ -85,8 +85,8 @@ hash is stored); if you lose it, run the script again.
 
 1. `/dashboard/admin` > **New organization**: the client's company name and plan.
 2. Open the organization > **Settings & people** > **Invite someone**: their email and role
-   (**Client**, or **Admin (Moonlabs)** for a teammate who should manage only this client).
-   Staff also see "Also make them Moonlabs staff".
+   (**Client**, or **Admin (Moonlab)** for a teammate who should manage only this client).
+   Staff also see "Also make them Moonlab staff".
 3. Click **Create invite link**, then **Copy link** and send it to them yourself (email,
    WhatsApp, Slack). It is valid for 7 days, works once, and is not shown again. Creating a
    new invite for the same email replaces the old link. Pending invites are listed under the
@@ -99,7 +99,7 @@ hash is stored); if you lose it, run the script again.
 
 ## 5. Reset a password
 
-No emails are sent yet, so the "Forgot password?" page tells people to ask their Moonlabs
+No emails are sent yet, so the "Forgot password?" page tells people to ask their Moonlab
 contact.
 
 1. Open the organization > **Settings & people** > **Reset a password**.
@@ -133,11 +133,11 @@ for the same (verified) Google address. It never creates accounts for strangers.
 is hidden until both secrets are set.
 
 1. Go to <https://console.cloud.google.com/>, pick or create a project.
-2. **APIs & Services > OAuth consent screen**: app name "Moonlabs", your support email, user
+2. **APIs & Services > OAuth consent screen**: app name "Moonlab", your support email, user
    type External. Scopes: `openid`, `email`, `profile` (the defaults). Publish the app.
 3. **APIs & Services > Credentials > Create credentials > OAuth client ID**:
    - Application type: **Web application**
-   - Authorized redirect URI: `https://moonlabs.sikdersmail.workers.dev/auth/google/callback`
+   - Authorized redirect URI: `https://moonlab.space/auth/google/callback`
      (add one per domain if you use a custom domain, e.g.
      `https://your-domain.com/auth/google/callback`)
 4. Copy the Client ID and Client secret, then:

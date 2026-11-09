@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Creates a one-time invite link for a Moonlabs staff account (first admin bootstrap).
+// Creates a one-time invite link for a Moonlab staff account (first admin bootstrap).
 //
 //   node scripts/portal-create-admin.mjs you@example.com                 # production D1
 //   node scripts/portal-create-admin.mjs you@example.com --local         # local D1 (wrangler dev)
@@ -16,7 +16,7 @@ import { join } from "node:path";
 import { spawnSync } from "node:child_process";
 
 const DATABASE = "moonlabs-portal";
-const DEFAULT_BASE = "https://moonlabs.sikdersmail.workers.dev";
+const DEFAULT_BASE = "https://moonlab.space";
 const INVITE_DAYS = 7;
 
 function usage(message) {

@@ -121,7 +121,7 @@ export function assertAdmin(ctx: PortalContext, orgId: string): void {
 }
 
 export function assertStaff(ctx: PortalContext): void {
-  if (!ctx.isStaff) throw new AccessError("Only Moonlabs staff can do that.");
+  if (!ctx.isStaff) throw new AccessError("Only Moonlab staff can do that.");
 }
 
 /**
