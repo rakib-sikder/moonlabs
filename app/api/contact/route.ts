@@ -1,6 +1,7 @@
 import { budgetOptions, timelineOptions, validateContact, type ContactPayload } from "@/lib/contact";
 import { services } from "@/lib/site";
 import { getDb } from "@/lib/portal/env";
+import { emailEnquiry } from "@/lib/notify";
 
 // Best-effort in-memory rate limit: 5 submissions per IP per 10 minutes, per server instance.
 const WINDOW_MS = 10 * 60 * 1000;
@@ -66,8 +67,10 @@ export async function POST(request: Request) {
     }
   }
 
-  // 2. Notify on Telegram when configured (best effort).
-  let notified = false;
+  // 2. Email the owner through Brevo when BREVO_API_KEY is set (best effort).
+  let notified = await emailEnquiry({ name, email, company, services: picked, budget, timeline, message });
+
+  // 3. Also notify on Telegram when configured (best effort).
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const chatId = process.env.TELEGRAM_CHAT_ID;
   if (token && chatId) {
@@ -91,14 +94,14 @@ export async function POST(request: Request) {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ chat_id: chatId, text, parse_mode: "HTML", disable_web_page_preview: true }),
       });
-      notified = res.ok;
+      notified = notified || res.ok;
       if (!res.ok) console.error(`[contact] Telegram responded ${res.status}`);
     } catch (err) {
       console.error("[contact] Telegram delivery failed:", err);
     }
-    if (stored && notified && db) {
-      await db.prepare("UPDATE enquiries SET notified = 1 WHERE id = ?").bind(id).run().catch(() => {});
-    }
+  }
+  if (stored && notified && db) {
+    await db.prepare("UPDATE enquiries SET notified = 1 WHERE id = ?").bind(id).run().catch(() => {});
   }
 
   if (!stored && !notified) {
