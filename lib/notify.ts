@@ -29,7 +29,9 @@ export type EnquiryMail = {
 
 /** Emails a new website enquiry to the owner. Returns true when Brevo accepted it. */
 export async function emailEnquiry(e: EnquiryMail): Promise<boolean> {
-  const { BREVO_API_KEY, NOTIFY_EMAIL, NOTIFY_FROM } = await env();
+  const { BREVO_API_KEY: rawKey, NOTIFY_EMAIL, NOTIFY_FROM } = await env();
+  // Secrets pasted through some shells arrive with a byte-order mark or a trailing newline.
+  const BREVO_API_KEY = rawKey?.replace(/^﻿/, "").trim();
   if (!BREVO_API_KEY) return false;
   const to = NOTIFY_EMAIL || "sikdersmail@gmail.com";
   const from = NOTIFY_FROM || "rakib@moonlab.space";
