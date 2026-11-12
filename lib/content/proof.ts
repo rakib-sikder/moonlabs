@@ -41,4 +41,15 @@ export const testimonials: Testimonial[] = [];
 
 export const stats: Stat[] = [];
 
-export const founders: Founder[] = [];
+export const founders: Founder[] = [
+  {
+    name: "Rakibul Hasan",
+    role: "Founder",
+    bio: "Designs and builds the automations Moonlab runs for itself and for clients, including LeadPilot, Inbox Unifier and Automation Toolkit.",
+    photo: "/people/rakibul-hasan.webp",
+    links: [
+      { label: "LinkedIn", href: "https://www.linkedin.com/in/rakibul-hasan-us/" },
+      { label: "GitHub", href: "https://github.com/rakib-sikder" },
+    ],
+  },
+];

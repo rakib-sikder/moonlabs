@@ -2,13 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/PageHeader";
+import { pictureFor } from "@/components/ui/Diorama";
 import { CtaBanner } from "@/components/CtaBanner";
 import { Accordion } from "@/components/ui/Accordion";
 import { WorkflowPipeline } from "@/components/ui/WorkflowPipeline";
 import { Check, Chip, Reveal, SectionHeading } from "@/components/ui/Section";
 import { IconTile } from "@/components/ui/IconTile";
 import { categoryOf, services, serviceTitle } from "@/lib/site";
-import { JsonLd, breadcrumbLd, serviceLd } from "@/lib/seo";
+import { JsonLd, breadcrumbLd, pageMeta, serviceLd } from "@/lib/seo";
 import { serviceDetails } from "@/lib/content/service-details";
 import { industryDetails } from "@/lib/content/industries";
 
@@ -28,15 +29,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const service = services.find((s) => s.slug === slug);
   if (!service) return {};
-  return {
-    title: serviceTitle(service),
-    alternates: { canonical: `/services/${service.slug}` },
-    // Keep it under ~160 characters so search results don't cut it off mid-sentence.
-    description: [
+  // Keep it under ~160 characters so search results don't cut it off mid-sentence.
+  const description =
+    [
       `${service.short} ${serviceTitle(service)} for businesses in Bangladesh and the US.`,
       `${service.short} ${serviceTitle(service)} for small businesses.`,
-    ].find((d) => d.length <= 158) ?? clip(service.short, 158),
-  };
+    ].find((d) => d.length <= 158) ?? clip(service.short, 158);
+  return pageMeta(`/services/${service.slug}`, serviceTitle(service), description, pictureFor(`svc-${service.slug}`));
 }
 
 export default async function ServicePage({ params }: { params: Promise<{ slug: string }> }) {
@@ -70,6 +69,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
         title={serviceTitle(service)}
         intro={service.short}
         accentColor={service.color}
+        image={pictureFor(`svc-${service.slug}`)}
       />
 
       {/* Problems */}

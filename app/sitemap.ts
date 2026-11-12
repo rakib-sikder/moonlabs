@@ -19,6 +19,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/work", priority: 0.7, freq: "monthly" },
     { path: "/integrations", priority: 0.6, freq: "monthly" },
     { path: "/roi-calculator", priority: 0.6, freq: "yearly" },
+    { path: "/sample-audit", priority: 0.6, freq: "yearly" },
     { path: "/about", priority: 0.6, freq: "yearly" },
     { path: "/faq", priority: 0.6, freq: "monthly" },
     { path: "/security", priority: 0.4, freq: "yearly" },

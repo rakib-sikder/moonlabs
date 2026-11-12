@@ -12,12 +12,20 @@ export function Footer() {
             <p className="mt-3 text-sm leading-relaxed text-muted">{site.description}</p>
             <address className="mt-3 text-[13px] not-italic text-muted">{fullAddress}</address>
           </div>
-          <div className="flex shrink-0 items-center gap-3">
+          <div className="flex shrink-0 flex-wrap items-center gap-3">
             {site.email && (
               <a href={`mailto:${site.email}`} className="text-sm text-muted transition-colors hover:text-foreground">
                 {site.email}
               </a>
             )}
+            <a
+              href={`https://wa.me/${site.phone.e164}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="whitespace-nowrap rounded-full border border-border px-4 py-2 text-sm font-medium transition-colors hover:border-muted"
+            >
+              WhatsApp
+            </a>
             <Link
               href={primaryCta.href}
               className="rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-ink transition-opacity hover:opacity-90"
@@ -31,7 +39,7 @@ export function Footer() {
           {footerNav.map((col) => (
             <div key={col.title}>
               <p className="mb-3 text-xs font-medium uppercase tracking-widest text-foreground">{col.title}</p>
-              <ul className="space-y-2 text-sm">
+              <ul className="space-y-3 text-sm sm:space-y-2">
                 {col.links.map((l) => (
                   <li key={l.href}>
                     <Link href={l.href} className="text-muted transition-colors hover:text-foreground">
@@ -47,6 +55,13 @@ export function Footer() {
       <div className="border-t border-border">
         <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-2 px-6 py-5 text-xs text-muted sm:flex-row">
           <span>© {new Date().getFullYear()} Moonlab. All rights reserved.</span>
+          <span className="flex items-center gap-6 text-sm sm:gap-4 sm:text-xs">
+            {site.social.map((s) => (
+              <a key={s.href} href={s.href} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-foreground">
+                {s.label}
+              </a>
+            ))}
+          </span>
           <span>Moon imagery: NASA Scientific Visualization Studio</span>
         </div>
       </div>

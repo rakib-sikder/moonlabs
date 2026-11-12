@@ -1,16 +1,18 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
+import { Diorama, pictureFor } from "@/components/ui/Diorama";
 import { CtaBanner } from "@/components/CtaBanner";
 import { Chip, Reveal } from "@/components/ui/Section";
 import { MiniOrbit } from "@/components/ui/MiniOrbit";
 import { caseStudies } from "@/lib/content/company";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/work" },
-  title: "Case studies",
-  description: "Automation systems we have built and run, including lead generation, inbox automation and a multi-profile browser tool.",
-};
+export const metadata: Metadata = pageMeta(
+  "/work",
+  "Case studies",
+  "Automation systems we have built and run, including lead generation, inbox automation and a multi-profile browser tool.", "page-work",
+);
 
 export default function WorkPage() {
   return (
@@ -18,6 +20,7 @@ export default function WorkPage() {
       <PageHeader
         eyebrow="Case studies"
         title="Systems we built and still run."
+        image="page-work"
         intro="We automate our own business first. These are systems we designed and built, and we still use them every day."
       />
       <section className="mx-auto max-w-6xl px-6 pb-28 space-y-6">
@@ -25,8 +28,12 @@ export default function WorkPage() {
           <Reveal key={c.slug} delay={0.05 * i}>
             <Link
               href={`/work/${c.slug}`}
-              className="group grid gap-8 rounded-3xl border border-border bg-surface/80 p-8 backdrop-blur-sm transition-colors hover:border-accent/40 md:grid-cols-[1fr_1.3fr] sm:p-10"
+              className="group block rounded-3xl border border-border bg-surface/80 p-8 backdrop-blur-sm transition-colors hover:border-accent/40 sm:p-10"
             >
+              {pictureFor(`work-${c.slug}`) && (
+                <Diorama name={pictureFor(`work-${c.slug}`)!} ratio={null} decorative className="mb-8 aspect-[16/9] md:aspect-[5/2]" />
+              )}
+              <div className="grid gap-8 md:grid-cols-[1fr_1.3fr]">
               <div className="flex flex-col justify-between gap-8">
                 <div>
                   <div className="flex items-center gap-4">
@@ -55,6 +62,7 @@ export default function WorkPage() {
                     <Chip key={t}>{t}</Chip>
                   ))}
                 </div>
+              </div>
               </div>
             </Link>
           </Reveal>

@@ -1,6 +1,6 @@
 import { Nav } from "@/components/Nav";
 import { Footer } from "@/components/Footer";
-import { ScrollProgress } from "@/components/ScrollProgress";
+import { ScrollDots } from "@/components/ScrollDots";
 import { BackgroundFX } from "@/components/fx/BackgroundFX";
 import { CometCursor } from "@/components/fx/CometCursor";
 import { SmoothScroll } from "@/components/fx/SmoothScroll";
@@ -14,9 +14,9 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
       <BackgroundFX />
       <SmoothScroll />
       <CometCursor />
-      <ScrollProgress />
+      <ScrollDots />
       <Nav />
-      <main className="relative text-foreground">{children}</main>
+      <main className="relative overflow-x-clip text-foreground">{children}</main>
       <Footer />
     </>
   );

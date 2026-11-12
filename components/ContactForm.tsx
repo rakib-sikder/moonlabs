@@ -2,10 +2,14 @@
 
 import { useState, type FormEvent } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { serviceCategories, servicesIn } from "@/lib/site";
+import { Check, Plus, X } from "lucide-react";
+import { serviceCategories, services, servicesIn } from "@/lib/site";
 import { budgetOptions, LIMITS, timelineOptions, validateContact, type ContactPayload } from "@/lib/contact";
 
 type Status = "idle" | "sending" | "sent" | "error";
+
+/** Dot colour for each service, by name (the form stores names). */
+const colorOf: Record<string, string> = Object.fromEntries(services.map((x) => [x.name, x.color]));
 
 const field =
   "w-full rounded-xl border border-border bg-background/60 px-4 py-3 text-sm outline-none transition-colors placeholder:text-muted/70 focus:border-accent";
@@ -24,6 +28,10 @@ export function ContactForm({ fallbackEmail }: { fallbackEmail?: string }) {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [status, setStatus] = useState<Status>("idle");
   const [serverError, setServerError] = useState("");
+  // The service list stays closed until asked for, so the form opens short.
+  const [picking, setPicking] = useState(false);
+  const [query, setQuery] = useState("");
+  const noMatch = !services.some((x) => x.name.toLowerCase().includes(query.trim().toLowerCase()));
 
   const set = <K extends keyof ContactPayload>(k: K, v: ContactPayload[K]) => {
     setData((d) => ({ ...d, [k]: v }));
@@ -112,33 +120,87 @@ export function ContactForm({ fallbackEmail }: { fallbackEmail?: string }) {
             </div>
 
             <fieldset>
-              <legend className="mb-3 text-sm">What can we help with?</legend>
-              <div className="space-y-4">
-                {serviceCategories.map((c) => (
-                <div key={c.id}>
-                <p className="mb-2 text-xs uppercase tracking-widest text-muted">{c.name}</p>
-                <div className="flex flex-wrap gap-2">
-                {servicesIn(c.id).map((s) => {
-                  const on = data.services.includes(s.name);
-                  return (
+              <legend className="mb-3 text-sm">
+                What can we help with? <span className="text-muted">(optional)</span>
+              </legend>
+              <div className="flex flex-wrap items-center gap-2">
+                {data.services.map((name) => (
+                  <span
+                    key={name}
+                    className="inline-flex items-center gap-2 rounded-full border border-accent bg-accent-soft py-1.5 pl-3.5 pr-1.5 text-sm"
+                  >
+                    <span className="h-2 w-2 rounded-full" style={{ background: colorOf[name] }} />
+                    {name}
                     <button
-                      key={s.slug}
                       type="button"
-                      aria-pressed={on}
-                      onClick={() => toggleService(s.name)}
-                      className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-2 text-sm transition-colors ${
-                        on ? "border-accent bg-accent-soft text-foreground" : "border-border text-muted hover:border-muted"
-                      }`}
+                      onClick={() => toggleService(name)}
+                      aria-label={`Remove ${name}`}
+                      className="flex h-6 w-6 items-center justify-center rounded-full text-muted transition-colors hover:bg-surface-2 hover:text-foreground"
                     >
-                      <span className="h-2 w-2 rounded-full" style={{ background: s.color }} />
-                      {s.name}
+                      <X className="h-3.5 w-3.5" />
                     </button>
-                  );
-                })}
-                </div>
-                </div>
+                  </span>
                 ))}
+                <button
+                  type="button"
+                  onClick={() => setPicking(!picking)}
+                  aria-expanded={picking}
+                  aria-controls="service-picker"
+                  className="inline-flex items-center gap-1.5 rounded-full border border-dashed border-border px-3.5 py-2 text-sm text-muted transition-colors hover:border-accent hover:text-foreground"
+                >
+                  <Plus className={`h-4 w-4 transition-transform ${picking ? "rotate-45" : ""}`} />
+                  {picking ? "Close" : data.services.length ? "Add another" : "Add a service"}
+                </button>
               </div>
+
+              {picking && (
+                <div
+                  id="service-picker"
+                  onKeyDown={(e) => e.key === "Escape" && setPicking(false)}
+                  className="mt-3 rounded-2xl border border-border bg-background/60 p-4"
+                >
+                  <input
+                    type="search"
+                    autoFocus
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Search services"
+                    aria-label="Search services"
+                    className={field}
+                  />
+                  <div className="mt-4 max-h-72 space-y-4 overflow-y-auto pr-1" data-lenis-prevent>
+                    {serviceCategories.map((c) => {
+                      const list = servicesIn(c.id).filter((x) => x.name.toLowerCase().includes(query.trim().toLowerCase()));
+                      if (!list.length) return null;
+                      return (
+                        <div key={c.id}>
+                          <p className="mb-2 text-xs uppercase tracking-widest text-muted">{c.name}</p>
+                          <div className="flex flex-wrap gap-2">
+                            {list.map((x) => {
+                              const on = data.services.includes(x.name);
+                              return (
+                                <button
+                                  key={x.slug}
+                                  type="button"
+                                  aria-pressed={on}
+                                  onClick={() => toggleService(x.name)}
+                                  className={`inline-flex items-center gap-2 rounded-full border px-3.5 py-2 text-sm transition-colors ${
+                                    on ? "border-accent bg-accent-soft text-foreground" : "border-border text-muted hover:border-muted hover:text-foreground"
+                                  }`}
+                                >
+                                  {on ? <Check className="h-3.5 w-3.5 text-accent" /> : <span className="h-2 w-2 rounded-full" style={{ background: x.color }} />}
+                                  {x.name}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
+                    {noMatch && <p className="text-sm text-muted">No service matches that. Describe it in the message below.</p>}
+                  </div>
+                </div>
+              )}
             </fieldset>
 
             <div className="grid gap-5 sm:grid-cols-2">
@@ -176,7 +238,7 @@ export function ContactForm({ fallbackEmail }: { fallbackEmail?: string }) {
                 {fallbackEmail && (
                   <>
                     {" "}
-                    <a href={`mailto:${fallbackEmail}`} className="underline underline-offset-4">{fallbackEmail}</a>
+                    <a href={`mailto:${fallbackEmail}`} className="underline underline-offset-4 transition-colors hover:text-accent">{fallbackEmail}</a>
                   </>
                 )}
               </p>

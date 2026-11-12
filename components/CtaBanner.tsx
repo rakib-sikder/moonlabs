@@ -39,7 +39,7 @@ export function CtaBanner({
 
         <div className="relative grid gap-10 px-6 py-14 sm:px-12 sm:py-16 lg:grid-cols-[1.4fr_1fr] lg:items-center">
           <div>
-            <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl">{title}</h2>
+            <h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">{title}</h2>
             <p className="mt-4 max-w-xl text-lg leading-relaxed text-muted">{body}</p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Magnetic>
@@ -50,7 +50,7 @@ export function CtaBanner({
                   Book a free audit
                 </Link>
               </Magnetic>
-              <Link href="/pricing" className="inline-flex rounded-full px-5 py-3 text-sm font-medium text-muted transition-colors hover:text-foreground">
+              <Link href="/pricing" className="inline-flex rounded-full px-1 py-3 text-sm font-medium text-muted transition-colors hover:text-foreground sm:px-5">
                 See pricing →
               </Link>
             </div>

@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import { PageHeader } from "@/components/PageHeader";
 import { CtaBanner } from "@/components/CtaBanner";
 import { Accordion } from "@/components/ui/Accordion";
 import { Reveal } from "@/components/ui/Section";
 import { faqs } from "@/lib/content/company";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/faq" },
-  title: "FAQ",
-  description: "Answers about pricing, timelines, data security and what happens after an automation goes live.",
-};
+export const metadata: Metadata = pageMeta(
+  "/faq",
+  "FAQ",
+  "Answers about pricing, timelines, data security and what happens after an automation goes live.", "page-faq",
+);
 
 export default function FaqPage() {
   // FAQPage structured data for search results.
@@ -26,7 +27,7 @@ export default function FaqPage() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       <PageHeader
         eyebrow="FAQ"
-        title="Frequently asked questions"
+        title="Frequently asked questions" image="page-faq"
         intro="Pricing, timelines, data security and what happens when something breaks. If yours isn't here, ask us."
       />
       <section className="mx-auto max-w-4xl px-6 pb-24 space-y-14">

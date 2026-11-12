@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import { LegalPage } from "@/components/LegalPage";
 import { site } from "@/lib/site";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/privacy" },
-  title: "Privacy policy",
-  description: "What Moonlab collects through this website and the client portal, why, and how long we keep it.",
-};
+export const metadata: Metadata = pageMeta(
+  "/privacy",
+  "Privacy policy",
+  "What Moonlab collects through this website and the client portal, why, and how long we keep it.",
+);
 
 const contact = site.email ? `email us at ${site.email}` : "use the contact form on this site";
 

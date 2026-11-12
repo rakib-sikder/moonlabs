@@ -38,10 +38,12 @@ function ServicesPanel() {
             const Icon = serviceIcons[s.slug];
             return (
               <li key={s.slug}>
-                <Link href={`/services/${s.slug}`} className="group flex gap-3 rounded-lg px-2 py-1.5 transition-colors hover:bg-surface-2">
+                <Link href={`/services/${s.slug}`} className="group flex gap-3 rounded-lg px-2 py-1.5 transition-colors hover:bg-accent-soft">
                   <Icon className="mt-0.5 h-4 w-4 shrink-0 text-muted group-hover:text-accent" strokeWidth={1.6} />
                   <span className="min-w-0">
-                    <span className="block text-sm font-medium leading-5">{s.name}</span>
+                    <span className="block text-sm font-medium leading-5 transition-colors group-hover:text-accent">{s.name}
+                    <ArrowRight aria-hidden className="ml-1 inline h-3.5 w-3.5 -translate-x-1 opacity-0 transition group-hover:translate-x-0 group-hover:opacity-100" />
+                  </span>
                     <span className="block text-xs leading-snug text-muted">{s.short}</span>
                   </span>
                 </Link>
@@ -64,10 +66,12 @@ function ServicesPanel() {
                   const Icon = serviceIcons[s.slug] ?? fallbackIcon;
                   return (
                     <li key={s.slug}>
-                      <Link href={`/services/${s.slug}`} className="group flex gap-3 rounded-lg px-2 py-1.5 transition-colors hover:bg-surface-2">
+                      <Link href={`/services/${s.slug}`} className="group flex gap-3 rounded-lg px-2 py-1.5 transition-colors hover:bg-accent-soft">
                         <Icon className="mt-0.5 h-4 w-4 shrink-0 text-muted group-hover:text-accent" strokeWidth={1.6} />
                         <span className="min-w-0">
-                          <span className="block text-sm font-medium leading-5">{s.name}</span>
+                          <span className="block text-sm font-medium leading-5 transition-colors group-hover:text-accent">{s.name}
+                    <ArrowRight aria-hidden className="ml-1 inline h-3.5 w-3.5 -translate-x-1 opacity-0 transition group-hover:translate-x-0 group-hover:opacity-100" />
+                  </span>
                           <span className="block text-xs leading-snug text-muted">{s.short}</span>
                         </span>
                       </Link>
@@ -92,10 +96,12 @@ function SolutionsPanel() {
           const Icon = industryIcons[ind.slug];
           return (
             <li key={ind.slug}>
-              <Link href={`/industries/${ind.slug}`} className="group flex gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-surface-2">
+              <Link href={`/industries/${ind.slug}`} className="group flex gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-accent-soft">
                 <Icon className="mt-0.5 h-4 w-4 shrink-0 text-muted group-hover:text-accent" strokeWidth={1.6} />
                 <span className="min-w-0">
-                  <span className="block text-sm font-medium leading-5">{ind.name}</span>
+                  <span className="block text-sm font-medium leading-5 transition-colors group-hover:text-accent">{ind.name}
+                    <ArrowRight aria-hidden className="ml-1 inline h-3.5 w-3.5 -translate-x-1 opacity-0 transition group-hover:translate-x-0 group-hover:opacity-100" />
+                  </span>
                   <span className="block text-xs leading-snug text-muted">{ind.headline}</span>
                 </span>
               </Link>
@@ -125,10 +131,12 @@ function ResourcesPanel() {
           const Icon = resourceIcons[l.href] ?? fallbackIcon;
           return (
             <li key={l.href}>
-              <Link href={l.href} className="group flex gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-surface-2">
+              <Link href={l.href} className="group flex gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-accent-soft">
                 <Icon className="mt-0.5 h-4 w-4 shrink-0 text-muted group-hover:text-accent" strokeWidth={1.6} />
                 <span className="min-w-0">
-                  <span className="block text-sm font-medium leading-5">{l.label}</span>
+                  <span className="block text-sm font-medium leading-5 transition-colors group-hover:text-accent">{l.label}
+                    <ArrowRight aria-hidden className="ml-1 inline h-3.5 w-3.5 -translate-x-1 opacity-0 transition group-hover:translate-x-0 group-hover:opacity-100" />
+                  </span>
                   <span className="block text-xs leading-snug text-muted">{l.desc}</span>
                 </span>
               </Link>
@@ -218,7 +226,7 @@ export function Nav() {
             <Link href="/" aria-label="Moonlab home">
               <Logo />
             </Link>
-            <ul className="hidden items-center gap-1 text-sm md:flex">
+            <ul className="hidden items-center gap-1 text-sm lg:flex">
               {mainNav.map((l) => {
                 const current = isActive(l.href) || (l.menu === "resources" && resourceLinks.some((r) => isActive(r.href)));
                 const expanded = l.menu ? activeMenu === l.menu : undefined;
@@ -260,7 +268,7 @@ export function Nav() {
             ) : (
               <Link
                 href={signIn.href}
-                className={`hidden rounded-full px-4 py-2 text-sm text-muted transition-colors hover:text-foreground sm:inline-block ${
+                className={`hidden whitespace-nowrap rounded-full px-4 py-2 text-sm text-muted transition-colors hover:text-foreground sm:inline-block ${
                   user === undefined ? "invisible" : ""
                 }`}
               >
@@ -269,7 +277,7 @@ export function Nav() {
             )}
             <Link
               href={primaryCta.href}
-              className="hidden rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-ink transition-opacity hover:opacity-90 sm:inline-block"
+              className="hidden whitespace-nowrap rounded-full bg-accent px-4 py-2 text-sm font-medium text-accent-ink transition-opacity hover:opacity-90 sm:inline-block"
             >
               {primaryCta.label}
             </Link>
@@ -279,7 +287,7 @@ export function Nav() {
               aria-expanded={open}
               aria-controls="mobile-menu"
               aria-label={open ? "Close menu" : "Open menu"}
-              className="relative -mr-2 flex h-11 w-11 items-center justify-center md:hidden"
+              className="relative -mr-2 flex h-11 w-11 items-center justify-center lg:hidden"
             >
               <span className={`absolute h-px w-5 bg-foreground transition-transform duration-300 ${open ? "rotate-45" : "-translate-y-1.5"}`} />
               <span className={`absolute h-px w-5 bg-foreground transition-transform duration-300 ${open ? "-rotate-45" : "translate-y-1.5"}`} />
@@ -298,7 +306,7 @@ export function Nav() {
               transition={{ duration: 0.18, ease: [0.16, 1, 0.3, 1] }}
               onMouseEnter={() => openMenu(activeMenu)}
               onClick={() => setActive(null)}
-              className="absolute inset-x-0 top-full hidden px-6 md:block"
+              className="absolute inset-x-0 top-full hidden px-6 lg:block"
             >
               <div
                 className={`mx-auto ${panels[activeMenu].width} overflow-hidden rounded-2xl border border-border bg-surface shadow-[0_24px_60px_-20px_rgba(0,0,0,0.45)]`}
@@ -306,7 +314,7 @@ export function Nav() {
                 {panels[activeMenu].render()}
                 <div className="flex items-center justify-between border-t border-border bg-surface-2/50 px-5 py-3 text-xs text-muted">
                   <span>Not sure where to start? A free 30-minute audit maps it out.</span>
-                  <Link href={primaryCta.href} className="inline-flex items-center gap-1 font-medium text-accent">
+                  <Link href={primaryCta.href} className="inline-flex items-center gap-1 font-medium text-accent hover:underline">
                     Book a free audit <ArrowRight className="h-3.5 w-3.5" />
                   </Link>
                 </div>
@@ -325,26 +333,26 @@ export function Nav() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-40 overflow-y-auto bg-background/97 px-6 pb-10 pt-20 backdrop-blur-lg md:hidden"
+            className="fixed inset-0 z-40 overflow-y-auto bg-background/97 px-6 pb-10 pt-20 backdrop-blur-lg lg:hidden"
           >
             <ul className="divide-y divide-border border-y border-border">
               {mainNav.map((l) =>
                 l.menu ? (
                   <li key={l.href}>
                     <details className="group">
-                      <summary className="flex cursor-pointer list-none items-center justify-between py-4 text-lg font-medium">
+                      <summary className="flex cursor-pointer list-none items-center justify-between py-4 text-lg font-medium transition-colors hover:text-accent">
                         {l.label}
                         <ChevronDown className="h-4 w-4 text-muted transition-transform group-open:rotate-180" />
                       </summary>
                       <ul className="pb-4">
                         <li>
-                          <Link href={l.href} onClick={() => setOpen(false)} className="block py-2 text-sm text-accent">
+                          <Link href={l.href} onClick={() => setOpen(false)} className="block py-2 text-sm text-accent hover:underline">
                             All {l.label.toLowerCase()} →
                           </Link>
                         </li>
                         {mobileLinks(l.menu).map((m) => (
                           <li key={m.href}>
-                            <Link href={m.href} onClick={() => setOpen(false)} className="block py-2 text-sm text-muted">
+                            <Link href={m.href} onClick={() => setOpen(false)} className="block py-2 text-sm text-muted transition-colors hover:text-foreground">
                               {m.label}
                             </Link>
                           </li>
@@ -354,7 +362,7 @@ export function Nav() {
                   </li>
                 ) : (
                   <li key={l.href}>
-                    <Link href={l.href} onClick={() => setOpen(false)} className="block py-4 text-lg font-medium">
+                    <Link href={l.href} onClick={() => setOpen(false)} className="block py-4 text-lg font-medium transition-colors hover:text-accent">
                       {l.label}
                     </Link>
                   </li>
@@ -365,11 +373,11 @@ export function Nav() {
               <Link
                 href={user ? "/dashboard" : signIn.href}
                 onClick={() => setOpen(false)}
-                className="rounded-full border border-border py-3 text-center text-sm font-medium"
+                className="rounded-full border border-border py-3 text-center text-sm font-medium transition-colors hover:border-muted"
               >
                 {user ? "Dashboard" : signIn.label}
               </Link>
-              <Link href={primaryCta.href} onClick={() => setOpen(false)} className="rounded-full bg-accent py-3 text-center text-sm font-medium text-accent-ink">
+              <Link href={primaryCta.href} onClick={() => setOpen(false)} className="rounded-full bg-accent py-3 text-center text-sm font-medium text-accent-ink transition-opacity hover:opacity-90">
                 {primaryCta.label}
               </Link>
             </div>

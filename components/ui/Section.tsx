@@ -49,7 +49,7 @@ export function SectionHeading({
       <RevealText
         text={title}
         highlight={highlight}
-        className="text-2xl sm:text-[2rem] font-semibold tracking-tight leading-tight"
+        className="text-balance text-2xl sm:text-[2rem] font-semibold tracking-tight leading-tight"
       />
       {intro && (
         <Reveal delay={0.15}>

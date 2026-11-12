@@ -1,12 +1,16 @@
 @import "tailwindcss";
 
+/* Tailwind only applies hover: styles on devices that report a hover-capable pointer.
+   Apply them on every device, so links react wherever a pointer passes over them. */
+@custom-variant hover (&:hover);
+
 /*
   Moonlab palette: graphite night (dark) and paper daylight (light), switched
   automatically by the OS setting. No manual toggle by design.
   One warm amber accent, like lamplight from a lunar base, reserved for primary
   actions and links; "moon" is a warm off-white (dark) / bronze (light) for eyebrows.
   Contrast vs background, dark: foreground 17.5, muted 8.7, moon 15.7, accent 10.6; ink on accent 10.0.
-  Contrast vs background, light: foreground 17.5, muted 7.4, moon 6.9, accent 4.7; white on accent 5.0.
+  Contrast vs background, light: foreground 17.5, muted 7.4, moon 6.9, accent 5.2 (4.8 on its own soft tint); white on accent 5.6.
 */
 :root {
   color-scheme: dark;
@@ -37,9 +41,9 @@
     --border: #e2e2dc;
     --foreground: #111214;
     --muted: #4d5159;
-    --accent: #b45309;
+    --accent: #a94e08;
     --accent-ink: #ffffff;
-    --accent-soft: rgba(180, 83, 9, 0.09);
+    --accent-soft: rgba(169, 78, 8, 0.09);
     --moon: #7a4b0c;
     --grid-line: rgba(17, 18, 20, 0.05);
     --grid-glow: rgba(180, 83, 9, 0.3);
@@ -174,14 +178,6 @@ html.lenis body {
   .text-moonlight {
     animation: none;
   }
-}
-
-/* Hero copy steps aside while the camera zooms to a clicked planet. */
-.hero-copy {
-  transition: opacity 0.35s ease;
-}
-html[data-zooming] .hero-copy {
-  opacity: 0 !important;
 }
 
 @keyframes fadein {

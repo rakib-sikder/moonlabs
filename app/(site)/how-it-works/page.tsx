@@ -1,15 +1,17 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
+import { Diorama } from "@/components/ui/Diorama";
 import { CtaBanner } from "@/components/CtaBanner";
 import { Check, Reveal, SectionHeading } from "@/components/ui/Section";
 import { processStages } from "@/lib/content/company";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/how-it-works" },
-  title: "How it works",
-  description: "How we go from a free 30-minute audit to automations that run on their own. Five stages with a fixed price agreed up front.",
-};
+export const metadata: Metadata = pageMeta(
+  "/how-it-works",
+  "How it works",
+  "How we go from a free 30-minute audit to automations that run on their own. Five stages with a fixed price agreed up front.", "process-path",
+);
 
 const principles = [
   { title: "Humans approve the risky parts", body: "Anything customer-facing or costly waits for your approval, until you decide it no longer needs it." },
@@ -26,6 +28,10 @@ export default function HowItWorksPage() {
         title="From first call to running on its own."
         intro="Five stages and a fixed price agreed before we start. Simple automations can be running within a week or two."
       />
+
+      <div className="mx-auto max-w-5xl px-6 pb-14">
+        <Diorama name="process-path" eager />
+      </div>
 
       <section className="mx-auto max-w-5xl px-6 pb-24">
         <ol className="relative space-y-6">

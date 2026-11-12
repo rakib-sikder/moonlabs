@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { caseStudies } from "@/lib/content/company";
+import { Diorama, pictureFor } from "@/components/ui/Diorama";
 import { SectionHead } from "./SectionHead";
 
 /** Home: case studies as rows — problem, what we built, stack, results. */
@@ -18,10 +19,13 @@ export function CaseStudies() {
           <Link
             key={c.slug}
             href={`/work/${c.slug}`}
-            className={`group grid gap-6 p-6 transition-colors hover:bg-surface-2/50 sm:p-8 lg:grid-cols-[1fr_1.4fr_1fr] ${
+            className={`group grid gap-6 p-6 transition-colors hover:bg-surface-2/50 sm:p-8 lg:grid-cols-[168px_1fr_1.4fr_1fr] ${
               i > 0 ? "border-t border-border" : ""
             }`}
           >
+            {pictureFor(`work-${c.slug}`) && (
+              <Diorama name={pictureFor(`work-${c.slug}`)!} ratio={null} decorative className="aspect-[16/9] self-start rounded-xl lg:aspect-[4/3]" />
+            )}
             <div>
               <p className="font-mono text-xs uppercase tracking-widest text-muted">{c.kind}</p>
               <h3 className="mt-2 text-lg font-semibold">{c.name}</h3>

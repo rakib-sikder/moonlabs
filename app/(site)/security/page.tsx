@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import { PageHeader } from "@/components/PageHeader";
 import { CtaBanner } from "@/components/CtaBanner";
 import { Reveal, SectionHeading } from "@/components/ui/Section";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/security" },
-  title: "Security & privacy",
-  description: "How Moonlab handles access, data and AI: minimal permissions, work done in your own accounts, human approval and run logs.",
-};
+export const metadata: Metadata = pageMeta(
+  "/security",
+  "Security & privacy",
+  "How Moonlab handles access, data and AI: minimal permissions, work done in your own accounts, human approval and run logs.", "page-security",
+);
 
 const practices = [
   { title: "Built in your accounts", body: "Automations run in tools you own. We work through invited access you can revoke at any time." },
@@ -30,7 +31,7 @@ export default function SecurityPage() {
     <>
       <PageHeader
         eyebrow="Security & privacy"
-        title="How we handle your data."
+        title="How we handle your data." image="page-security"
         intro="Automations work with your inbox, your CRM and your customers. These are the rules we follow to keep that safe."
       />
       <section className="mx-auto max-w-6xl px-6 pb-24">

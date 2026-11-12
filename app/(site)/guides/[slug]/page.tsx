@@ -2,12 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/PageHeader";
+import { pictureFor } from "@/components/ui/Diorama";
 import { CtaBanner } from "@/components/CtaBanner";
 import { Accordion } from "@/components/ui/Accordion";
 import { IconTile } from "@/components/ui/IconTile";
 import { guides } from "@/lib/content/guides";
 import { services, site } from "@/lib/site";
-import { JsonLd, breadcrumbLd, faqLd } from "@/lib/seo";
+import { JsonLd, breadcrumbLd, faqLd, pageMeta, shareImage } from "@/lib/seo";
 
 export const dynamicParams = false;
 
@@ -19,13 +20,11 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const g = guides.find((x) => x.slug === slug);
   if (!g) return {};
-  return {
-    title: g.title,
-    description: g.description,
+  const meta = pageMeta(`/guides/${g.slug}`, g.title, g.description, pictureFor(`guide-${g.slug}`), {
+    absoluteTitle: true,
     keywords: g.keywords,
-    alternates: { canonical: `/guides/${g.slug}` },
-    openGraph: { type: "article", title: g.title, description: g.description, publishedTime: g.published, url: `/guides/${g.slug}` },
-  };
+  });
+  return { ...meta, openGraph: { ...meta.openGraph, type: "article", publishedTime: g.published, authors: [site.founder] } };
 }
 
 const fmt = (d: string) => new Date(d + "T12:00:00").toLocaleDateString("en-GB", { day: "numeric", month: "long", year: "numeric" });
@@ -61,6 +60,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
     "@type": "Article",
     headline: g.title,
     description: g.description,
+    image: new URL(shareImage(pictureFor(`guide-${g.slug}`))[0].url, site.url).toString(),
     datePublished: g.published,
     dateModified: g.published,
     author: { "@type": "Person", name: site.founder },
@@ -82,7 +82,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
           ]),
         ]}
       />
-      <PageHeader eyebrow={`Guide · ${fmt(g.published)} · ${g.readMinutes} min read`} title={g.title} intro={g.description} />
+      <PageHeader eyebrow={`Guide · ${fmt(g.published)} · ${g.readMinutes} min read`} title={g.title} intro={g.description} image={pictureFor(`guide-${g.slug}`)} />
 
       <div className="mx-auto grid max-w-6xl gap-12 px-6 pb-20 lg:grid-cols-[220px_minmax(0,1fr)]">
         <nav aria-label="On this page" className="hidden lg:block">

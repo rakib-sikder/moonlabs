@@ -1,18 +1,19 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
+import { Diorama, pictureFor } from "@/components/ui/Diorama";
 import { CtaBanner } from "@/components/CtaBanner";
 import { serviceCategories, servicesIn, type Service } from "@/lib/site";
 import { serviceDetails } from "@/lib/content/service-details";
 import { serviceIcons } from "@/lib/icons";
 import { Reveal } from "@/components/ui/Section";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/services" },
-  title: "Services",
-  description:
-    "Automation and AI, plus websites, mobile apps, web apps, databases, cloud, UI/UX design, SEO and marketing from the same team.",
-};
+export const metadata: Metadata = pageMeta(
+  "/services",
+  "Services",
+  "Automation and AI, plus websites, mobile apps, web apps, databases, cloud, UI/UX design, SEO and marketing from the same team.", "page-services",
+);
 
 function ServiceCard({ service, compact = false }: { service: Service; compact?: boolean }) {
   const detail = serviceDetails[service.slug];
@@ -64,6 +65,7 @@ export default function ServicesPage() {
       <PageHeader
         eyebrow={`Services · ${total} across ${serviceCategories.length} sectors`}
         title="Automation, plus the work around it."
+        image="page-services"
         intro="Automation is our main work. The same team can also handle the website, app, data and marketing it connects to, so the pieces are built to fit together."
       />
 
@@ -94,7 +96,7 @@ export default function ServicesPage() {
               className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 rounded-full blur-3xl"
               style={{ background: core.color, opacity: 0.18 }}
             />
-            <div className="relative flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+            <div className="relative flex flex-col gap-8 md:flex-row md:items-center md:justify-between">
               <div className="max-w-2xl">
                 <span className="inline-flex items-center gap-2 rounded-full bg-accent-soft px-3 py-1 text-xs font-medium text-accent">
                   <span className="h-1.5 w-1.5 rounded-full bg-accent" />
@@ -102,12 +104,13 @@ export default function ServicesPage() {
                 </span>
                 <h2 className="mt-5 text-3xl font-semibold tracking-tight sm:text-4xl">{core.name}</h2>
                 <p className="mt-3 text-lg text-muted leading-relaxed">{core.short}</p>
-              </div>
-              <p className="font-mono text-sm text-moon md:text-right">
+                <p className="mt-5 font-mono text-sm text-moon">
                 {servicesIn(core.id).length} areas
-                <br />
+                {" · "}
                 <span className="text-muted">most of our work</span>
-              </p>
+                </p>
+              </div>
+              <Diorama name="service-automation" decorative className="w-full shrink-0 md:w-[320px]" />
             </div>
           </div>
         </Reveal>
@@ -132,6 +135,9 @@ export default function ServicesPage() {
                   <h2 className="mt-3 text-2xl font-semibold tracking-tight sm:text-3xl">{c.name}</h2>
                   <p className="mt-3 text-muted leading-relaxed">{c.short}</p>
                   <div aria-hidden className="mt-6 h-px w-24" style={{ background: `linear-gradient(to right, ${c.color}, transparent)` }} />
+                  {pictureFor(`service-${c.id}`) && (
+                    <Diorama name={pictureFor(`service-${c.id}`)!} ratio="16 / 9" decorative className="mt-8 max-w-sm" />
+                  )}
                 </div>
               </Reveal>
               <div className={`grid gap-5 ${list.length >= 3 ? "md:grid-cols-3" : "md:grid-cols-2"}`}>

@@ -1,16 +1,18 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
+import { Diorama, pictureFor } from "@/components/ui/Diorama";
 import { CtaBanner } from "@/components/CtaBanner";
 import { Reveal } from "@/components/ui/Section";
 import { industryDetails } from "@/lib/content/industries";
 import { services } from "@/lib/site";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/industries" },
-  title: "Solutions by industry",
-  description: "Automation for real estate, clinics, restaurants, e-commerce, agencies, law firms, education and logistics.",
-};
+export const metadata: Metadata = pageMeta(
+  "/industries",
+  "Solutions by industry",
+  "Automation for real estate, clinics, restaurants, e-commerce, agencies, law firms, education and logistics.", "page-industries",
+);
 
 export default function IndustriesPage() {
   return (
@@ -18,6 +20,7 @@ export default function IndustriesPage() {
       <PageHeader
         eyebrow="Solutions"
         title="Automation by industry."
+        image="page-industries"
         intro="Each industry has its own repetitive work. Pick yours to see the problems we usually find and the automations we build for them."
       />
       <section className="mx-auto max-w-6xl px-6 pb-28 grid gap-5 sm:grid-cols-2">
@@ -25,8 +28,12 @@ export default function IndustriesPage() {
           <Reveal key={ind.slug} delay={(i % 2) * 0.08}>
             <Link
               href={`/industries/${ind.slug}`}
-              className="group flex h-full flex-col rounded-2xl border border-border bg-surface/80 p-7 backdrop-blur-sm transition-colors hover:border-accent/40"
+              className="group flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-surface/80 backdrop-blur-sm transition-colors hover:border-accent/40"
             >
+              {pictureFor(`industry-${ind.slug}`) && (
+                <Diorama name={pictureFor(`industry-${ind.slug}`)!} ratio="3 / 2" decorative className="rounded-none border-0 border-b" />
+              )}
+              <div className="flex flex-1 flex-col p-7">
               <div className="flex items-baseline justify-between gap-4">
                 <h2 className="text-xl font-medium">{ind.name}</h2>
                 <span className="font-mono text-xs text-moon">{String(i + 1).padStart(2, "0")}</span>
@@ -52,6 +59,7 @@ export default function IndustriesPage() {
                 <span className="text-sm text-accent">
                   See automations <span className="inline-block transition-transform group-hover:translate-x-1">→</span>
                 </span>
+              </div>
               </div>
             </Link>
           </Reveal>

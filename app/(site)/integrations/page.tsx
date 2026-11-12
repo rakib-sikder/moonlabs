@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
 import { CtaBanner } from "@/components/CtaBanner";
 import { toolCount, toolGroups } from "@/lib/content/integrations";
 import { services } from "@/lib/site";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/integrations" },
-  title: "Integrations",
-  description: "The CRMs, inboxes, AI models, accounting, e-commerce and cloud tools Moonlab connects, and what we do with each one.",
-};
+export const metadata: Metadata = pageMeta(
+  "/integrations",
+  "Integrations",
+  "The CRMs, inboxes, AI models, accounting, e-commerce and cloud tools Moonlab connects, and what we do with each one.", "page-integrations",
+);
 
 const nameOf = (slug: string) => services.find((s) => s.slug === slug)?.name ?? slug;
 
@@ -18,7 +19,7 @@ export default function IntegrationsPage() {
     <>
       <PageHeader
         eyebrow={`Integrations · ${toolCount} tools`}
-        title="We connect the tools you already pay for."
+        title="We connect the tools you already pay for." image="page-integrations"
         intro="If a tool has an API, a webhook, an export or just a web page, we can usually connect it. These are the ones we use most."
       />
 

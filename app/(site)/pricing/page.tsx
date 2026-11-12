@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
 import { CtaBanner } from "@/components/CtaBanner";
@@ -7,11 +8,11 @@ import { Check, Reveal, SectionHeading } from "@/components/ui/Section";
 import { comparison, faqs, planMatrix, plans } from "@/lib/content/company";
 import { Check as CheckIcon, Minus } from "lucide-react";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/pricing" },
-  title: "Pricing",
-  description: "A free audit, then a fixed-price project or a monthly plan. We don't bill by the hour.",
-};
+export const metadata: Metadata = pageMeta(
+  "/pricing",
+  "Pricing",
+  "A free audit, then a fixed-price project or a monthly plan. We don't bill by the hour.", "page-pricing",
+);
 
 const phases = ["Crescent", "Half Moon", "Full Moon"];
 
@@ -39,7 +40,7 @@ export default function PricingPage() {
     <>
       <PageHeader
         eyebrow="Pricing"
-        title="Plans and prices"
+        title="Plans and prices" image="page-pricing"
         intro="Every project starts with a free audit. After that you choose a fixed-price project or a monthly plan, and you see the price before any work starts."
       />
 
@@ -57,7 +58,7 @@ export default function PricingPage() {
         </Reveal>
       </section>
 
-      <section className="mx-auto max-w-6xl px-6 pb-24 grid gap-5 lg:grid-cols-3">
+      <section className="mx-auto max-w-6xl px-6 pb-24 grid gap-8 lg:grid-cols-3 lg:gap-5">
         {plans.map((p, i) => (
           <Reveal key={p.name} delay={i * 0.08}>
             <div
@@ -103,6 +104,7 @@ export default function PricingPage() {
 
       <section className="mx-auto max-w-6xl px-6 pb-24">
         <SectionHeading eyebrow="Compare plans" title="What each plan includes." />
+        <p className="mb-2 text-xs text-muted sm:hidden">Swipe sideways to see every column →</p>
         <div className="overflow-x-auto rounded-2xl border border-border bg-surface/80 backdrop-blur-sm">
           <table className="w-full min-w-[680px] text-left text-sm">
             <thead>
@@ -171,6 +173,7 @@ export default function PricingPage() {
       <section className="mx-auto max-w-6xl px-6 pb-24">
         <SectionHeading eyebrow="Compare" title="Moonlab vs. hiring vs. freelancers." />
         <Reveal>
+          <p className="mb-2 text-xs text-muted sm:hidden">Swipe sideways to see every column →</p>
           <div className="overflow-x-auto rounded-2xl border border-border bg-surface/80 backdrop-blur-sm">
             <table className="w-full min-w-[640px] text-left text-sm">
               <thead>

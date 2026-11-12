@@ -1,15 +1,17 @@
 import Link from "next/link";
+import { Diorama } from "@/components/ui/Diorama";
 import SiteLayout from "./(site)/layout";
 
 export default function NotFound() {
   return (
     <SiteLayout>
-      <section className="min-h-[70vh] flex flex-col items-center justify-center px-6 pt-24 text-center">
+      <section className="min-h-[70vh] flex flex-col items-center justify-center px-6 pb-16 pt-28 text-center">
+        <Diorama name="not-found" className="mb-10 w-full max-w-sm" />
         <p className="font-mono text-xs uppercase tracking-widest text-moon mb-4">
-          404 · Lost in space
+          404 · Page not found
         </p>
         <h1 className="text-4xl sm:text-5xl font-semibold tracking-tight">
-          This page drifted out of orbit.
+          This note slipped off the desk.
         </h1>
         <p className="mt-4 text-muted">
           The link may be old, or the page has moved.

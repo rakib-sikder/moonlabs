@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
 import { CtaBanner } from "@/components/CtaBanner";
@@ -7,11 +8,11 @@ import Image from "next/image";
 import { caseStudies } from "@/lib/content/company";
 import { founders } from "@/lib/content/proof";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/about" },
-  title: "About",
-  description: "Moonlab is a small automation agency that builds AI agents, workflows and integrations for small and mid-sized businesses.",
-};
+export const metadata: Metadata = pageMeta(
+  "/about",
+  "About",
+  "Moonlab is an automation agency that builds AI agents, workflows and integrations for small and mid-sized businesses.", "about-workshop",
+);
 
 const values = [
   { title: "Honest numbers", body: "We measure hours saved before and after. If something isn't worth automating, we say so in the audit." },
@@ -30,7 +31,8 @@ export default function AboutPage() {
     <>
       <PageHeader
         eyebrow="About"
-        title="A small team that automates routine work."
+        title="The team that automates your routine work."
+        image="about-workshop"
         intro="Moonlab started by automating our own business: finding leads, replying to them, and running servers that switch to a backup on their own when something fails. Now we build the same kind of systems for other teams."
       />
 
@@ -55,11 +57,20 @@ export default function AboutPage() {
             <ul className="space-y-4">
               {founders.map((f) => (
                 <li key={f.name} className="flex gap-4 rounded-2xl border border-border bg-surface/80 p-5 backdrop-blur-sm">
-                  {f.photo && <Image src={f.photo} alt="" width={64} height={64} className="h-16 w-16 rounded-full object-cover" />}
+                  {f.photo && <Image src={f.photo} alt={f.name} width={80} height={80} className="h-20 w-20 shrink-0 rounded-full object-cover" />}
                   <div>
                     <p className="font-medium">{f.name}</p>
                     <p className="text-sm text-moon">{f.role}</p>
                     <p className="mt-2 text-sm leading-relaxed text-muted">{f.bio}</p>
+                    {f.links && (
+                      <p className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm">
+                        {f.links.map((l) => (
+                          <a key={l.href} href={l.href} target="_blank" rel="noopener noreferrer" className="text-accent underline-offset-4 hover:underline">
+                            {l.label}
+                          </a>
+                        ))}
+                      </p>
+                    )}
                   </div>
                 </li>
               ))}

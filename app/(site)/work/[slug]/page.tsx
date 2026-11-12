@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/PageHeader";
+import { pictureFor } from "@/components/ui/Diorama";
+import { JsonLd, breadcrumbLd, pageMeta } from "@/lib/seo";
 import { CtaBanner } from "@/components/CtaBanner";
 import { Check, Chip, Reveal, SectionHeading } from "@/components/ui/Section";
 import { caseStudies } from "@/lib/content/company";
@@ -16,7 +18,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const c = caseStudies.find((x) => x.slug === slug);
   if (!c) return {};
-  return { title: `${c.name} case study`, description: c.summary, alternates: { canonical: `/work/${c.slug}` } };
+  return pageMeta(`/work/${c.slug}`, `${c.name} case study`, c.summary, pictureFor(`work-${c.slug}`));
 }
 
 export default async function CaseStudyPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -28,9 +30,16 @@ export default async function CaseStudyPage({ params }: { params: Promise<{ slug
 
   return (
     <>
-      <PageHeader eyebrow={`Case study · ${c.kind}`} title={c.name} intro={c.summary} accentColor={c.color} />
+      <JsonLd
+        data={breadcrumbLd([
+          { name: "Home", path: "/" },
+          { name: "Case studies", path: "/work" },
+          { name: c.name, path: `/work/${c.slug}` },
+        ])}
+      />
+      <PageHeader eyebrow={`Case study · ${c.kind}`} title={c.name} intro={c.summary} accentColor={c.color} image={pictureFor(`work-${c.slug}`)} />
 
-      <section className="mx-auto max-w-6xl px-6 pb-24 grid gap-6 lg:grid-cols-[1fr_1.4fr]">
+      <section className="mx-auto max-w-6xl px-6 pb-24 grid gap-6 lg:grid-cols-[1fr_1.4fr] lg:items-start">
         <Reveal>
           <div className="h-full rounded-2xl border border-border bg-surface/80 p-8 backdrop-blur-sm">
             <p className="mb-4 font-mono text-xs uppercase tracking-widest text-moon">The problem</p>

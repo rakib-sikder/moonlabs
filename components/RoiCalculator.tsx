@@ -41,7 +41,7 @@ function Slider({
         <label htmlFor={id} className="text-sm">
           {label}
         </label>
-        <span className="font-mono text-sm text-moon">{format(value)}</span>
+        <span className="shrink-0 whitespace-nowrap font-mono text-sm text-moon">{format(value)}</span>
       </div>
       <input
         id={id}
@@ -133,7 +133,7 @@ export function RoiCalculator() {
         </p>
         <Link
           href="/contact"
-          className="mt-6 inline-flex rounded-full bg-accent px-6 py-3 text-sm font-medium text-accent-ink transition-opacity hover:opacity-90"
+          className="mt-6 inline-flex rounded-full bg-accent px-6 py-3 text-center text-sm font-medium text-accent-ink transition-opacity hover:opacity-90"
         >
           Book a free audit for real numbers
         </Link>

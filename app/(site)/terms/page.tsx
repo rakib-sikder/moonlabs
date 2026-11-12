@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
+import { pageMeta } from "@/lib/seo";
 import { LegalPage } from "@/components/LegalPage";
 
-export const metadata: Metadata = {
-  alternates: { canonical: "/terms" },
-  title: "Terms of service",
-  description: "The terms that apply to Moonlab projects, monthly plans and the client portal.",
-};
+export const metadata: Metadata = pageMeta(
+  "/terms",
+  "Terms of service",
+  "The terms that apply to Moonlab projects, monthly plans and the client portal.",
+);
 
 export default function TermsPage() {
   return (

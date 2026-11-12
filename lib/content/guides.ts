@@ -16,6 +16,260 @@ export type Guide = {
 export const guides: Guide[] = [
   // ---------------------------------------------------------------------------
   {
+    slug: "business-automation-cost",
+    title: "How Much Does Business Automation Cost? A Plain Pricing Guide",
+    description:
+      "What drives the cost of business automation, the three ways it is sold, the running costs people forget and a simple sum to check whether it pays back.",
+    published: "2026-11-13",
+    readMinutes: 7,
+    keywords: [
+      "business automation cost",
+      "how much does automation cost",
+      "automation agency pricing",
+      "workflow automation pricing",
+      "automation return on investment",
+    ],
+    intro: [
+      "The honest answer to \"how much does automation cost?\" is that it depends on what you are automating. That answer is not much use when you are trying to decide whether to spend the money, so this guide breaks it down into parts you can check for your own business.",
+      "It covers what makes a project cheap or expensive, the three ways automation is usually sold, the running costs that are easy to miss, a simple sum for working out whether it pays back, and the questions to ask an agency before you sign. It is written for owners of small and mid-sized businesses, whether you are in the US or in Bangladesh.",
+    ],
+    sections: [
+      {
+        heading: "What drives the cost of an automation",
+        paragraphs: [
+          "Two automations that sound similar can take very different amounts of work. The price follows the work, and the work mostly comes from four things.",
+          "A useful rule: the more clearly you can describe the task as \"when this happens, do that\", the cheaper it is to build. Every \"it depends\" in your description adds time.",
+        ],
+        bullets: [
+          "How many tools are connected. Moving a form entry into a Google Sheet is one connection. Moving it into a sheet, a CRM, an accounting tool and a WhatsApp message is four, and each one has to be set up, tested and kept working.",
+          "How messy the data is. If phone numbers are typed in five formats, customer names are spelled differently in each system, or half the rows have blanks, the automation needs cleaning steps before it can do anything useful.",
+          "Whether AI is involved. Rule-based steps are predictable and quick to test. Steps where an AI model reads an email, sorts a request or drafts a reply need more testing, a check for wrong answers, and they add a usage fee.",
+          "How many exceptions need a human. Refunds over a limit, VIP customers, orders with missing details. Each exception needs a rule for when the automation stops and who it hands the case to.",
+        ],
+      },
+      {
+        heading: "The three ways automation is sold",
+        paragraphs: [
+          "Most agencies and freelancers sell automation in one of three ways. None of them is wrong. Each one moves the risk to a different place.",
+          "Moonlab uses the first two. A single automation starts from $99 as a one-time project. The monthly plan is $199 per month, which covers up to 2 new automations a month with monitoring included, and there is a larger plan at $399 per month. Every project starts with a free 30-minute audit, and the fixed price is agreed before work starts. Current details are at /pricing.",
+        ],
+        bullets: [
+          "One-off fixed-price project. You agree the scope and the price, and the work is delivered for that price. You know the total before you start, and the builder carries the risk if it takes longer. The trade-off is that the scope has to be written down clearly, and changes after that are a new conversation. It also does not cover what happens when something breaks six months later, unless support is included.",
+          "Monthly plan. You pay a fixed amount each month for a set amount of new work plus monitoring and fixes. This suits a business with a list of tasks to automate over time, or one that wants someone watching the automations. The trade-off is that you pay in quiet months too, so it only makes sense if you will use it.",
+          "Hourly. You pay for time spent. It is flexible and works for small fixes or work that cannot be scoped yet. The trade-off is that you carry the risk. The total is unknown at the start, and a slow builder costs you more than a fast one.",
+        ],
+      },
+      {
+        heading: "The running costs people forget",
+        paragraphs: [
+          "The build price is only part of the cost. An automation runs on other companies' tools, and those have their own charges. We do not quote them here because they vary by plan, by country and by volume, and they change. Check each vendor's own pricing page before you commit, not a number in a blog post.",
+          "Ask for these costs to be listed in the proposal, next to the build price, so you can see the full monthly figure before you agree.",
+        ],
+        bullets: [
+          "Tool subscriptions. Automation platforms such as Zapier, Make or n8n, plus any CRM, form or inbox tool the workflow depends on. Many have tiers based on how many tasks you run a month, so your volume decides which tier you need.",
+          "Message and API usage fees. WhatsApp template messages, SMS, email sending and AI model calls are usually charged by use. A workflow that runs 50 times a month and one that runs 5,000 times can have very different bills.",
+          "Maintenance when a tool changes. Tools update their apps, rename fields and retire old connections. When that happens the automation can stop or, worse, keep running with wrong data. Someone has to notice and fix it, and that time is a cost whether you pay an agency or do it yourself.",
+        ],
+      },
+      {
+        heading: "How to work out whether it pays back",
+        paragraphs: [
+          "You can test any automation idea with one sum. Take the hours it saves per week, multiply by what an hour of that person's time costs you, and compare the yearly total against the build cost plus the running cost.",
+          "Here is a made-up example to show the arithmetic. Say a task takes 5 hours a week, and the automation removes 4 of them because 1 hour of checking and exceptions remains. Say that person's time costs you $15 an hour. The saving is 4 x $15 = $60 a week, and $60 x 52 weeks = $3,120 a year. If the build were a one-time project at a fixed quote, the payback time is the quote divided by $60. At the $99 starting price that is 99 / 60 = 1.65, so under two weeks. On a $199 monthly plan the yearly cost is $199 x 12 = $2,388, which leaves $3,120 - $2,388 = $732 a year from this one task, before tool fees. That is a thin margin for one task, and it shows why a monthly plan makes sense when you have several tasks to automate, not one.",
+          "Then subtract the running costs from the section above. If the number is still clearly positive, the project is worth doing. If it only works when every estimate goes your way, it is not. The same sum works in taka. Use your own hours and your own wage figure, not ours.",
+        ],
+        bullets: [
+          "Hours saved per week x hourly cost = weekly saving.",
+          "Weekly saving x 52 = yearly saving.",
+          "Build cost + (monthly running cost x 12) = first-year cost.",
+          "Yearly saving minus first-year cost = what you actually keep in year one.",
+        ],
+      },
+      {
+        heading: "What to ask an agency before signing",
+        paragraphs: [
+          "A good proposal answers most of these without being asked. If the answers are vague, expect the invoice to be vague too.",
+        ],
+        bullets: [
+          "Is the price fixed, and what exactly is included in it?",
+          "Which tool subscriptions and usage fees will I pay on top, and who pays them, me or you?",
+          "Whose accounts will the automation run in? It should be yours, so you keep it if we stop working together.",
+          "What happens when it breaks? Who finds out, how fast, and is the fix included?",
+          "What does the automation do when it meets a case it cannot handle?",
+          "How will it be tested before it touches real customers or real data?",
+          "Will I get a written description of how it works, in plain language?",
+          "What does a change cost after delivery?",
+        ],
+      },
+      {
+        heading: "Mistakes that make projects expensive",
+        paragraphs: [
+          "Most cost overruns come from decisions made before any building starts. These are the common ones.",
+        ],
+        bullets: [
+          "Automating a process that is not settled. If the steps change every week, you pay for the build and then pay again for each change. Fix the process on paper first.",
+          "Starting with the biggest, most complicated workflow. Start with one small task that runs often. It pays back sooner and teaches you what the next one should be.",
+          "Vague scope. \"Automate our sales\" cannot be priced. \"When a lead fills in the form, add it to the CRM and send a WhatsApp reply within a minute\" can.",
+          "Skipping the data clean-up. Messy data does not go away when you automate. It just moves faster.",
+          "Using AI where a simple rule would do. It adds usage fees and testing time for no gain.",
+          "Trying to automate every exception. Handling the common cases and handing the rare ones to a person is usually far cheaper than covering everything.",
+          "No owner after launch. If nobody is responsible for the automation, small faults sit unnoticed until they become costly ones.",
+        ],
+      },
+      {
+        heading: "Get a fixed price for your own case",
+        paragraphs: [
+          "The quickest way to get a real number is to describe one task to someone who builds these for a living. Book a free 30-minute audit at /contact. We look at the task, tell you whether it is worth automating, list the running costs you should expect, and give you a fixed price before any work starts. If the sum does not work in your favour, we will say so.",
+          "Related services: operations automation at /services/operations, custom builds at /services/custom-build, and sales and lead follow-up at /services/sales-and-leads.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "How much does it cost to automate one business task?",
+        a: "It depends on how many tools are connected, how clean the data is, whether AI is involved and how many exceptions need a person. At Moonlab a single automation starts from $99 as a one-time project, and you get a fixed price after a free 30-minute audit, before any work starts.",
+      },
+      {
+        q: "Is a monthly plan or a one-off project better?",
+        a: "A one-off project suits a single, clearly defined task. A monthly plan suits a business with several tasks to automate over time, or one that wants monitoring and fixes included. Moonlab's monthly plan is $199 per month for up to 2 new automations a month with monitoring, and there is a larger plan at $399 per month.",
+      },
+      {
+        q: "What other costs are there besides the build?",
+        a: "Subscriptions for the tools the automation runs on, usage fees for messages, SMS or AI calls, and maintenance when a tool changes. These vary by vendor, plan and volume, so check each vendor's pricing page and ask for them to be listed in the proposal.",
+      },
+      {
+        q: "How do I know if automation will pay for itself?",
+        a: "Multiply the hours saved per week by what an hour of that time costs you, then by 52. Compare that yearly saving with the build cost plus twelve months of running costs. If the result is clearly positive even with cautious estimates, it pays back.",
+      },
+      {
+        q: "Does adding AI make an automation more expensive?",
+        a: "Usually, yes. AI steps need more testing, a check for wrong answers and a usage fee from the AI provider. Use AI only where the task needs reading or writing free text. Fixed rules are cheaper and more predictable for everything else.",
+      },
+    ],
+    services: ["operations", "custom-build", "sales-and-leads"],
+  },
+  // ---------------------------------------------------------------------------
+  {
+    slug: "zapier-vs-make-vs-n8n",
+    title: "Zapier vs Make vs n8n vs Custom Code: How to Choose",
+    description:
+      "A plain comparison of Zapier, Make, n8n and custom code for small businesses: what each one is, where it fits, how to decide and the mistakes to avoid.",
+    published: "2026-11-13",
+    readMinutes: 7,
+    keywords: [
+      "zapier vs make vs n8n",
+      "zapier vs make",
+      "n8n vs zapier",
+      "no-code vs custom code automation",
+      "best automation tool for small business",
+    ],
+    intro: [
+      "If you are about to build your first automations, the first question is usually which tool to use. Zapier, Make and n8n come up in every search, and sooner or later someone suggests paying a developer to write it properly instead.",
+      "All four routes can work. They differ in how much complexity they handle, where your data sits, who can maintain the result and how the cost grows as you use it more. This guide explains each option in plain terms, shows where each one fits, gives you a simple way to decide and covers the mistakes that cause trouble whichever tool you pick.",
+      "One note before we start. Prices, plan names and usage limits for these tools change often, so we do not quote them here. Check each vendor's own site before you commit.",
+    ],
+    sections: [
+      {
+        heading: "What each option is",
+        paragraphs: [
+          "Zapier is a hosted no-code tool. It is known for a very large library of app connections and a simple model: a trigger happens in one app, then one or more actions run in other apps. You build in the browser and Zapier runs it for you.",
+          "Make is also hosted, but you build on a visual canvas. You lay out a scenario as connected modules, and you can see the data move from one step to the next. That layout suits workflows that branch or need to reshape data along the way.",
+          "n8n is a workflow tool that you can use hosted or run on your own server. It has a visual editor like the others, and it lets you add code steps when the built-in ones are not enough. Custom code means a developer writes the automation as a program and hosts it for you. At Moonlab we use Python and Node.js for this.",
+        ],
+      },
+      {
+        heading: "Where each one fits best",
+        paragraphs: [
+          "None of these is the best tool in general. Each one is a good fit for a certain kind of job and a certain kind of team.",
+        ],
+        bullets: [
+          "Zapier fits short, linear workflows between popular apps, built and looked after by someone who is not technical. A hypothetical example: when a form is submitted, add a row to a sheet and send a message to the sales channel.",
+          "Make fits workflows with several branches, loops over lists of items, or data that has to be reformatted between systems, where seeing the whole flow on one canvas helps.",
+          "n8n fits teams that want the workflow and its data on their own server, or that expect to mix visual steps with small pieces of code. Self-hosting means someone has to look after that server.",
+          "Custom code fits work that is unusual, high in volume, sensitive, or central to how the business runs, and anything that needs an app with no ready-made connection.",
+        ],
+      },
+      {
+        heading: "A simple way to decide",
+        paragraphs: [
+          "Write the workflow down as a numbered list of steps before you open any tool. Then answer five questions about it. The answers usually point to one or two options and rule out the rest.",
+        ],
+        bullets: [
+          "How many steps are there? A handful of steps in a straight line suits the simplest tool. Dozens of steps suggest a canvas tool or code.",
+          "How much branching and data handling is there? If the flow splits on conditions, loops over lists or has to clean and combine data, choose a tool built for that or write code.",
+          "How sensitive is the data? If it includes health, financial or personal records, find out where each tool stores and processes it. Self-hosting or custom code gives you more control over that.",
+          "Who will maintain it? A tool your own staff can open and understand is worth more than a stronger one that only an outside developer can touch.",
+          "How much volume will it handle? Hosted tools generally charge by usage, so a workflow that runs thousands of times a day costs very differently from one that runs twenty times. Estimate your monthly runs and check current pricing.",
+        ],
+      },
+      {
+        heading: "When no-code stops being enough",
+        paragraphs: [
+          "No-code tools are a sensible place to start, and many businesses never need anything else. The signs that you have outgrown one tend to be practical. The workflow has grown so large that nobody wants to edit it. You are using awkward workarounds to do something the tool was not designed for. The usage bill is rising faster than the value you get. Or you need a connection, a speed or a level of control that the tool does not offer.",
+          "At that point custom code is worth pricing. It costs more to build and needs a developer to change, but it can do exactly what the process requires, it can be tested properly, and its running cost does not depend on a per-run charge from a platform. A common middle path is to keep the simple workflows in a no-code tool and move only the heavy or sensitive one into code.",
+          "Our own position at Moonlab is this: \"We pick the simplest tool that will still be reliable in a year. That means no-code where it fits and custom code where it doesn't.\"",
+        ],
+      },
+      {
+        heading: "Why the tool matters less than how you run it",
+        paragraphs: [
+          "Every automation fails at some point, on any of these tools. An app changes a field name, a login expires, a customer types something unexpected. What decides whether that becomes a real problem is how the workflow was set up, not which tool it was built in.",
+          "Three things matter more than the tool choice.",
+        ],
+        bullets: [
+          "Monitoring: someone gets an alert when a run fails, and someone checks now and then that the workflow is still running at all. A workflow that has quietly stopped sends no error.",
+          "Error handling: the workflow knows what to do when a step fails. It retries, skips the item and records it, or stops and tells a person. It should never lose data silently.",
+          "Documentation: a short written note for each workflow covering what it does, what starts it, which accounts it uses and who owns it. One page is enough.",
+        ],
+      },
+      {
+        heading: "Common mistakes",
+        paragraphs: [
+          "These mistakes show up across all four options, and all of them can be avoided.",
+        ],
+        bullets: [
+          "Picking by popularity. The tool your friend uses or the one with the most videos may not match your workflow. Start from the steps you wrote down.",
+          "Building with no alerts. The workflow fails one night and nobody finds out until a customer complains a week later.",
+          "One person holding all the knowledge. If only one employee or one freelancer understands the setup, you are stuck when they leave. Keep the accounts in the company's name and write the notes.",
+          "Automating a process that is still changing. Settle the process first, then automate it.",
+          "Running everything through personal logins. When that person's account is closed, every connection breaks at once.",
+          "Never reviewing usage and cost. Check the numbers every few months so growth does not surprise you.",
+        ],
+      },
+      {
+        heading: "Get help choosing",
+        paragraphs: [
+          "If you are not sure which route fits your process, book a free 30-minute audit at /contact. We look at the workflow you have in mind, tell you which option we would use and why, and say so if a simple no-code setup you can build yourself is enough.",
+          "Related services: operations automation at /services/operations, custom builds at /services/custom-build, and web apps and SaaS at /services/web-apps-and-saas.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "Which is cheapest: Zapier, Make or n8n?",
+        a: "It depends on how many workflows you run, how many steps they have and how often they run. Each vendor counts usage in its own way, and prices and plans change, so estimate your monthly volume and compare it against each vendor's current pricing page. If you self-host n8n, include the cost of the server and the time to maintain it.",
+      },
+      {
+        q: "Is n8n harder to use than Zapier?",
+        a: "For a simple workflow, most non-technical people find Zapier quicker to learn because the model is one trigger followed by actions. n8n gives you more control and the option to add code, which helps on complex work but takes longer to get comfortable with. Self-hosting adds server upkeep on top.",
+      },
+      {
+        q: "Can I switch tools later?",
+        a: "Yes, but workflows do not transfer between tools, so switching means rebuilding them. That is manageable if each workflow is documented and you know what it is supposed to do. It is one more reason to write those notes from the start.",
+      },
+      {
+        q: "When should a small business choose custom code?",
+        a: "When the workflow is central to the business and a no-code tool cannot do it reliably, when the data is too sensitive to pass through another platform, when volume makes usage-based pricing expensive, or when you need to connect a system that has no ready-made connection. For a few simple workflows, no-code is usually the better first step.",
+      },
+      {
+        q: "Do I need a developer to use Zapier or Make?",
+        a: "Not for simple workflows. Many owners and operations managers build their first ones themselves. Help becomes useful when the workflow branches a lot, handles important data or needs proper error handling and alerts.",
+      },
+    ],
+    services: ["operations", "custom-build", "web-apps-and-saas"],
+  },
+  // ---------------------------------------------------------------------------
+  {
     slug: "whatsapp-automation-for-business-bangladesh",
     title: "WhatsApp Automation for Business in Bangladesh: A Practical Guide",
     description:

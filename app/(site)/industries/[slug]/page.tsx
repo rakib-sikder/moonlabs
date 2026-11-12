@@ -2,12 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/PageHeader";
+import { pictureFor } from "@/components/ui/Diorama";
 import { CtaBanner } from "@/components/CtaBanner";
 import { Reveal, SectionHeading } from "@/components/ui/Section";
 import { IconTile } from "@/components/ui/IconTile";
 import { industryDetails } from "@/lib/content/industries";
 import { services } from "@/lib/site";
-import { JsonLd, breadcrumbLd } from "@/lib/seo";
+import { JsonLd, breadcrumbLd, pageMeta } from "@/lib/seo";
 import { caseStudies } from "@/lib/content/company";
 import { WorkflowPipeline } from "@/components/ui/WorkflowPipeline";
 
@@ -21,7 +22,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const ind = industryDetails.find((i) => i.slug === slug);
   if (!ind) return {};
-  return { title: `Automation for ${ind.name.toLowerCase()}`, description: ind.intro, alternates: { canonical: `/industries/${ind.slug}` } };
+  return pageMeta(`/industries/${ind.slug}`, `Automation for ${ind.name.toLowerCase()}`, ind.intro, pictureFor(`industry-${ind.slug}`));
 }
 
 export default async function IndustryPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -40,7 +41,7 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
           { name: ind.name, path: `/industries/${ind.slug}` },
         ])}
       />
-      <PageHeader eyebrow={`Solutions · ${ind.name}`} title={ind.headline} intro={ind.intro} />
+      <PageHeader eyebrow={`Solutions · ${ind.name}`} title={ind.headline} intro={ind.intro} image={pictureFor(`industry-${ind.slug}`)} />
 
       <section className="mx-auto max-w-6xl px-6 pb-24">
         <SectionHeading eyebrow="What we usually find" title="Where the hours go." />

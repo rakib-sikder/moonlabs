@@ -8,8 +8,17 @@ export const site = {
   tagline: "Automation agency",
   description:
     "Moonlab builds AI agents, workflows and integrations that take repetitive work off your team. We also build the websites, apps, data and marketing around them.",
-  /** Public contact address - set NEXT_PUBLIC_CONTACT_EMAIL; hidden everywhere when empty. */
-  email: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "",
+  /** Public contact address. NEXT_PUBLIC_CONTACT_EMAIL overrides it. */
+  email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "sikdersmail@gmail.com",
+  /** Phone and WhatsApp: `display` is what people read, `e164` is digits only for tel: and wa.me links. */
+  phone: { display: "+880 1785-952127", e164: "8801785952127" },
+  /** Where visitors book the free audit themselves. NEXT_PUBLIC_CAL_LINK overrides it. */
+  calLink: "https://cal.com/rakibulhasan-us/free-automation-audit",
+  /** Public profiles, shown in the footer and listed in structured data. */
+  social: [
+    { label: "LinkedIn", href: "https://www.linkedin.com/in/rakibul-hasan-us/" },
+    { label: "Facebook", href: "https://www.facebook.com/rakibul.hasan.fb.us" },
+  ],
   /** Canonical origin for SEO (sitemap, Open Graph). */
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://moonlab.space",
   founder: "Rakibul Hasan",
@@ -44,6 +53,7 @@ export const resourceLinks: NavLink[] = [
   { href: "/work", label: "Case studies", desc: "Systems we built and still run" },
   { href: "/guides", label: "Guides", desc: "Practical how-tos on automation, booking and websites" },
   { href: "/integrations", label: "Integrations", desc: "The tools we connect, and what we do with each" },
+  { href: "/sample-audit", label: "Sample audit report", desc: "See the written report the free audit gives you" },
   { href: "/roi-calculator", label: "ROI calculator", desc: "Estimate the hours and money you'd save" },
   { href: "/security", label: "Security", desc: "Access, data handling and approvals" },
   { href: "/faq", label: "FAQ", desc: "Pricing, timelines, ownership and support" },
