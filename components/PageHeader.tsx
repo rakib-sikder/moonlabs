@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { RevealText } from "./ui/RevealText";
 import { MoonImage } from "./ui/MoonImage";
 
-/** Shared header for inner pages, with a slowly turning orbit system on the right. */
+/** Shared header for inner pages, with the moon on the right. */
 export function PageHeader({
   eyebrow,
   title,
@@ -14,7 +14,7 @@ export function PageHeader({
   eyebrow: string;
   title: string;
   intro?: string;
-  /** Planet colour for service pages; defaults to the brand accent. */
+  /** Glow colour for service pages; defaults to the brand accent. */
   accentColor?: string;
 }) {
   const planet = accentColor ?? "var(--accent)";
@@ -26,37 +26,11 @@ export function PageHeader({
         style={{ opacity: "var(--glow-strength)", background: `radial-gradient(circle, ${planet} 0%, transparent 70%)` }}
       />
 
-      {/* Orbit rings */}
+      {/* The moon, on its own */}
       <div
         aria-hidden
-        className="pointer-events-none absolute right-[-180px] top-6 hidden h-[480px] w-[480px] md:block lg:right-[-60px] [mask-image:linear-gradient(to_bottom,black_55%,transparent_92%)]"
+        className="pointer-events-none absolute right-[-180px] top-6 hidden h-[480px] w-[480px] md:block lg:right-[-60px]"
       >
-        {[1, 0.74, 0.5].map((s, i) => (
-          <div
-            key={s}
-            className="orbit-spin absolute left-1/2 top-1/2 rounded-full border border-foreground/10"
-            style={{
-              width: `${s * 100}%`,
-              height: `${s * 100}%`,
-              marginLeft: `${-s * 50}%`,
-              marginTop: `${-s * 50}%`,
-              ["--orbit-speed" as string]: `${28 - i * 7}s`,
-              animationDirection: i % 2 ? "reverse" : "normal",
-            }}
-          >
-            {/* Small shaded planet riding the ring */}
-            <span
-              className="absolute left-1/2 -translate-x-1/2 rounded-full"
-              style={{
-                width: [14, 9, 7][i],
-                height: [14, 9, 7][i],
-                top: -[7, 4.5, 3.5][i],
-                background: `radial-gradient(circle at 32% 30%, color-mix(in srgb, ${[planet, "#5ee0d0", "#ffc76b"][i]} 45%, white), ${[planet, "#5ee0d0", "#ffc76b"][i]} 55%, color-mix(in srgb, ${[planet, "#5ee0d0", "#ffc76b"][i]} 35%, black))`,
-                boxShadow: `0 0 14px 2px color-mix(in srgb, ${[planet, "#5ee0d0", "#ffc76b"][i]} 45%, transparent)`,
-              }}
-            />
-          </div>
-        ))}
         <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
           <MoonImage size={120} glow={planet} />
         </div>

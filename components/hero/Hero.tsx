@@ -1,17 +1,10 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
-import { useThemeColors } from "@/lib/useTheme";
 import { Magnetic } from "@/components/ui/Magnetic";
-import { CssMoon } from "./CssMoon";
-
-const MoonScene = dynamic(() => import("./MoonScene"), {
-  ssr: false,
-  loading: () => <CssMoon />,
-});
+import { HeroPile } from "./HeroPile";
 
 const lines = [
   { words: ["We", "automate", "the", "work"] },
@@ -21,31 +14,9 @@ const lines = [
 
 const ease = [0.16, 1, 0.3, 1] as const;
 
-function hasWebGL() {
-  try {
-    const c = document.createElement("canvas");
-    return !!(c.getContext("webgl2") || c.getContext("webgl"));
-  } catch {
-    return false;
-  }
-}
-
 export function Hero() {
   const ref = useRef<HTMLElement>(null);
   const reduced = !!useReducedMotion();
-  const colors = useThemeColors();
-  const [webgl, setWebgl] = useState<boolean | null>(null);
-  const [active, setActive] = useState(true);
-
-  useEffect(() => {
-    // Feature detection has to run in the browser; this runs once after mount.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setWebgl(hasWebGL());
-    const io = new IntersectionObserver(([e]) => setActive(e.isIntersecting), { rootMargin: "100px" });
-    if (ref.current) io.observe(ref.current);
-    return () => io.disconnect();
-  }, []);
-
   const { scrollYProgress } = useScroll({ target: ref, offset: ["start start", "end start"] });
   const sceneY = useTransform(scrollYProgress, [0, 1], ["0%", "-18%"]);
   const sceneScale = useTransform(scrollYProgress, [0, 1], [1, 0.82]);
@@ -57,7 +28,7 @@ export function Hero() {
 
   return (
     <section ref={ref} className="relative min-h-[100svh] overflow-hidden">
-      {/* Moon glow behind the scene */}
+      {/* Warm glow behind the pile */}
       <div
         aria-hidden
         className="pointer-events-none absolute top-[8%] right-[-10%] lg:right-[2%] h-[680px] w-[680px] rounded-full blur-3xl"
@@ -71,12 +42,15 @@ export function Hero() {
         style={{ y: sceneY, scale: sceneScale, opacity: sceneOpacity }}
         className="absolute inset-0"
       >
-        {webgl === false ? <CssMoon /> : webgl ? <MoonScene colors={colors} active={active} reduced={reduced} /> : null}
+        {/* Stacked above the copy on small screens, beside it from xl up. */}
+        <div className="absolute left-0 right-0 top-[13svh] px-4 xl:left-[55%] xl:top-1/2 xl:-translate-y-1/2 xl:pl-0 xl:pr-[3%]">
+          <HeroPile className="mx-auto w-full max-w-[560px]" />
+        </div>
       </motion.div>
 
       <motion.div
         style={{ y: textY, opacity: textOpacity }}
-        className="hero-copy pointer-events-none relative z-10 mx-auto flex min-h-[100svh] max-w-6xl flex-col justify-end px-6 pb-20 pt-[52svh] lg:justify-center lg:pt-24 lg:pb-0"
+        className="hero-copy pointer-events-none relative z-10 mx-auto flex min-h-[100svh] max-w-6xl flex-col justify-end px-6 pb-20 pt-[52svh] xl:justify-center xl:pt-24 xl:pb-0"
       >
         <motion.p
           initial={{ opacity: 0, y: 10 }}
@@ -91,7 +65,7 @@ export function Hero() {
           AUTOMATION AGENCY · NOW BOOKING
         </motion.p>
 
-        <h1 className="text-[2.45rem] leading-[1.04] sm:text-6xl lg:text-[4.1rem] font-semibold tracking-tight">
+        <h1 className="text-[2.45rem] leading-[1.04] sm:text-6xl xl:text-[3.6rem] font-semibold tracking-tight">
           {lines.map((line, li) => (
             <span key={li} className="block">
               {line.words.map((w) => {

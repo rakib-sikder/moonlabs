@@ -23,6 +23,9 @@
   --grid-line: rgba(255, 255, 255, 0.035);
   --grid-glow: rgba(245, 178, 78, 0.35);
   --glow-strength: 0.16;
+  /* Hero pile: an overdue chore, and the same chore once handled. */
+  --late: #f47c7c;
+  --ok: #4fd18b;
 }
 
 @media (prefers-color-scheme: light) {
@@ -41,6 +44,8 @@
     --grid-line: rgba(17, 18, 20, 0.05);
     --grid-glow: rgba(180, 83, 9, 0.3);
     --glow-strength: 0.12;
+    --late: #c0312f;
+    --ok: #13804b;
   }
 }
 
