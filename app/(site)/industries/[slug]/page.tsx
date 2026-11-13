@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { PageHeader } from "@/components/PageHeader";
 import { pictureFor } from "@/components/ui/Diorama";
+import { industrySeo } from "@/lib/content/seo-targets";
 import { CtaBanner } from "@/components/CtaBanner";
 import { Reveal, SectionHeading } from "@/components/ui/Section";
 import { IconTile } from "@/components/ui/IconTile";
@@ -22,6 +23,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { slug } = await params;
   const ind = industryDetails.find((i) => i.slug === slug);
   if (!ind) return {};
+  const target = industrySeo[ind.slug];
+  if (target)
+    return pageMeta(`/industries/${ind.slug}`, target.title, target.description, pictureFor(`industry-${ind.slug}`), {
+      absoluteTitle: true,
+      keywords: target.keywords,
+    });
   return pageMeta(`/industries/${ind.slug}`, `Automation for ${ind.name.toLowerCase()}`, ind.intro, pictureFor(`industry-${ind.slug}`));
 }
 
@@ -41,7 +48,7 @@ export default async function IndustryPage({ params }: { params: Promise<{ slug:
           { name: ind.name, path: `/industries/${ind.slug}` },
         ])}
       />
-      <PageHeader eyebrow={`Solutions · ${ind.name}`} title={ind.headline} intro={ind.intro} image={pictureFor(`industry-${ind.slug}`)} />
+      <PageHeader eyebrow={industrySeo[ind.slug]?.heading ?? `Solutions · ${ind.name}`} title={ind.headline} intro={ind.intro} image={pictureFor(`industry-${ind.slug}`)} />
 
       <section className="mx-auto max-w-6xl px-6 pb-24">
         <SectionHeading eyebrow="What we usually find" title="Where the hours go." />

@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import type { ElementType } from "react";
+import { Fragment, type ElementType } from "react";
 
 /** Heading whose words rise out of a blur, one after another, when scrolled into view. */
 export function RevealText({
@@ -30,8 +30,11 @@ export function RevealText({
         viewport={{ once: true, amount: 0.5 }}
         variants={{ hidden: {}, show: { transition: { staggerChildren: 0.05, delayChildren: delay } } }}
       >
+        {/* Real spaces between words (not margins), so search engines read separate words. */}
         {words.map((w, i) => (
-          <span key={i} className="inline-block overflow-hidden pb-[0.1em] mr-[0.25em] align-top">
+          <Fragment key={i}>
+          {i > 0 && " "}
+          <span className="inline-block overflow-hidden pb-[0.1em] align-top">
             <motion.span
               className={`inline-block ${highlight.includes(w) ? "text-moonlight" : ""}`}
               variants={{
@@ -47,6 +50,7 @@ export function RevealText({
               {w}
             </motion.span>
           </span>
+          </Fragment>
         ))}
       </motion.span>
     </Tag>

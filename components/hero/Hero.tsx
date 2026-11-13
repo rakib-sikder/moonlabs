@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { Fragment } from "react";
 import { motion } from "framer-motion";
 import { Magnetic } from "@/components/ui/Magnetic";
 import { HeroPile } from "./HeroPile";
@@ -50,7 +51,8 @@ export function Hero() {
               {line.words.map((w) => {
                 const i = wordIndex++;
                 return (
-                  <span key={w + i} className="inline-block overflow-hidden pb-[0.08em] mx-[0.12em] align-top md:ml-0 md:mr-[0.24em]">
+                  <Fragment key={w + i}>
+                  <span className="inline-block overflow-hidden pb-[0.08em] align-top">
                     <motion.span
                       className={`inline-block ${line.highlight ? "text-moonlight" : ""}`}
                       initial={{ y: "105%", opacity: 0, filter: "blur(10px)" }}
@@ -60,6 +62,9 @@ export function Hero() {
                       {w}
                     </motion.span>
                   </span>
+                  {/* A real space, so the heading reads as words (not one long word) to search engines. */}
+                  {" "}
+                  </Fragment>
                 );
               })}
             </span>

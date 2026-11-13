@@ -11,6 +11,7 @@ import { IconTile } from "@/components/ui/IconTile";
 import { categoryOf, services, serviceTitle } from "@/lib/site";
 import { JsonLd, breadcrumbLd, pageMeta, serviceLd } from "@/lib/seo";
 import { serviceDetails } from "@/lib/content/service-details";
+import { serviceSeo } from "@/lib/content/seo-targets";
 import { industryDetails } from "@/lib/content/industries";
 
 export const dynamicParams = false;
@@ -35,6 +36,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
       `${service.short} ${serviceTitle(service)} for businesses in Bangladesh and the US.`,
       `${service.short} ${serviceTitle(service)} for small businesses.`,
     ].find((d) => d.length <= 158) ?? clip(service.short, 158);
+  const target = serviceSeo[service.slug];
+  if (target)
+    return pageMeta(`/services/${service.slug}`, target.title, target.description, pictureFor(`svc-${service.slug}`), {
+      absoluteTitle: true,
+      keywords: target.keywords,
+    });
   return pageMeta(`/services/${service.slug}`, serviceTitle(service), description, pictureFor(`svc-${service.slug}`));
 }
 
@@ -66,7 +73,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
       />
       <PageHeader
         eyebrow={`${category.name} · ${isAutomation ? "Live in" : "Timeline"} ${detail.setup}`}
-        title={serviceTitle(service)}
+        title={serviceSeo[service.slug]?.heading ?? serviceTitle(service)}
         intro={service.short}
         accentColor={service.color}
         image={pictureFor(`svc-${service.slug}`)}

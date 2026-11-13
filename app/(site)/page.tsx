@@ -14,7 +14,7 @@ import { HomeFaq, Solutions } from "@/components/home/SolutionsAndFaq";
 export const metadata: Metadata = {
   alternates: { canonical: "/" },
   description:
-    "Moonlab is an AI automation agency for small businesses in the US and Bangladesh. We automate lead replies, support email, invoice chasing and data entry. Free 30-minute audit.",
+    "AI automation agency for small businesses in the US and Bangladesh: lead replies, support email, invoices and data entry on autopilot. Free 30-minute audit.",
 };
 
 export default function Home() {
