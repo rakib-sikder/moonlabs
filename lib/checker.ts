@@ -71,11 +71,14 @@ async function crux(key: string, u: URL): Promise<CheckResult["field"]> {
     const json = (await res.json()) as { record?: { metrics?: Record<string, { percentiles?: { p75?: number | string } }> } };
     return json.record?.metrics ?? null;
   };
+  // Google files a site under the exact host it is served from, so try it with and without www.
+  const other = new URL(u.toString());
+  other.hostname = u.hostname.startsWith("www.") ? u.hostname.slice(4) : `www.${u.hostname}`;
   let scope: "page" | "site" = "page";
-  let m = await ask({ url: u.toString() });
+  let m = (await ask({ url: u.toString() })) ?? (await ask({ url: other.toString() }));
   if (!m) {
     scope = "site";
-    m = await ask({ origin: u.origin });
+    m = (await ask({ origin: u.origin })) ?? (await ask({ origin: other.origin }));
   }
   if (!m) return null;
   const p = (name: string) => {
@@ -176,7 +179,7 @@ export async function runCheck(key: string, u: URL): Promise<CheckResult> {
   const passed: string[] = [];
   // When real visitors already get a good result, the simulated slow-phone test of the same
   // thing would only contradict it, so it is left out.
-  const realGood = new Set(
+  const realGood = new Set<string>(
     (field?.vitals ?? []).filter((v) => v.rating === "good").map((v) => (v.key === "lcp" ? "largest-contentful-paint" : v.key === "cls" ? "cumulative-layout-shift" : "")),
   );
   for (const [id, info] of Object.entries(EXPLAIN)) {
