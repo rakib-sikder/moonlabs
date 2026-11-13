@@ -8,6 +8,7 @@ import { ProcessStrip } from "@/components/home/ProcessStrip";
 import { CaseStudies } from "@/components/home/CaseStudies";
 import { PortalPreview } from "@/components/home/PortalPreview";
 import { ClientLogos, StatsRow, Testimonials } from "@/components/home/Proof";
+import { Reviews } from "@/components/home/Reviews";
 import { HomeFaq, Solutions } from "@/components/home/SolutionsAndFaq";
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
@@ -23,6 +24,7 @@ export default function Home() {
       <StatsRow />
       <CaseStudies />
       <Testimonials />
+      <Reviews />
       <ProcessStrip />
       <Solutions />
       <PortalPreview />

@@ -36,6 +36,19 @@ export default async function AdminPage() {
         </Link>
       )}
 
+      {ctx.isStaff && (
+        <Link
+          href="/dashboard/admin/reviews"
+          className="mb-6 flex items-center justify-between rounded-xl border border-border bg-surface px-5 py-4 text-sm transition-colors hover:border-accent/40"
+        >
+          <span>
+            <span className="font-medium">Client reviews</span>
+            <span className="text-muted"> · approve what appears on the site</span>
+          </span>
+          <span className="text-accent">Open →</span>
+        </Link>
+      )}
+
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Panel title={`Organizations (${orgs.length})`} className="lg:col-span-2" bodyClassName={null}>
           {orgs.length === 0 ? (
