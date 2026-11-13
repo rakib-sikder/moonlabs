@@ -10,8 +10,10 @@ import { founders } from "@/lib/content/proof";
 
 export const metadata: Metadata = pageMeta(
   "/about",
-  "About",
-  "Moonlab is an automation agency that builds AI agents, workflows and integrations for small and mid-sized businesses.", "about-workshop",
+  "About Moonlab | Software & Automation Company in Dhaka",
+  "Moonlab is a software and AI automation company in Dhaka, Bangladesh, building automations, websites and apps for businesses in Bangladesh and the US.",
+  "about-workshop",
+  { absoluteTitle: true },
 );
 
 const values = [

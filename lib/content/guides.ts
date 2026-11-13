@@ -16,6 +16,515 @@ export type Guide = {
 export const guides: Guide[] = [
   // ---------------------------------------------------------------------------
   {
+    slug: "ai-automation-for-small-business",
+    title: "AI Automation for Small Business: Where to Start in 2026",
+    description:
+      "What AI automation can do for a small business in practice, the jobs it handles well, what to keep a person on, how to pick a first task and judge payback.",
+    published: "2026-11-13",
+    readMinutes: 7,
+    keywords: [
+      "ai automation for small business",
+      "small business automation",
+      "automation for small business",
+      "ai automation agency",
+      "ai automation agency services",
+    ],
+    intro: [
+      "Most talk about AI is aimed at large companies with IT teams. If you run a business with 2 to 50 people, the useful question is simpler: which of the jobs your team does every week could a machine do, and which should it stay away from? This guide answers that for AI automation for small business, in plain terms and without the hype.",
+      "It covers what AI automation actually is, the jobs it does well with a short example of each, what it should not be trusted with, how to pick your first task, when to hire an AI automation agency and when to do it yourself, and a simple sum for checking whether it pays back. All examples are made up to show how things work. They are not client stories.",
+    ],
+    sections: [
+      {
+        heading: "What AI automation for small business actually means",
+        paragraphs: [
+          "Most small business automation is made of plain rules: when a form is filled in, add the person to a spreadsheet and send a reply. Rules are fast, cheap and predictable. They have been around for years and they still do most of the work.",
+          "The AI part is one step inside those rules, used only where text has to be read or written. A rule cannot tell whether an email is a complaint, a quote request or spam. An AI model can read it and sort it. A rule cannot write a reply that fits the question. An AI model can draft one. So a typical automation looks like this: a trigger, a few rule steps, one AI step that reads or writes, then more rule steps that file the result or pass it to a person.",
+          "Thinking of it this way keeps costs down and mistakes visible. If a step can be done with a rule, use a rule. Save AI for the parts that need judgment about words.",
+        ],
+      },
+      {
+        heading: "Jobs small business automation does well",
+        paragraphs: [
+          "These are the tasks where automation for small business tends to fit best: they happen often, they follow a pattern, and a mistake is easy to spot and fix. Each example below is hypothetical.",
+        ],
+        bullets: [
+          "Answering enquiries. A plumbing company gets questions through its website form at all hours. The automation reads each message, answers common questions about service areas and opening times, and books a callback for anything else.",
+          "Sorting email. A small accounting office has one shared inbox. Each new email is read, tagged as client question, new client, invoice or spam, and moved to the right folder or person.",
+          "Invoice chasing. A cleaning company sends invoices from its accounting tool. When one is 7 days overdue, the automation sends a polite reminder, and at 21 days it alerts the owner instead of sending another.",
+          "Data entry. A dental clinic receives patient forms as PDFs. The automation pulls out the name, phone number and appointment date and adds them to the booking sheet for staff to check.",
+          "Follow-ups. A landscaping firm sends quotes by email. If there is no reply after 3 days, the customer gets a short follow-up written to match the original quote.",
+          "Review requests. A hair salon sends a message the day after each appointment asking happy customers for a review, with a link to its Google listing.",
+          "Reports. A small online shop gets a short summary every Monday morning: orders, refunds and the questions customers asked most last week.",
+        ],
+      },
+      {
+        heading: "What it should not be trusted with",
+        paragraphs: [
+          "AI models can write confident text that is wrong. That is fine when a person reads it before it matters, and a problem when nobody does. Some jobs should keep a person in charge, whatever the tool claims.",
+        ],
+        bullets: [
+          "Anything legal. Contracts, terms, disputes, employment decisions and compliance answers need a qualified person. An automation can collect the documents, but it should not give the advice.",
+          "Moving money without approval. Paying bills, issuing refunds and changing bank details should always wait for a person to click approve. An automation can prepare the payment and ask, not send it on its own.",
+          "Sensitive data without masking. Health details, card numbers, social security numbers and similar data should be removed or masked before any text goes to an AI model, and only kept in tools that are meant to hold it.",
+          "Replies that make promises. Discounts, delivery dates and refunds offered by an AI step without a rule behind them can cost you. Limit what it is allowed to say.",
+        ],
+      },
+      {
+        heading: "How to pick your first automation for small business",
+        paragraphs: [
+          "Start small. The first project should be quick to build, easy to check and obviously useful, so you can see whether automation suits your business before spending more.",
+          "A good first task passes three tests. If it fails one, pick another.",
+          "Write the task down as steps before anyone builds anything. If you cannot describe it as \"when this happens, do that\", it is not ready to automate yet.",
+        ],
+        bullets: [
+          "Frequent. It happens many times a week, not a few times a year. More runs means more time saved.",
+          "Repetitive. It looks roughly the same each time. The same form, the same kind of email, the same report.",
+          "Clear rules. You can explain to a new hire exactly what to do, including what to do when something looks odd.",
+        ],
+      },
+      {
+        heading: "AI automation agency services vs doing it yourself",
+        paragraphs: [
+          "You can build simple automations yourself with tools such as Zapier, Make or n8n. If the task is one connection between two tools you already use, and you enjoy setting things up, this is often the right call.",
+          "An AI automation agency earns its fee when the task connects several tools, involves an AI step that needs testing, or has to keep working while you are busy running the business. Typical AI automation agency services include working out which tasks are worth automating, building and testing the workflow, setting limits on what the AI step can do, handling errors, and watching the automation after launch so a broken connection is noticed and fixed.",
+          "The question to ask yourself is not \"can I build it?\" but \"who will fix it when it breaks in six months?\" If the answer is nobody, either keep it very simple or pay someone to own it.",
+        ],
+      },
+      {
+        heading: "A simple way to judge payback",
+        paragraphs: [
+          "Use one sum. Hours saved per week, multiplied by what an hour of that person's time costs you, gives the weekly saving. Multiply by 52 for the year. Then compare it with the build cost plus a year of running costs, such as tool subscriptions and AI usage fees. Check those on each vendor's own pricing page, because they vary by plan and volume.",
+          "A made-up example: sorting the shared inbox takes 4 hours a week, and the automation removes 3 of them because 1 hour of checking remains. If that person's time costs you $20 an hour, the saving is 3 x $20 = $60 a week, or $3,120 a year. A one-time build from $99 would pay for itself in about two weeks of savings, before tool fees.",
+          "If the number is clearly positive after running costs, go ahead. If it only works when every guess goes your way, pick a different task.",
+        ],
+      },
+      {
+        heading: "How Moonlab works",
+        paragraphs: [
+          "Moonlab is an AI automation agency for small businesses. Every project starts with a free 30-minute audit. We look at how your team spends its week, point out the tasks worth automating, and tell you plainly if something is not worth it.",
+          "The price is fixed and agreed before any work starts. A single automation starts from $99 as a one-time project. The monthly plan is $199 per month for up to 2 new automations a month, with monitoring included, and there is a larger plan at $399 per month. Details are at /pricing.",
+          "Everything is built in your own accounts, so you keep the automations if we stop working together. Risky steps, such as anything that sends money or makes a promise to a customer, wait for a person on your team to approve them.",
+          "Book the audit at /contact. Related services: sales and lead follow-up at /services/sales-and-leads, customer support at /services/customer-support, and operations at /services/operations.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "What is AI automation for small business?",
+        a: "It is a set of rules that runs routine tasks for you, such as filing form entries or sending reminders, with an AI step added only where text has to be read or written, for example sorting an email or drafting a reply.",
+      },
+      {
+        q: "Which small business automation should I start with?",
+        a: "Pick a task that happens many times a week, looks the same each time and has clear rules. Common first choices are answering enquiries, sorting a shared inbox, chasing overdue invoices and asking for reviews.",
+      },
+      {
+        q: "Is automation for small business safe with customer data?",
+        a: "It can be, if it is set up with care. Sensitive data should be masked before it reaches an AI model, automations should run in your own accounts, and anything that moves money should wait for a person to approve it.",
+      },
+      {
+        q: "What do AI automation agency services include?",
+        a: "Usually an audit of which tasks are worth automating, building and testing the workflow, limits on what the AI step can do, error handling, and monitoring after launch. At Moonlab the audit is free and takes 30 minutes.",
+      },
+      {
+        q: "How much does an AI automation agency cost?",
+        a: "It varies by agency and by task. At Moonlab a single automation starts from $99 one-time, the monthly plan is $199 per month for up to 2 new automations a month with monitoring, and a larger plan is $399 per month. The price is fixed before work starts.",
+      },
+    ],
+    services: ["sales-and-leads", "customer-support", "operations"],
+  },
+  // ---------------------------------------------------------------------------
+  {
+  slug: "n8n-automation-agency",
+  title: "n8n Automation Agency: What We Build and How It Works",
+  description:
+    "What an n8n automation agency builds, when n8n is the right tool, self-hosted vs hosted trade-offs and what to ask before you hire an n8n expert.",
+  published: "2026-11-13",
+  readMinutes: 7,
+  keywords: [
+    "n8n automation agency",
+    "n8n automation",
+    "n8n ai automation",
+    "n8n workflow automation",
+    "hire an n8n expert",
+  ],
+  intro: [
+    "You have heard that n8n can take repetitive work off your team, and you are now deciding whether to build it yourself or hire an n8n automation agency. This guide is for business owners and operations leads in that position.",
+    "It explains what n8n is in plain terms, when it is the right tool and when Zapier, Make or custom code is a better fit, the kind of n8n automation an agency usually builds, the trade-offs of self-hosting, and what good work from an agency looks like. It ends with the questions to ask before you hire an n8n expert and how we work at Moonlab.",
+    "One note before we start. n8n's prices, plans and licence terms change, so we do not quote them here. Check n8n's own site for the current details.",
+  ],
+  sections: [
+    {
+      heading: "What n8n is, in plain terms",
+      paragraphs: [
+        "n8n is a workflow tool. You connect the apps your business already uses, such as your forms, inbox, CRM, accounting tool and spreadsheets, and tell it what to do when something happens. A new form entry arrives, so it adds the lead to the CRM and sends a reply. An invoice lands in an inbox, so it reads the details and records them.",
+        "You build these workflows in a visual editor by placing steps on a canvas and joining them up. When the built-in steps are not enough, you can add a code step to reshape data or handle a case the standard steps do not cover. That mix of visual steps and code is the main reason technical teams like it.",
+        "n8n can be used two ways. You can use it as a hosted service, where n8n runs it for you, or you can self-host it on your own server. The workflows look the same either way. What changes is who looks after the server and where your data sits.",
+      ],
+    },
+    {
+      heading: "When n8n automation is the right pick, and when it is not",
+      paragraphs: [
+        "n8n is a good tool, but it is not the right answer for every job. A good agency will tell you when something else fits better. We cover the full comparison in /guides/zapier-vs-make-vs-n8n. The short version is below.",
+      ],
+      bullets: [
+        "Choose n8n when you want the workflows and their data on your own server, when the logic branches or needs small pieces of code, or when you expect to add AI steps and want control over how they run.",
+        "Choose Zapier when the workflow is short and linear, uses popular apps, and will be looked after by someone on your team who is not technical.",
+        "Choose Make when you want a hosted visual canvas for workflows with several branches or a lot of data reshaping, and you do not need to self-host.",
+        "Choose custom code when the process is central to the business, runs at high volume, handles very sensitive data, or needs a system that no workflow tool connects to well.",
+      ],
+    },
+    {
+      heading: "What an n8n automation agency typically builds",
+      paragraphs: [
+        "Most n8n workflow automation projects fall into a few familiar types. The examples below are hypothetical, to show the shape of the work rather than a real client.",
+      ],
+      bullets: [
+        "Lead capture and instant reply. A cleaning company gets leads from its website form and two directories. The workflow collects each lead in one place, adds it to the CRM, sends the customer a reply within a minute and alerts the owner on their phone.",
+        "CRM sync. A small agency keeps clients in one CRM and projects in a separate tool. When a deal is marked won, the workflow creates the project, copies the contact details and keeps both records matched when either one changes.",
+        "Invoice and document processing with an AI step. A wholesaler receives supplier invoices as PDFs by email. The workflow pulls each attachment, uses an AI step to read the supplier, date, amount and line items, checks them against simple rules and adds them to the accounting tool. Anything that fails a check goes to a person for review.",
+        "Support email triage. An online shop gets a mix of order questions, returns and complaints in one inbox. An AI step sorts each email by type and urgency, adds a label, drafts a reply for common questions and sends urgent ones to the right person straight away.",
+        "Weekly reports. A service business wants Monday numbers without someone building a spreadsheet by hand. The workflow pulls bookings, revenue and open tickets from three tools every Monday morning and sends a short summary to the owner by email.",
+      ],
+    },
+    {
+      heading: "n8n AI automation: where the AI step helps",
+      paragraphs: [
+        "Two of the examples above use AI, and that is where n8n AI automation is most useful: reading free text that a fixed rule cannot handle, such as an email, a PDF or a customer message. The AI step turns that text into structured data or a draft, and the rest of the workflow follows normal rules.",
+        "AI steps need more care than rule-based ones. They can give a wrong answer with full confidence, they add a usage fee from the AI provider, and they need testing on real examples before they touch customers. A sound design checks the AI output against simple rules and sends anything unclear to a person. If a fixed rule can do the job, use the rule.",
+      ],
+    },
+    {
+      heading: "Self-hosted vs hosted n8n",
+      paragraphs: [
+        "This choice matters more with n8n than with most tools, because self-hosting is a real option. Neither choice is right for everyone.",
+      ],
+      bullets: [
+        "Data control. Self-hosting keeps workflow data on a server you control, which helps when you handle personal, health or financial records. With the hosted service, your data passes through n8n's infrastructure, so read their terms on where it is stored and processed.",
+        "Maintenance. A self-hosted server needs backups, monitoring, disk space checks and a plan for when it goes down. The hosted service handles that for you.",
+        "Who patches it. n8n releases updates, some of them security fixes. On the hosted service n8n applies them. On your own server someone has to apply them, test that your workflows still run afterwards and roll back if they do not. Agree in writing who that person is.",
+        "Cost. Hosted pricing and self-hosting costs are structured differently. For self-hosting, count the server and the time to look after it, not only the licence. Check n8n's site for current terms.",
+      ],
+    },
+    {
+      heading: "What to expect from an n8n automation agency",
+      paragraphs: [
+        "Building a workflow that runs once in a demo is the easy part. What you are paying an agency for is a workflow that keeps running, tells someone when it fails, and that you can still own if the agency is gone. Expect these as standard.",
+      ],
+      bullets: [
+        "Scoping first. A written description of each workflow, what starts it, what it does, what it should do with unusual cases and how you will know it works, agreed before building starts.",
+        "Built in your own accounts. The n8n instance, the app connections and the API keys belong to your business, not to the agency or to one employee's personal login.",
+        "Error alerts. When a run fails, a named person gets a message with enough detail to act on it. A check that the workflow is still running at all, because a stopped workflow sends no errors.",
+        "Documentation. A short plain-language note per workflow covering its purpose, trigger, connected accounts, known limits and owner.",
+        "Handover. A walkthrough with your team, access to everything, and a clear answer on what support looks like after delivery and what changes cost.",
+      ],
+    },
+    {
+      heading: "Questions to ask before you hire an n8n expert",
+      paragraphs: [
+        "Whether you hire an n8n expert as a freelancer or an agency, these questions sort careful builders from the rest. Good answers are specific. Vague answers are a warning.",
+      ],
+      bullets: [
+        "Would you use n8n for this, or is another tool or custom code a better fit? Why?",
+        "Should we self-host or use the hosted service, and who will update and back up the server if we self-host?",
+        "Whose accounts will everything run in, and what do we keep if we stop working together?",
+        "How will we find out when a workflow fails, and how quickly will you respond?",
+        "What happens to a case the workflow cannot handle?",
+        "How will you test it before it touches real customers or real data?",
+        "Is the price fixed, what does it include, and which tool or AI usage fees will we pay on top?",
+      ],
+    },
+    {
+      heading: "How Moonlab works",
+      paragraphs: [
+        "Moonlab builds automations in n8n, Make, Zapier and custom code. Every project starts with a free 30-minute audit. We look at the task, tell you whether it is worth automating and which tool we would use, and agree a fixed price before any work starts. A single automation starts from $99 as a one-time project, and there are monthly plans at $199 and $399 per month for ongoing work and monitoring.",
+        "We do not start from n8n and look for a use for it. Our rule is this: \"We pick the simplest tool that will still be reliable in a year. That means no-code where it fits and custom code where it doesn't.\" If n8n is the right tool, we build it in your accounts with alerts and documentation and hand it over. If something simpler will do, we will say so.",
+        "Book an audit at /contact. Related services: operations automation at /services/operations, custom builds at /services/custom-build, and web apps and SaaS at /services/web-apps-and-saas.",
+      ],
+    },
+  ],
+  faqs: [
+    {
+      q: "What does an n8n automation agency do?",
+      a: "It scopes, builds, tests and hands over workflows in n8n that connect your business tools and run tasks automatically, such as replying to leads, syncing a CRM, reading invoices or sending weekly reports. A good agency also sets up error alerts, writes documentation and builds everything in your own accounts.",
+    },
+    {
+      q: "Should I self-host n8n or use the hosted version?",
+      a: "Self-host if you need the data on a server you control and you have someone who will back it up, monitor it and apply updates. Use the hosted service if you would rather not look after a server. Check n8n's site for current pricing and terms for each option.",
+    },
+    {
+      q: "Is n8n better than Zapier or Make?",
+      a: "Not in general. n8n suits branching workflows, code steps and teams that want to self-host. Zapier suits short, simple workflows run by non-technical staff, and Make suits complex flows on a hosted canvas. The right choice depends on the workflow, the data and who will maintain it.",
+    },
+    {
+      q: "Can n8n handle AI automation?",
+      a: "Yes. n8n AI automation usually means adding an AI step that reads an email, PDF or message and turns it into structured data or a draft reply. Those steps need testing, checks on the output and a route to a person for unclear cases, and the AI provider charges for usage.",
+    },
+    {
+      q: "How much does it cost to hire an n8n expert?",
+      a: "It depends on the number of tools, the state of the data, any AI steps and how many exceptions need a person. At Moonlab a single automation starts from $99 as a one-time project, and you get a fixed price after a free 30-minute audit. n8n's own fees are separate, so check its site.",
+    },
+  ],
+  services: ["operations", "custom-build", "web-apps-and-saas"],
+  },
+  // ---------------------------------------------------------------------------
+  {
+  slug: "invoice-automation-small-business",
+  title: "Invoice Automation for Small Business: A Practical Guide",
+  description:
+    "How invoice automation works for a small business: sending invoices, polite reminders, reading supplier bills with AI, where a person checks and how to start.",
+  published: "2026-11-13",
+  readMinutes: 7,
+  keywords: [
+    "invoice automation",
+    "invoice processing automation",
+    "invoice automation software",
+    "automate invoice reminders",
+    "accounts payable automation small business",
+  ],
+  intro: [
+    "In many small businesses, invoices are still handled by hand. Someone copies job details into an invoice, emails it, remembers (or forgets) to chase it, and later checks the bank to mark it paid. On the other side, supplier bills arrive as PDFs and emails, and someone types each one into the books. Invoice automation takes over the repetitive parts of that work and leaves the decisions with you.",
+    "This guide is for owners and bookkeepers in the US and in Bangladesh who create, send, chase and receive invoices themselves. It covers both sides: money coming in from customers and money going out to suppliers. It explains what each step looks like when automated, where a person must stay in the loop, the mistakes that cause real problems, and how to start with one small piece instead of rebuilding everything at once.",
+  ],
+  sections: [
+    {
+      heading: "What invoice automation covers",
+      paragraphs: [
+        "Invoice automation is a set of small workflows, not one big system. Each workflow watches for an event, such as a job being marked done or a supplier email arriving, and then does a fixed set of steps in the tools you already use.",
+        "It helps to split the work into two sides, because the risks are different. On the money in side, the main risk is sending the wrong thing to a customer. On the money out side, the main risk is paying the wrong amount, or paying twice. A good setup handles the routine cases on its own and sends anything unusual to a person.",
+      ],
+      bullets: [
+        "Money in: creating invoices from finished jobs or orders, sending them, reminding customers when payment is late, marking invoices paid, and giving you a weekly list of what is overdue.",
+        "Money out: reading supplier invoices, pulling out the key details, checking them against what you expected to pay, filing them into your accounting tool, and flagging only the ones that do not match.",
+      ],
+    },
+    {
+      heading: "Money in: from finished job to paid invoice",
+      paragraphs: [
+        "The starting point is whatever already tells you a job is finished. That might be a row in a Google Sheet, a status in a job tracker, a completed order in an online shop, or a delivery note. The automation reads that event and builds the invoice from it, so nobody has to retype the customer name, the items or the price.",
+        "The invoice is created in your accounting tool (for example QuickBooks, Xero or Tally) or from a template you already use, then sent from your own email address. When a payment lands, the automation matches it to the right invoice and marks it paid. Once a week, you get one short list of every invoice that is still unpaid, how many days late it is, and what reminders have already gone out.",
+      ],
+      bullets: [
+        "Trigger: a job or order is marked complete in the place your team already records it.",
+        "Create: the invoice is built from the job details, with the correct customer, items, price, tax and due date.",
+        "Send: the invoice goes out from your own email account, with a short, plain message.",
+        "Mark paid: when a matching payment arrives, the invoice is marked paid and reminders stop.",
+        "Report: a weekly overdue list goes to the owner or bookkeeper, sorted by amount and days late.",
+      ],
+    },
+    {
+      heading: "How to automate invoice reminders without annoying customers",
+      paragraphs: [
+        "Most late payments are not refusals. The customer forgot, the email got buried, or the invoice is waiting for someone to approve it. A polite reminder at a set point usually solves it. When you automate invoice reminders, the schedule stays the same every time, which is fairer to customers than chasing only when someone happens to remember.",
+        "A simple schedule works well: a friendly note a few days before the due date, a reminder on the due date, then reminders at set days overdue, such as 7 and 14 days. After that, the automation stops and a person decides what happens next. The most important rule is that every reminder checks the payment status right before it is sent. A reminder to a customer who paid yesterday does more damage than no reminder at all.",
+      ],
+      bullets: [
+        "Keep the wording polite and short, with the invoice number, amount, due date and how to pay.",
+        "Check payment status immediately before each send, not only when the schedule was set.",
+        "Let a person pause reminders for one customer, for example during a dispute or a payment plan.",
+        "Stop after the last scheduled reminder and hand the case to a person instead of escalating the tone automatically.",
+      ],
+    },
+    {
+      heading: "Money out: invoice processing automation for supplier bills",
+      paragraphs: [
+        "Supplier invoices arrive in many shapes: a PDF attached to an email, a link to download, a photo of a paper bill, or the details typed into the email itself. This is where invoice processing automation earns its keep, because reading and typing these is slow and easy to get wrong.",
+        "An AI step reads each invoice and pulls out the supplier name, invoice number, invoice date, total and tax. Those details are then checked against what you expected to pay, such as a purchase order or an agreed monthly amount. If everything matches, the invoice is filed into your accounting tool as a bill, with the original document attached. If anything does not match, it goes to a person with a short note saying what is different. That is the core of accounts payable automation for a small business: the routine bills are handled, and your attention goes only to the ones that need it.",
+      ],
+      bullets: [
+        "Collect: supplier invoices sent to one inbox address are picked up automatically.",
+        "Read: an AI step extracts supplier, invoice number, date, total and tax from the PDF or email.",
+        "Check: the details are compared with the purchase order or expected amount, and with past invoices to catch duplicates.",
+        "File: matching invoices are entered as bills in your accounting tool with the original attached.",
+        "Flag: mismatches, unreadable documents and new suppliers go to a person, with the reason stated.",
+      ],
+    },
+    {
+      heading: "Where a person must stay in the loop",
+      paragraphs: [
+        "Automation should prepare decisions about money, not make all of them. AI reading is good but not perfect, and a wrong total on a supplier bill is a real cost. Set clear points where the workflow stops and waits for a named person.",
+        "These checks do not slow things down much, because the automation has already done the reading, matching and filing. The person only has to look at the cases that are flagged and press approve or reject.",
+      ],
+      bullets: [
+        "Approving payments. The automation can prepare a payment list, but a person approves it before money leaves the account.",
+        "Disputes. If a customer questions an invoice or a supplier bill looks wrong, reminders pause and a person handles it.",
+        "Anything over a set amount. Pick a limit that suits your business, and route every invoice above it to a person, even when it matches.",
+        "New suppliers and changed bank details. These are common routes for fraud, so they should always be confirmed by a person directly with the supplier.",
+        "Documents the AI could not read with confidence. These should be flagged, not guessed.",
+      ],
+    },
+    {
+      heading: "Common mistakes with invoice automation",
+      paragraphs: [
+        "Most problems come from how the workflow was designed, not from the tools. These are the ones to watch for.",
+      ],
+      bullets: [
+        "No exception handling. The workflow assumes every invoice is normal. When one is missing a total or has a new supplier, it either fails without telling anyone or files bad data. Every step needs a rule for what happens when something is off, and a person who gets told.",
+        "Duplicate invoices. A supplier resends the same invoice, or a job is marked done twice, and it gets entered or sent twice. Check the invoice number, supplier and amount against what is already recorded before creating anything.",
+        "Reminders sent to customers who already paid. This happens when reminders are scheduled once and never recheck payment status. It annoys good customers and makes the business look careless.",
+        "No audit trail. If you cannot see what the automation did, when and why, you cannot answer a customer, a supplier or your accountant. Keep a simple log of every invoice created, sent, filed, flagged and approved.",
+        "Automating before the process is clear. If nobody agrees on when a job counts as finished, the automation cannot know either. Settle the rule first.",
+      ],
+    },
+    {
+      heading: "How to start small, and whether you need new invoice automation software",
+      paragraphs: [
+        "You do not need to replace your accounting tool or buy new invoice automation software to start. Most of this can be built on top of the tools you already use, connected with an automation platform or a small custom script. Pick one piece that happens often and is clearly defined, get it working, and then add the next.",
+        "Good first projects are the weekly overdue list, or automated reminders with a payment check before each send. Both are low risk, because they inform people rather than move money. Supplier invoice reading is a good second step, run in a review mode first where a person checks every result for a few weeks before anything is filed automatically.",
+        "Here is a made-up example to show how to size the work. Say you send 60 invoices a month and each one takes 5 minutes to create and send by hand. That is 60 x 5 = 300 minutes, or 5 hours a month. Say 15 of them need chasing, at 10 minutes each for checking and writing the email. That is 15 x 10 = 150 minutes, or 2.5 hours. Together that is 7.5 hours a month on money in alone. Use your own counts and times; the point is to know the number before you decide what to automate first.",
+      ],
+    },
+    {
+      heading: "How Moonlab builds invoice automation",
+      paragraphs: [
+        "We start with a free 30-minute audit. You show us how invoices move through your business today, and we tell you which part is worth automating first, what the checks should be, and where a person needs to stay in the loop. If a step is not worth automating, we will say so.",
+        "Before any work starts, we agree a fixed price. A single automation starts from $99 one-time, and there are monthly plans at $199 and $399 a month if you want several workflows built over time with monitoring included. Everything is built in your own accounting and email accounts, so the invoices, the logs and the automation stay with you. Book the audit at /contact.",
+        "Related services: finance and HR automation at /services/finance-and-hr, operations automation at /services/operations, and custom builds at /services/custom-build.",
+      ],
+    },
+  ],
+  faqs: [
+    {
+      q: "What is invoice automation?",
+      a: "Invoice automation means using software to handle the repetitive parts of invoicing: creating invoices from finished jobs, sending them, reminding late payers, marking them paid, and reading and filing supplier bills. A person still approves payments and handles anything unusual.",
+    },
+    {
+      q: "Do I need new invoice automation software?",
+      a: "Usually not. Most workflows can be built on top of your existing accounting tool (for example QuickBooks, Xero or Tally) and your email account, connected by an automation platform or a small custom script. Start with what you already use.",
+    },
+    {
+      q: "How do I automate invoice reminders without upsetting customers?",
+      a: "Use a fixed, polite schedule, such as a note before the due date, one on the due date and reminders at 7 and 14 days overdue. Check payment status right before each reminder is sent, let a person pause reminders for a customer, and stop after the last one so a person decides what comes next.",
+    },
+    {
+      q: "How accurate is AI invoice processing automation?",
+      a: "AI reading of supplier invoices works well on clear documents but is not perfect. That is why each result should be checked against a purchase order or expected amount, and why anything that does not match, or that the AI could not read with confidence, goes to a person instead of being filed.",
+    },
+    {
+      q: "Is accounts payable automation safe for a small business?",
+      a: "It is safe when payments are approved by a person, invoices above a set amount are always reviewed, new suppliers and changed bank details are confirmed directly, duplicates are checked, and every action is logged. The automation prepares the work; a person releases the money.",
+    },
+  ],
+  services: ["finance-and-hr", "operations", "custom-build"],
+  },
+  // ---------------------------------------------------------------------------
+  {
+    slug: "choose-software-company-bangladesh",
+    title: "How to Choose a Software Company in Bangladesh: A Buyer's Guide",
+    description:
+      "How to choose a software company in Bangladesh: types of firms, what to check before hiring, red flags, pricing models and why a short paid pilot beats lists.",
+    published: "2026-11-13",
+    readMinutes: 7,
+    keywords: [
+      "software company in bangladesh",
+      "best software company in bangladesh",
+      "software development company bangladesh",
+      "business automation bangladesh",
+      "web development company in dhaka",
+    ],
+    intro: [
+      "Picking a software company in Bangladesh is easy to start and hard to get right. There are large outsourcing firms, product companies, small agencies and thousands of freelancers, and almost all of them have a nice website. The difference shows up later: when the project runs late, when you want to change something after launch, or when you find out the code and the hosting account are not in your name.",
+      "This guide is for business owners in Bangladesh and for foreign companies outsourcing work here. It covers the kinds of companies you will meet and when each one fits, what to check before you hire a software development company in Bangladesh, the red flags, how pricing models work, and why a short paid pilot tells you more than any ranking list.",
+    ],
+    sections: [
+      {
+        heading: "The kinds of software companies in Bangladesh",
+        paragraphs: [
+          "Not every project needs the same kind of team. Matching the company to the size and risk of the work matters more than finding the biggest name.",
+        ],
+        bullets: [
+          "Large outsourcing firms: many developers, formal processes and experience with foreign clients. They fit long projects with a big budget and a clear specification. Small jobs can get a junior team and slow replies.",
+          "Product companies: they build and sell their own software, such as accounting, school or HR systems. They fit when a ready product already does most of what you need. Custom changes are usually limited or slow.",
+          "Small agencies: a handful of people who handle design, build and support together. They fit websites, web apps and business automation where you want to talk directly to the people doing the work. Check that they are not stretched across too many clients.",
+          "Freelancers: one person, often skilled, usually cheaper. They fit small, well-defined tasks. The risk is continuity: if that one person gets busy or disappears, nobody else knows the system.",
+        ],
+      },
+      {
+        heading: "What to check before you hire a software development company in Bangladesh",
+        paragraphs: [
+          "A short checklist catches most problems before you sign anything. Ask for each item in writing, not just on a call.",
+        ],
+        bullets: [
+          "A real portfolio you can click: live websites and apps, not only screenshots or design mockups. Ask which part they built.",
+          "People you can talk to: you should meet the person who will actually build or manage your project, not only a salesperson.",
+          "Who owns the code and accounts: the domain, hosting, code repository, app store listing and any paid tools should be in your name, with the company added as a user.",
+          "A written fixed scope and price: what is included, what is not, the timeline and what happens if you want changes.",
+          "Support after launch: how bugs are reported, how fast they respond and what ongoing changes cost.",
+          "Payments and messaging, if relevant: ask if they have connected bKash, Nagad or card payments before, and SMS or WhatsApp messages, and which official providers they used.",
+          "Data security: where customer data is stored, who has access, how passwords and API keys are handled and what happens to their access when the project ends.",
+        ],
+      },
+      {
+        heading: "Red flags to walk away from",
+        paragraphs: [
+          "Some warning signs are easy to spot once you know them. One on its own can be a misunderstanding. Two or three together usually mean trouble.",
+        ],
+        bullets: [
+          "No written scope. If everything is agreed on a phone call or in Messenger, every disagreement later becomes your word against theirs.",
+          "Code and hosting kept on their accounts. This makes it hard to leave, and you may have to rebuild from scratch if the relationship ends badly.",
+          "Vague timelines like 'very soon' or 'within a few weeks' with no milestones you can check.",
+          "'Lifetime' promises, such as lifetime free support or lifetime hosting for a one-time fee. Nobody can run servers and fix bugs forever for free, so the promise usually ends quietly.",
+          "A full payment upfront for a large project, with nothing delivered until the end.",
+          "They agree to everything. A good team tells you when an idea is not worth building.",
+        ],
+      },
+      {
+        heading: "Pricing models: fixed price, monthly and hourly",
+        paragraphs: [
+          "Most companies use one of three models, and each fits a different kind of work. Ask which model a quote uses before you compare two quotes, because the numbers are not comparable otherwise.",
+          "Fixed price means one agreed price for a defined scope. It fits websites, single automations and apps where the requirements are clear. It protects your budget, but it only works if the scope is written down properly, and changes outside it are priced separately.",
+          "Monthly means a set fee for ongoing work, such as maintenance, small changes, monitoring and new automations over time. It fits businesses that keep improving their systems instead of building once and stopping.",
+          "Hourly means you pay for the time spent. It fits open-ended work where nobody can define the scope yet, such as investigating an old system. Ask for a weekly report of hours and a cap, or the bill can grow without anyone noticing.",
+        ],
+      },
+      {
+        heading: "Why 'best software company in Bangladesh' lists are not a good way to choose",
+        paragraphs: [
+          "Searching for the best software company in Bangladesh gives you plenty of ranked lists. Many are written by the companies themselves, by sites that sell placements, or by people who have never worked with the firms they rank. Even an honest list cannot tell you whether a company fits your project, your budget and the way you like to work.",
+          "A better approach takes a few weeks and costs little. Shortlist two or three companies from referrals and portfolios you can actually click. Ask each one for references, meaning past clients you can contact yourself, and ask those clients what went wrong and how it was handled. Then give your top choice a short paid pilot: one small, real piece of the project with a fixed price. You learn how they communicate, how they handle feedback and whether they deliver on time, before you commit to the full build.",
+        ],
+      },
+      {
+        heading: "Business automation in Bangladesh: what to ask a web development company in Dhaka",
+        paragraphs: [
+          "Many businesses here do not need a large custom system. They need business automation: order updates sent automatically, leads put into a sheet and assigned, invoices and reminders generated without someone typing them. If that is your goal, ask a web development company in Dhaka whether they build automation as a core service or only as an add-on to websites.",
+          "Ask them to describe one workflow they have automated, step by step, and what happens when it fails. A team that has run automations in production will talk about alerts, retries and who gets notified. For examples of what can be automated on WhatsApp, read /guides/whatsapp-automation-for-business-bangladesh.",
+        ],
+      },
+      {
+        heading: "How Moonlab works",
+        paragraphs: [
+          "Moonlab is a software and automation company with an office in Dhaka at H-152/K, 3rd Floor, Green Road, Kalabagan. We work with clients in Bangladesh and the US. Automation is our core focus, and we also build websites, web apps and mobile apps.",
+          "Every project starts with a free 30-minute audit, where we look at how your work actually runs and tell you what is worth building and what is not. If you go ahead, we agree a fixed price before any work starts. Everything is built in your own accounts, so the code, hosting and tools belong to you from day one.",
+          "For reference, a single automation starts from $99 one-time, and ongoing plans are $199 a month and $399 a month. You can read more about the team at /about, or book your free audit at /contact.",
+        ],
+      },
+    ],
+    faqs: [
+      {
+        q: "How do I find a reliable software company in Bangladesh?",
+        a: "Shortlist two or three companies from referrals and portfolios you can click, speak to past clients yourself, and start with a short paid pilot. Check that the scope and price are written down and that the code and accounts will be in your name.",
+      },
+      {
+        q: "Which is the best software company in Bangladesh?",
+        a: "There is no single answer, because the right company depends on your project size, budget and how you like to work. Ranked lists are often paid or self-written. A small paid pilot and real references tell you more than any list.",
+      },
+      {
+        q: "Should I hire a freelancer or a software development company in Bangladesh?",
+        a: "A freelancer can suit a small, clearly defined task. For a system your business depends on, a company is usually safer, because more than one person knows the work and support continues if someone leaves.",
+      },
+      {
+        q: "Who should own the code and hosting after the project?",
+        a: "You should. Ask for the domain, hosting, code repository and any paid tools to be set up in your own accounts, with the company added as a user. That way you can change teams later without starting over.",
+      },
+      {
+        q: "Can a web development company in Dhaka work with clients outside Bangladesh?",
+        a: "Yes. Many teams in Dhaka work with foreign clients over video calls, shared project boards and written updates. Agree on meeting times that suit both time zones, and keep the scope, price and milestones in writing.",
+      },
+    ],
+    services: ["web-development", "web-apps-and-saas", "operations"],
+  },
+  // ---------------------------------------------------------------------------
+  {
     slug: "business-automation-cost",
     title: "How Much Does Business Automation Cost? A Plain Pricing Guide",
     description:

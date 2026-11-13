@@ -17,18 +17,18 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: `${site.name} · Automation agency`,
+    default: `${site.name} · AI Automation Agency for Small Businesses`,
     template: `%s · ${site.name}`,
   },
   description: site.description,
   openGraph: {
-    title: `${site.name} · Automation agency`,
+    title: `${site.name} · AI Automation Agency for Small Businesses`,
     description: site.description,
     siteName: site.name,
     type: "website",
     url: site.url,
   },
-  twitter: { card: "summary_large_image", title: `${site.name} · Automation agency`, description: site.description },
+  twitter: { card: "summary_large_image", title: `${site.name} · AI Automation Agency for Small Businesses`, description: site.description },
   robots: { index: true, follow: true },
   verification: {
     ...(site.googleVerification ? { google: site.googleVerification } : {}),

@@ -11,7 +11,11 @@ import { ClientLogos, StatsRow, Testimonials } from "@/components/home/Proof";
 import { Reviews } from "@/components/home/Reviews";
 import { HomeFaq, Solutions } from "@/components/home/SolutionsAndFaq";
 
-export const metadata: Metadata = { alternates: { canonical: "/" } };
+export const metadata: Metadata = {
+  alternates: { canonical: "/" },
+  description:
+    "Moonlab is an AI automation agency for small businesses in the US and Bangladesh. We automate lead replies, support email, invoice chasing and data entry. Free 30-minute audit.",
+};
 
 export default function Home() {
   return (

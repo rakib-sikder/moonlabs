@@ -11,8 +11,8 @@ import { Reveal } from "@/components/ui/Section";
 
 export const metadata: Metadata = pageMeta(
   "/services",
-  "Services",
-  "Automation and AI, plus websites, mobile apps, web apps, databases, cloud, UI/UX design, SEO and marketing from the same team.", "page-services",
+  "AI automation services, websites, apps and SEO",
+  "AI automation services for small businesses: lead replies, support, invoices and data entry, plus websites, apps, databases, design and SEO from one team.", "page-services",
 );
 
 function ServiceCard({ service, compact = false }: { service: Service; compact?: boolean }) {

@@ -41,7 +41,7 @@ export function Hero() {
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
           </span>
-          AUTOMATION AGENCY · NOW BOOKING
+          AI AUTOMATION AGENCY · NOW BOOKING
         </motion.p>
 
         <h1 className="text-[2rem] leading-[1.06] sm:text-5xl md:text-[2.5rem] lg:text-5xl xl:text-[3.4rem] font-semibold tracking-tight">
