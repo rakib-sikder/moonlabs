@@ -1,18 +1,11 @@
-// Crescent mark: a moon disc with an offset cut-out, plus the wordmark.
+// Moonlab wordmark: MOONLAB in Sora (outlined), first O a thin new moon, second O the gold full moon.
+// Source of truth: D:\Desktop\Anything\moonlab-brand (make_brand.py). Ink follows the text colour; the full moon uses --accent.
 export function Logo({ className = "" }: { className?: string }) {
   return (
-    <span className={`inline-flex items-center gap-2 ${className}`}>
-      <svg viewBox="0 0 24 24" className="h-6 w-6" aria-hidden>
-        <defs>
-          <mask id="crescent-mask">
-            <rect width="24" height="24" fill="white" />
-            <circle cx="16" cy="9" r="8" fill="black" />
-          </mask>
-        </defs>
-        <circle cx="12" cy="12" r="9" fill="var(--moon)" mask="url(#crescent-mask)" />
-        <circle cx="19" cy="5" r="1.4" fill="var(--accent)" />
+    <span className={`inline-flex items-center ${className}`}>
+      <svg viewBox="-0.0 -21.9 6136.6 773.8" className="h-[1.05rem] w-auto" style={{ aspectRatio: "6136.6 / 773.8" }} role="img" aria-label="Moonlab">
+        <path d="M106.0 730V0H236.0L452.0 487H468.0L683.0 0H814.0V730H716.0V107L723.0 109L516.0 579H396.0L188.0 109L196.0 107V730Z" fill="currentColor"/><circle cx="1446.9" cy="365.0" r="337.9" fill="none" stroke="currentColor" strokeWidth="98.0"/><circle cx="2360.7" cy="365.0" r="386.9" fill="var(--accent)"/><path d="M2993.6000000000004 730V0H3153.6000000000004L3524.6000000000004 642H3556.6000000000004L3536.6000000000004 660V0H3630.6000000000004V730H3468.6000000000004L3097.6000000000004 88H3065.6000000000004L3085.6000000000004 70V730Z" fill="currentColor"/><path d="M3982.6000000000004 730V0H4080.6000000000004V730ZM4060.6000000000004 730V642H4394.6V730Z" fill="currentColor"/><path d="M4588.6 730 4851.6 0H5017.6L5288.6 730H5187.6L4942.6 64L4990.6 88H4872.6L4923.6 64L4686.6 730ZM4745.6 512 4778.6 424H5093.6L5126.6 512Z" fill="currentColor"/><path d="M5640.6 734V648H5844.6Q5903.6 648 5936.1 614.5Q5968.6 581 5968.6 525Q5968.6 468 5936.6 435.5Q5904.6 403 5844.6 403H5640.6V339H5830.6Q5900.6 339 5954.1 356.0Q6007.6 373 6038.1 412.5Q6068.6 452 6068.6 520V534Q6068.6 598 6042.6 642.5Q6016.6 687 5963.6 710.5Q5910.6 734 5830.6 734ZM5562.6 734V-4H5660.6V734ZM5640.6 385V321H5817.6Q5879.6 321 5909.1 287.5Q5938.6 254 5938.6 202Q5938.6 149 5909.1 115.5Q5879.6 82 5817.6 82H5640.6V-4H5800.6Q5920.6 -4 5979.6 46.5Q6038.6 97 6038.6 192V206Q6038.6 273 6008.6 312.5Q5978.6 352 5925.1 368.5Q5871.6 385 5800.6 385Z" fill="currentColor"/>
       </svg>
-      <span className="font-semibold tracking-tight">moonlab</span>
     </span>
   );
 }
