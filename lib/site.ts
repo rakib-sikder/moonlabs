@@ -17,7 +17,7 @@ export const site = {
   /** Public profiles, shown in the footer and listed in structured data. */
   social: [
     { label: "LinkedIn", href: "https://www.linkedin.com/in/rakibul-hasan-us/" },
-    { label: "Facebook", href: "https://www.facebook.com/rakibul.hasan.fb.us" },
+    { label: "Facebook", href: "https://www.facebook.com/profile.php?id=61596310243676" },
   ],
   /** Canonical origin for SEO (sitemap, Open Graph). */
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://moonlab.space",
