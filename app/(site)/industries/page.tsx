@@ -11,7 +11,7 @@ import { services } from "@/lib/site";
 export const metadata: Metadata = pageMeta(
   "/industries",
   "Solutions by industry",
-  "Automation for real estate, clinics, restaurants, e-commerce, agencies, law firms, education and logistics.", "page-industries",
+  "AI automation for real estate, clinics, restaurants, online stores, agencies, law firms, schools and logistics teams, with examples for each industry.", "page-industries",
 );
 
 export default function IndustriesPage() {

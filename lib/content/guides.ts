@@ -1,4 +1,6 @@
 // SEO guides shown at /guides. Plain data; rendered by app/(site)/guides.
+import { moreGuides1 } from "./guides-more-1";
+import { moreGuides2 } from "./guides-more-2";
 export type GuideSection = { heading: string; paragraphs: string[]; bullets?: string[] };
 export type Guide = {
   slug: string;
@@ -11,9 +13,19 @@ export type Guide = {
   sections: GuideSection[]; // 5-9 sections, H2 headings
   faqs: { q: string; a: string }[];
   services: string[];       // 2-3 service slugs from lib/site.ts
+  category?: GuideCategory; // groups the /guides index; defaults to "Automation & AI"
 };
 
-export const guides: Guide[] = [
+export const guideCategories = [
+  "Automation & AI",
+  "Sales & marketing",
+  "Finance & operations",
+  "Websites & SEO",
+  "Apps, data & cloud",
+] as const;
+export type GuideCategory = (typeof guideCategories)[number];
+
+const baseGuides: Guide[] = [
   // ---------------------------------------------------------------------------
   {
     slug: "ai-automation-for-small-business",
@@ -409,7 +421,7 @@ export const guides: Guide[] = [
   // ---------------------------------------------------------------------------
   {
     slug: "choose-software-company-bangladesh",
-    title: "How to Choose a Software Company in Bangladesh: A Buyer's Guide",
+    title: "Choosing a Software Company in Bangladesh",
     description:
       "How to choose a software company in Bangladesh: types of firms, what to check before hiring, red flags, pricing models and why a short paid pilot beats lists.",
     published: "2026-11-13",
@@ -1238,3 +1250,31 @@ export const guides: Guide[] = [
     services: ["web-development", "seo", "cloud-and-devops"],
   },
 ];
+
+// Existing guides that predate categories.
+const baseCategory: Record<string, GuideCategory> = {
+  "choose-software-company-bangladesh": "Apps, data & cloud",
+  "website-audit-checklist-small-business": "Websites & SEO",
+  "missed-call-text-back-and-online-booking": "Sales & marketing",
+  "invoice-automation-small-business": "Finance & operations",
+  "business-automation-cost": "Finance & operations",
+};
+
+export const guides: Guide[] = [
+  ...baseGuides.map((g) => ({ ...g, category: g.category ?? baseCategory[g.slug] ?? "Automation & AI" })),
+  ...moreGuides1,
+  ...moreGuides2,
+].sort((a, b) => (a.published < b.published ? 1 : a.published > b.published ? -1 : 0));
+
+/** Guides to suggest under a guide: same category first, then ones sharing a service. */
+export function relatedGuides(g: Guide, n = 3): Guide[] {
+  const score = (x: Guide) =>
+    (x.category === g.category ? 2 : 0) + x.services.filter((s) => g.services.includes(s)).length;
+  return guides
+    .filter((x) => x.slug !== g.slug)
+    .map((x) => [x, score(x)] as const)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, n)
+    .map(([x]) => x);
+}
+

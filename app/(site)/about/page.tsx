@@ -10,8 +10,8 @@ import { founders } from "@/lib/content/proof";
 
 export const metadata: Metadata = pageMeta(
   "/about",
-  "About Moonlab | Software & Automation Company in Dhaka",
-  "Moonlab is a software and AI automation company in Dhaka, Bangladesh, building automations, websites and apps for businesses in Bangladesh and the US.",
+  "About Moonlab | AI Automation & Software Studio",
+  "Moonlab is a remote AI automation and software studio building automations, websites and apps for small businesses in the US, UK and Europe.",
   "about-workshop",
   { absoluteTitle: true },
 );

@@ -6,8 +6,8 @@ import { RoiCalculator } from "@/components/RoiCalculator";
 
 export const metadata: Metadata = pageMeta(
   "/roi-calculator",
-  "ROI calculator",
-  "Estimate the hours and money automation could give back to your team in under a minute.", "page-roi-calculator",
+  "Automation ROI Calculator",
+  "Free automation ROI calculator: estimate the hours and money automation could give back to your team each month, and how fast a project pays for itself.", "page-roi-calculator",
 );
 
 export default function RoiCalculatorPage() {

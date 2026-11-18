@@ -9,7 +9,7 @@ import { faqs } from "@/lib/content/company";
 export const metadata: Metadata = pageMeta(
   "/faq",
   "FAQ",
-  "Answers about pricing, timelines, data security and what happens after an automation goes live.", "page-faq",
+  "Answers to common questions about Moonlab: pricing, timelines, data security, the tools we use, ownership and what happens after an automation goes live.", "page-faq",
 );
 
 export default function FaqPage() {

@@ -6,7 +6,7 @@ import { pictureFor } from "@/components/ui/Diorama";
 import { CtaBanner } from "@/components/CtaBanner";
 import { Accordion } from "@/components/ui/Accordion";
 import { IconTile } from "@/components/ui/IconTile";
-import { guides } from "@/lib/content/guides";
+import { guides, relatedGuides } from "@/lib/content/guides";
 import { services, site } from "@/lib/site";
 import { JsonLd, breadcrumbLd, faqLd, pageMeta, shareImage } from "@/lib/seo";
 
@@ -53,7 +53,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
   const g = guides.find((x) => x.slug === slug);
   if (!g) notFound();
   const related = g.services.map((s) => services.find((x) => x.slug === s)).filter((s): s is (typeof services)[number] => Boolean(s));
-  const others = guides.filter((x) => x.slug !== g.slug).slice(0, 3);
+  const others = relatedGuides(g, 3);
 
   const articleLd = {
     "@context": "https://schema.org",

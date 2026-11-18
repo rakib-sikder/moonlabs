@@ -13,6 +13,8 @@ import { JsonLd, breadcrumbLd, pageMeta, serviceLd } from "@/lib/seo";
 import { serviceDetails } from "@/lib/content/service-details";
 import { serviceSeo } from "@/lib/content/seo-targets";
 import { industryDetails } from "@/lib/content/industries";
+import { guides } from "@/lib/content/guides";
+import { plans } from "@/lib/content/company";
 
 export const dynamicParams = false;
 
@@ -33,7 +35,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   // Keep it under ~160 characters so search results don't cut it off mid-sentence.
   const description =
     [
-      `${service.short} ${serviceTitle(service)} for businesses in Bangladesh and the US.`,
+      `${service.short} ${serviceTitle(service)} for businesses in the US, UK and Europe.`,
       `${service.short} ${serviceTitle(service)} for small businesses.`,
     ].find((d) => d.length <= 158) ?? clip(service.short, 158);
   const target = serviceSeo[service.slug];
@@ -57,6 +59,7 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
   const siblings = services.filter((s) => s.category === service.category);
   const position = siblings.indexOf(service);
   const next = siblings[(position + 1) % siblings.length];
+  const relatedGuides = guides.filter((g) => g.services.includes(service.slug)).slice(0, 5);
   const relatedIndustries = industryDetails.filter((i) => i.services.includes(slug));
 
   return (
@@ -144,6 +147,52 @@ export default async function ServicePage({ params }: { params: Promise<{ slug: 
             </div>
           </div>
         </Reveal>
+      </section>
+
+      {/* Cost + related guides */}
+      <section className="mx-auto max-w-6xl px-6 pb-24 grid gap-12 lg:grid-cols-2">
+        <div>
+          <SectionHeading eyebrow="Pricing" title="What it costs." />
+          {isAutomation ? (
+            <ul className="space-y-3">
+              {plans.map((p) => (
+                <li key={p.name} className="flex items-baseline justify-between gap-4 rounded-xl border border-border bg-surface/80 px-5 py-4 backdrop-blur-sm">
+                  <span>
+                    <span className="font-medium">{p.name}</span>
+                    <span className="ml-2 text-sm text-muted">{p.tagline}</span>
+                  </span>
+                  <span className="whitespace-nowrap font-mono text-sm">
+                    {p.price} <span className="text-muted">{p.unit}</span>
+                  </span>
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="rounded-xl border border-border bg-surface/80 px-5 py-4 leading-relaxed text-muted backdrop-blur-sm">
+              A fixed price per project, agreed after a free call and a written scope. No hourly billing. Typical timeline: {detail.setup}.
+            </p>
+          )}
+          <p className="mt-4 text-sm text-muted">
+            Every project starts with a free 30-minute audit. <Link href="/pricing" className="text-accent hover:underline">See full pricing</Link>
+          </p>
+        </div>
+        {relatedGuides.length > 0 && (
+          <div>
+            <SectionHeading eyebrow="Learn more" title="Guides on this topic." />
+            <ul className="space-y-3">
+              {relatedGuides.map((g) => (
+                <li key={g.slug}>
+                  <Link
+                    href={`/guides/${g.slug}`}
+                    className="block rounded-xl border border-border bg-surface/80 px-5 py-4 backdrop-blur-sm transition-colors hover:border-accent/40"
+                  >
+                    {g.title}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </section>
 
       {/* FAQ + industries */}

@@ -10,8 +10,8 @@ import { Check as CheckIcon, Minus } from "lucide-react";
 
 export const metadata: Metadata = pageMeta(
   "/pricing",
-  "Pricing",
-  "A free audit, then a fixed-price project or a monthly plan. We don't bill by the hour.", "page-pricing",
+  "Pricing: AI Automation Plans for Small Business",
+  "Simple pricing for AI automation and web projects: a free audit, then a fixed-price project or a monthly plan. One automation from $99, no hourly billing.", "page-pricing",
 );
 
 const phases = ["Crescent", "Half Moon", "Full Moon"];

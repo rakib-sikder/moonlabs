@@ -72,7 +72,7 @@ export default function ContactPage() {
                   {site.phone.display}
                 </a>
               </p>
-              <p className="mt-3 text-sm text-muted">We work with clients online across Bangladesh and the US.</p>
+              <p className="mt-3 text-sm text-muted">We work with clients online across the US, UK and Europe, in your time zone.</p>
             </address>
             <div className="rounded-3xl border border-border bg-surface/80 p-8 backdrop-blur-sm">
               <p className="mb-6 font-mono text-xs uppercase tracking-widest text-moon">What happens next</p>

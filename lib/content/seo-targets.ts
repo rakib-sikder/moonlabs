@@ -1,5 +1,5 @@
 // Search targets for every service and industry page, picked from DataForSEO keyword data
-// (monthly searches and difficulty, US and Bangladesh, November 2026). Each page gets the
+// (monthly searches and difficulty, US and UK, November 2026; site repositioned to US, UK and Europe on 2026-11-18). Each page gets the
 // phrase people actually search for in its title, description and main heading; the
 // visible copy below the heading stays as it is.
 //
@@ -48,7 +48,7 @@ export const serviceSeo: Record<string, SeoTarget> = {
     keywords: ["business process automation", "business automation", "workflow automation services"],
     title: "Business Process Automation Services | Moonlab",
     description:
-      "Business process automation for small and mid-sized businesses in the US and Bangladesh: approvals, data entry, reports and handovers that run on their own.",
+      "Business process automation for small and mid-sized businesses in the US, UK and Europe: approvals, data entry, reports and handovers that run on their own.",
     heading: "Business process automation",
   },
   "finance-and-hr": {
@@ -73,24 +73,24 @@ export const serviceSeo: Record<string, SeoTarget> = {
     heading: "Custom software and AI agent development",
   },
   "web-development": {
-    keywords: ["website development company", "web development agency", "web development company in bangladesh"],
+    keywords: ["website development company", "web development agency", "small business website design"],
     title: "Website Development Company for Small Business | Moonlab",
     description:
-      "A website development company for small businesses in the US and Bangladesh. Fast, mobile-first sites built to bring in enquiries, with SEO basics done.",
+      "A website development company for small businesses in the US, UK and Europe. Fast, mobile-first sites built to bring in enquiries, with SEO basics done.",
     heading: "Website development for small businesses",
   },
   "app-development": {
     keywords: ["app development company", "mobile app development company", "flutter app development company"],
     title: "Mobile App Development Company (iOS & Android) | Moonlab",
     description:
-      "Mobile app development for iOS and Android, built once and shipped to both stores. An app development company in Dhaka working with US and Bangladesh clients.",
+      "Mobile app development for iOS and Android, built once and shipped to both stores. For startups and small businesses in the US, UK and Europe.",
     heading: "Mobile app development for iOS and Android",
   },
   "web-apps-and-saas": {
-    keywords: ["saas development company", "web application development", "software company in bangladesh"],
+    keywords: ["saas development company", "web application development", "custom web app development"],
     title: "SaaS & Web Application Development Company | Moonlab",
     description:
-      "SaaS and custom web application development: client portals, internal tools and SaaS products, from first version to scale. A software company in Bangladesh.",
+      "SaaS and custom web application development: client portals, internal tools and SaaS products, from first version to scale, for US, UK and EU teams.",
     heading: "SaaS and web application development",
   },
   "database-management": {
@@ -115,24 +115,24 @@ export const serviceSeo: Record<string, SeoTarget> = {
     heading: "Cloud consulting and DevOps",
   },
   "ui-ux-design": {
-    keywords: ["ui ux design services", "ux design agency", "ui ux design agency in bangladesh"],
+    keywords: ["ui ux design services", "ux design agency", "ux design for startups"],
     title: "UI/UX Design Services for Apps & Websites | Moonlab",
     description:
-      "UI/UX design services for apps and websites: user research, flows, wireframes and clickable Figma prototypes, from a design team in Dhaka, Bangladesh.",
+      "UI/UX design services for apps and websites: user research, flows, wireframes and clickable Figma prototypes, for startups and small teams.",
     heading: "UI/UX design services",
   },
   branding: {
-    keywords: ["brand identity design", "logo design services", "branding agency in bangladesh"],
+    keywords: ["brand identity design", "logo design services", "small business branding"],
     title: "Logo & Brand Identity Design Services | Moonlab",
     description:
-      "Logo and brand identity design for small businesses: a logo, colours, type and templates that make you look established. Studio in Dhaka, Bangladesh.",
+      "Logo and brand identity design for small businesses: a logo, colours, type and templates that make you look established from day one.",
     heading: "Logo and brand identity design",
   },
   seo: {
-    keywords: ["seo agency", "seo services for small business", "seo expert in bangladesh"],
-    title: "SEO Agency for Small Businesses, US & Bangladesh | Moonlab",
+    keywords: ["seo agency", "seo services for small business", "local seo services"],
+    title: "SEO Agency for Small Businesses, US, UK & EU | Moonlab",
     description:
-      "SEO services for small businesses: technical fixes, local SEO, Google Business Profile and content. An SEO team in Bangladesh working with US and local clients.",
+      "SEO services for small businesses: technical fixes, local SEO, Google Business Profile and content. For small businesses in the US, UK and Europe.",
     heading: "SEO services for small businesses",
   },
   "paid-ads": {

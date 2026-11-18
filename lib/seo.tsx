@@ -54,8 +54,11 @@ export const organizationLd = {
     addressCountry: site.address.countryCode,
   },
   areaServed: [
-    { "@type": "Country", name: "Bangladesh" },
     { "@type": "Country", name: "United States" },
+    { "@type": "Country", name: "United Kingdom" },
+    { "@type": "Place", name: "Europe" },
+    { "@type": "Country", name: "Canada" },
+    { "@type": "Country", name: "Australia" },
   ],
   knowsAbout: [
     "Business process automation",
@@ -95,7 +98,7 @@ export function serviceLd(service: Service, title: string, faqs: { q: string; a:
       description: service.short,
       url: abs(`/services/${service.slug}`),
       provider: { "@id": `${site.url}/#organization` },
-      areaServed: ["Bangladesh", "United States"],
+      areaServed: ["United States", "United Kingdom", "Europe", "Canada", "Australia"],
       hasOfferCatalog: {
         "@type": "OfferCatalog",
         name: title,

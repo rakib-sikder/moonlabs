@@ -5,7 +5,7 @@ import { LegalPage } from "@/components/LegalPage";
 export const metadata: Metadata = pageMeta(
   "/terms",
   "Terms of service",
-  "The terms that apply to Moonlab projects, monthly plans and the client portal.",
+  "Moonlab terms of service: the terms that apply to our fixed-price projects, monthly automation plans, the client portal and use of this website.",
 );
 
 export default function TermsPage() {
