@@ -81,6 +81,7 @@ const pictures = {
   "guide-small-business-dashboard": [1376, 768, "A paper dashboard with three gauges, the middle needle amber"],
   "guide-power-bi-vs-looker-studio": [1376, 768, "Two paper telescopes pointed at one chart with an amber top bar"],
   "guide-cloud-backups-small-business": [1376, 768, "Three paper boxes under a paper cloud lit amber from below"],
+  "guide-outsourcing-software-development": [1376, 768, "A paper globe joined by a string to a workbench, its pin amber"],
   "process-path": [1584, 672, "Five paper objects along a lamp-lit path: a magnifier, a blueprint, a workbench, a rocket and a globe"],
   "contact-desk": [1376, 768, "Two paper armchairs facing each other across a low table under a floor lamp"],
   "not-found": [1200, 896, "A single paper note lying on the floor, far from a lit desk"],
