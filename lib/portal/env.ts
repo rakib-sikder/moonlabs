@@ -10,6 +10,8 @@ export type PortalEnv = {
   FILES?: R2Bucket;
   GOOGLE_CLIENT_ID?: string;
   GOOGLE_CLIENT_SECRET?: string;
+  FACEBOOK_APP_ID?: string;
+  FACEBOOK_APP_SECRET?: string;
 };
 
 /** Name of the cookie remembering which organization the user is looking at. */
@@ -50,4 +52,15 @@ export async function getGoogleConfig(): Promise<GoogleConfig | null> {
   const clientSecret = (env.GOOGLE_CLIENT_SECRET ?? process.env.GOOGLE_CLIENT_SECRET)?.trim();
   if (!clientId || !clientSecret) return null;
   return { clientId, clientSecret };
+}
+
+export type FacebookConfig = { appId: string; appSecret: string };
+
+/** Facebook sign-in is offered only when both secrets are set. */
+export async function getFacebookConfig(): Promise<FacebookConfig | null> {
+  const env = await getPortalEnv();
+  const appId = (env.FACEBOOK_APP_ID ?? process.env.FACEBOOK_APP_ID)?.trim();
+  const appSecret = (env.FACEBOOK_APP_SECRET ?? process.env.FACEBOOK_APP_SECRET)?.trim();
+  if (!appId || !appSecret) return null;
+  return { appId, appSecret };
 }

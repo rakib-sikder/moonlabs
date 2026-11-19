@@ -28,7 +28,10 @@ yet" and the rest of the site works normally.
   session.
 - **Rate limiting**: 5 failed passwords per email and IP address (and 30 per IP address)
   within 15 minutes blocks further attempts for that window.
-- **No public sign-up.** People get in only through an invite link from an admin.
+- **Sign-up**: anyone can create an account at `/signup` (or with Google / Facebook). Email
+  sign-ups are held in `signup_requests` until the emailed link is confirmed. Every new
+  account gets its own workspace and a client membership. Admin invites still work.
+- **Forgot password** emails a one-time reset link (24 hours).
 - **Who can see what** is checked in code (`lib/portal/access.ts`) on every page, action and
   download:
 
@@ -126,11 +129,39 @@ To turn R2 on:
 
 Admin > Files then shows **Upload a deliverable** next to **Share a link**.
 
-## 7. Optional: Google sign-in
+## 7. Plan orders (Payoneer)
 
-Google sign-in only signs in people who already have an account, or who have an open invite
-for the same (verified) Google address. It never creates accounts for strangers. The button
-is hidden until both secrets are set.
+1. A client picks a plan on Billing. That creates an open invoice and a pending plan order,
+   and emails you and the client.
+2. In Payoneer, create a payment request for the invoice amount and copy its link.
+3. Admin > the organization > Invoices > **Payment links**: paste it, keep "Email the link to
+   the client" ticked, **Save link**. The client sees **Pay now** on Billing.
+4. When the money arrives, set that invoice to **Paid**. The plan switches on and the client
+   is emailed. Setting it to **Void** cancels the order.
+
+## 8. Optional: Facebook sign-in
+
+The button is hidden until both secrets are set.
+
+1. <https://developers.facebook.com/apps> > **Create app** > use case "Authenticate and request
+   data from users with Facebook Login".
+2. **Facebook Login > Settings**: Valid OAuth Redirect URIs
+   `https://moonlab.space/auth/facebook/callback`.
+3. **App settings > Basic**: Privacy Policy URL `https://moonlab.space/privacy`, a data
+   deletion instructions URL, category, icon. Then switch the app to **Live**.
+4. Copy the App ID and App secret:
+
+   ```bash
+   npx wrangler secret put FACEBOOK_APP_ID
+   npx wrangler secret put FACEBOOK_APP_SECRET
+   ```
+
+Accounts without an email on Facebook (phone-only) are sent back to sign in another way.
+
+## 9. Optional: Google sign-in
+
+A verified Google address signs in to its account or creates one with its own workspace. The
+button is hidden until both secrets are set.
 
 1. Go to <https://console.cloud.google.com/>, pick or create a project.
 2. **APIs & Services > OAuth consent screen**: app name "Moonlab", your support email, user

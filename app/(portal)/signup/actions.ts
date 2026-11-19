@@ -21,7 +21,7 @@ import { randomToken, sha256Hex } from "@/lib/portal/crypto";
 import { guarded, safeNext } from "@/lib/portal/action-utils";
 import { ValidationError, email as readEmail, optionalText, text } from "@/lib/portal/validate";
 import { sendAccountMail } from "@/lib/portal/mail";
-import { findSignup } from "@/lib/portal/signup";
+import { findSignup, newAccountStatements } from "@/lib/portal/signup";
 import type { ActionState } from "@/lib/portal/types";
 
 const SIGNUP_HOURS = 24;
@@ -123,11 +123,8 @@ export async function confirmSignup(formData: FormData): Promise<ActionState> {
 
     const userId = crypto.randomUUID();
     const orgId = crypto.randomUUID();
-    const orgName = signup.company || `${signup.name.split(" ")[0]}'s workspace`.slice(0, 120);
     await db.batch([
-      db.prepare("INSERT INTO users (id, email, name, password_hash, is_staff) VALUES (?, ?, ?, ?, 0)").bind(userId, signup.email, signup.name, signup.password_hash),
-      db.prepare("INSERT INTO organizations (id, name) VALUES (?, ?)").bind(orgId, orgName),
-      db.prepare("INSERT INTO memberships (user_id, org_id, role) VALUES (?, ?, 'client')").bind(userId, orgId),
+      ...newAccountStatements(db, { userId, orgId, email: signup.email, name: signup.name, company: signup.company, passwordHash: signup.password_hash }),
       db.prepare("DELETE FROM signup_requests WHERE email = ?").bind(signup.email),
     ]);
 

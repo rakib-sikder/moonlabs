@@ -1,20 +1,22 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { getGoogleConfig, isPortalConfigured } from "@/lib/portal/env";
+import { getFacebookConfig, getGoogleConfig, isPortalConfigured } from "@/lib/portal/env";
 import { getSessionUser } from "@/lib/portal/auth";
 import { safeNext } from "@/lib/portal/action-utils";
 import { NotConfigured } from "../_components/ui";
 import { ActionForm } from "../_components/action-form";
 import { AuthCard } from "../_components/auth-card";
+import { SocialButtons } from "../_components/social-buttons";
 import { signInWithPassword } from "./actions";
 
 export const metadata: Metadata = { title: "Sign in" };
 
 const ERRORS: Record<string, string> = {
   google: "Google sign-in was cancelled or failed. Try again.",
-  google_no_account: "There is no portal account for that Google address yet. Create an account with email first.",
-  google_unverified: "That Google address is not verified. Use email and password instead.",
+    google_unverified: "That Google address is not verified. Use email and password instead.",
+  facebook: "Facebook sign-in was cancelled or failed. Try again.",
+  facebook_no_email: "Your Facebook account has no email address we can use. Sign in with Google or email instead.",
 };
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
@@ -30,7 +32,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   const next = safeNext(typeof params.next === "string" ? params.next : undefined);
   if (await getSessionUser()) redirect(next);
   const error = typeof params.error === "string" ? ERRORS[params.error] : undefined;
-  const google = await getGoogleConfig();
+  const social = (await getGoogleConfig()) || (await getFacebookConfig());
 
   return (
     <AuthCard title="Sign in to your client portal" description="Track projects, automations, requests and invoices." footer={
@@ -47,20 +49,9 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
         </p>
       )}
 
-      {google && (
-        <>
-          <a href={`/auth/google${next !== "/dashboard" ? `?next=${encodeURIComponent(next)}` : ""}`} className="pt-btn mt-6 w-full">
-            Continue with Google
-          </a>
-          <div className="my-6 flex items-center gap-3 text-[12px] text-muted" aria-hidden>
-            <span className="h-px flex-1 bg-border" />
-            or
-            <span className="h-px flex-1 bg-border" />
-          </div>
-        </>
-      )}
+      <SocialButtons next={next} />
 
-      <ActionForm action={signInWithPassword} submitLabel="Sign in" pendingLabel="Signing in…" className={`${google ? "" : "mt-6 "}[&_button]:w-full`}>
+      <ActionForm action={signInWithPassword} submitLabel="Sign in" pendingLabel="Signing in…" className={`${social ? "" : "mt-6 "}[&_button]:w-full`}>
         <input type="hidden" name="next" value={next} />
         <div className="space-y-4">
           <div>

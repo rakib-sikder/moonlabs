@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { isPortalConfigured } from "@/lib/portal/env";
+import { getFacebookConfig, getGoogleConfig, isPortalConfigured } from "@/lib/portal/env";
 import { MIN_PASSWORD_LENGTH, getSessionUser } from "@/lib/portal/auth";
 import { safeNext } from "@/lib/portal/action-utils";
 import { NotConfigured } from "../_components/ui";
 import { ActionForm } from "../_components/action-form";
 import { AuthCard } from "../_components/auth-card";
+import { SocialButtons } from "../_components/social-buttons";
 import { startSignup } from "./actions";
 
 export const metadata: Metadata = { title: "Create an account" };
@@ -23,6 +24,7 @@ export default async function SignupPage({ searchParams }: { searchParams: Promi
   const params = await searchParams;
   const next = safeNext(typeof params.next === "string" ? params.next : undefined);
   if (await getSessionUser()) redirect(next);
+  const social = (await getGoogleConfig()) || (await getFacebookConfig());
   const loginHref = next !== "/dashboard" ? `/login?next=${encodeURIComponent(next)}` : "/login";
 
   return (
@@ -38,7 +40,8 @@ export default async function SignupPage({ searchParams }: { searchParams: Promi
         </>
       }
     >
-      <ActionForm action={startSignup} submitLabel="Create account" pendingLabel="Sending…" className="mt-6 [&_button]:w-full" resetOnSuccess>
+      <SocialButtons next={next} />
+      <ActionForm action={startSignup} submitLabel="Create account" pendingLabel="Sending…" className={`${social ? "" : "mt-6 "}[&_button]:w-full`} resetOnSuccess>
         <input type="hidden" name="next" value={next} />
         {/* Honeypot for bots: hidden from people and screen readers. */}
         <div aria-hidden style={{ position: "absolute", left: "-10000px", width: 1, height: 1, overflow: "hidden" }}>
