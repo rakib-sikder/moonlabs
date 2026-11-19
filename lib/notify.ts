@@ -40,8 +40,8 @@ export type EnquiryMail = {
 
 type OwnerMail = { subject: string; text: string; html: string; replyTo?: { email: string; name: string } };
 
-/** Sends one alert to the owner's inbox: Gmail first, Brevo as the fallback. True when accepted. */
-export async function emailOwner(mail: OwnerMail): Promise<boolean> {
+/** Sends one email: Gmail first, Brevo as the fallback. True when a mail server accepted it. */
+export async function sendMail(to: string | null, mail: OwnerMail & { fromName?: string }): Promise<boolean> {
   const { BREVO_API_KEY, NOTIFY_EMAIL, NOTIFY_FROM, GMAIL_USER, GMAIL_APP_PASSWORD } = await env();
   // Secrets pasted through some shells arrive with a byte-order mark or a trailing newline.
   const clean = (v?: string) => v?.replace(/^﻿/, "").trim();
@@ -49,11 +49,12 @@ export async function emailOwner(mail: OwnerMail): Promise<boolean> {
   const gmailUser = clean(GMAIL_USER);
   const gmailPass = clean(GMAIL_APP_PASSWORD);
   if (!brevoKey && !(gmailUser && gmailPass)) return false;
-  const to = NOTIFY_EMAIL || gmailUser || "sikdersmail@gmail.com";
+  const recipient = to || NOTIFY_EMAIL || gmailUser || "sikdersmail@gmail.com";
   const from = NOTIFY_FROM || "rakib@moonlab.space";
+  const fromName = mail.fromName ?? "Moonlab website";
 
   if (gmailUser && gmailPass) {
-    const sent = await sendViaGmail(gmailUser, gmailPass, { to, ...mail });
+    const sent = await sendViaGmail(gmailUser, gmailPass, { ...mail, to: recipient, fromName });
     if (sent || !brevoKey) return sent;
   }
   if (!brevoKey) return false;
@@ -62,8 +63,8 @@ export async function emailOwner(mail: OwnerMail): Promise<boolean> {
       method: "POST",
       headers: { "api-key": brevoKey, "content-type": "application/json", accept: "application/json" },
       body: JSON.stringify({
-        sender: { name: "Moonlab website", email: from },
-        to: [{ email: to }],
+        sender: { name: fromName, email: from },
+        to: [{ email: recipient }],
         ...(mail.replyTo ? { replyTo: mail.replyTo } : {}),
         subject: mail.subject,
         textContent: mail.text,
@@ -76,6 +77,11 @@ export async function emailOwner(mail: OwnerMail): Promise<boolean> {
     console.error("[notify] Brevo request failed:", err);
     return false;
   }
+}
+
+/** Sends one alert to the owner's inbox. True when accepted. */
+export function emailOwner(mail: OwnerMail): Promise<boolean> {
+  return sendMail(null, mail);
 }
 
 /** A labelled table, a highlighted message and a footer link: the shape of every owner alert. */

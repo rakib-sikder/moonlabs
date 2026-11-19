@@ -14,7 +14,7 @@ export async function resetPassword(formData: FormData): Promise<ActionState> {
     if (!db) return { ok: false, message: "The client portal is not configured yet." };
     const token = String(formData.get("token") ?? "");
     const reset = await findPasswordReset(db, token);
-    if (!reset) return { ok: false, message: "This reset link is invalid, used or expired. Ask for a new one." };
+    if (!reset) return { ok: false, message: "This reset link is invalid, used or expired. Request a new one from the Forgot password page." };
 
     const password = String(formData.get("password") ?? "");
     const problem = passwordProblem(password);
@@ -25,7 +25,7 @@ export async function resetPassword(formData: FormData): Promise<ActionState> {
       .prepare("UPDATE password_resets SET used_at = ? WHERE token_hash = ? AND used_at IS NULL")
       .bind(nowIso(), reset.token_hash)
       .run();
-    if (claimed.meta.changes !== 1) return { ok: false, message: "This reset link was just used. Ask for a new one." };
+    if (claimed.meta.changes !== 1) return { ok: false, message: "This reset link was just used. Request a new one from the Forgot password page." };
 
     await db.batch([
       db.prepare("UPDATE users SET password_hash = ? WHERE id = ?").bind(await hashPassword(password), reset.user_id),

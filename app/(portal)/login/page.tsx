@@ -13,7 +13,7 @@ export const metadata: Metadata = { title: "Sign in" };
 
 const ERRORS: Record<string, string> = {
   google: "Google sign-in was cancelled or failed. Try again.",
-  google_no_account: "There is no portal account or open invite for that Google address. Ask your Moonlab contact for an invite.",
+  google_no_account: "There is no portal account for that Google address yet. Create an account with email first.",
   google_unverified: "That Google address is not verified. Use email and password instead.",
 };
 
@@ -35,9 +35,9 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   return (
     <AuthCard title="Sign in to your client portal" description="Track projects, automations, requests and invoices." footer={
       <>
-        Not a client yet?{" "}
-        <Link href="/pricing" className="pt-link">
-          See plans
+        New here?{" "}
+        <Link href={next !== "/dashboard" ? `/signup?next=${encodeURIComponent(next)}` : "/signup"} className="pt-link">
+          Create an account
         </Link>
       </>
     }>

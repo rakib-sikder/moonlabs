@@ -4,7 +4,7 @@
 //   GMAIL_APP_PASSWORD  a Google "app password" for that account, never the normal password
 // Only runs on Cloudflare (it uses cloudflare:sockets); anywhere else it reports failure.
 
-type Mail = { to: string; replyTo?: { email: string; name: string }; subject: string; text: string; html: string };
+type Mail = { to: string; fromName?: string; replyTo?: { email: string; name: string }; subject: string; text: string; html: string };
 
 const utf8 = new TextEncoder();
 
@@ -75,7 +75,7 @@ export async function sendViaGmail(user: string, appPassword: string, mail: Mail
 
     const boundary = `mb-${crypto.randomUUID()}`;
     const headers = [
-      `From: ${word("Moonlab website")} <${user}>`,
+      `From: ${word(mail.fromName ?? "Moonlab website")} <${user}>`,
       `To: <${oneLine(mail.to)}>`,
       ...(mail.replyTo ? [`Reply-To: ${word(mail.replyTo.name)} <${oneLine(mail.replyTo.email)}>`] : []),
       `Subject: ${word(mail.subject)}`,
