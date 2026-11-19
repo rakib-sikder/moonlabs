@@ -1,21 +1,32 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { getOrgPage } from "@/lib/portal/access";
-import { listInvoices } from "@/lib/portal/queries";
+import { getSessionUser } from "@/lib/portal/auth";
+import { getPendingPlanOrder, listInvoices } from "@/lib/portal/queries";
 import { plans } from "@/lib/content/company";
 import { formatDate, formatMoney, invoiceStatusLabel, invoiceTone, planLabel } from "@/lib/portal/format";
 import { Badge, EmptyState, NoWorkspace, PageHeader, Panel } from "../../_components/ui";
 import { IconExternal } from "../../_components/icons";
+import { ActionForm } from "../../_components/action-form";
+import { cancelPlanOrder, orderPlan } from "./actions";
 
 export const metadata: Metadata = { title: "Billing" };
 
-export default async function BillingPage() {
+export default async function BillingPage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {
+  const query = await searchParams;
+  const wanted = typeof query.plan === "string" ? plans.find((p) => p.key === query.plan)?.key : undefined;
+  if (!(await getSessionUser())) {
+    const next = wanted ? `/dashboard/billing?plan=${wanted}` : "/dashboard/billing";
+    redirect(`/signup?next=${encodeURIComponent(next)}`);
+  }
   const page = await getOrgPage();
   if (!page) return null;
   const { ctx, org } = page;
   if (!org) return <NoWorkspace canAdmin={ctx.canAdmin} />;
 
-  const invoices = await listInvoices(ctx, org.id);
+  const [invoices, pendingOrder] = await Promise.all([listInvoices(ctx, org.id), getPendingPlanOrder(ctx, org.id)]);
+  const pendingPlan = pendingOrder ? plans.find((p) => p.key === pendingOrder.plan) : undefined;
   const plan = plans.find((p) => p.name === planLabel[org.plan]);
   const outstanding = invoices.filter((i) => i.status === "open" || i.status === "overdue");
   const outstandingByCurrency = new Map<string, number>();
@@ -51,13 +62,15 @@ export default async function BillingPage() {
               )}
             </div>
           )}
-          <p className="mt-4 text-[12.5px] text-muted">
-            To change or cancel your plan,{" "}
-            <Link href="/dashboard/requests/new" className="pt-link">
-              open a request
-            </Link>
-            .
-          </p>
+          {org.plan !== "none" && (
+            <p className="mt-4 text-[12.5px] text-muted">
+              To cancel your plan,{" "}
+              <Link href="/dashboard/requests/new" className="pt-link">
+                open a request
+              </Link>
+              .
+            </p>
+          )}
         </Panel>
         <Panel title="Outstanding">
           {outstanding.length === 0 ? (
@@ -76,6 +89,83 @@ export default async function BillingPage() {
           )}
         </Panel>
       </div>
+
+      {pendingOrder ? (
+        <Panel title="Your plan order" className="mb-6">
+          <div className="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <p className="font-semibold">
+                {pendingPlan?.name ?? pendingOrder.plan} {pendingPlan && <span className="font-normal text-muted">· {pendingPlan.price} {pendingPlan.unit}</span>}
+              </p>
+              <p className="mt-1 text-[13px] text-muted">
+                {pendingOrder.url
+                  ? `Invoice ${pendingOrder.number ?? ""} is ready. Pay by card or bank transfer; the plan starts when the payment arrives.`
+                  : `Invoice ${pendingOrder.number ?? ""} is open. We will add a secure payment link here and email it to you within one business day.`}
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              {pendingOrder.url && (
+                <a href={pendingOrder.url} target="_blank" rel="noopener noreferrer" className="pt-btn" data-variant="primary">
+                  Pay now
+                  <IconExternal className="h-3.5 w-3.5" />
+                </a>
+              )}
+              <ActionForm action={cancelPlanOrder} submitLabel="Cancel order" variant="ghost" size="sm" hasVisibleFields={false} confirm="Cancel this plan order?">
+                <input type="hidden" name="org_id" value={org.id} />
+              </ActionForm>
+            </div>
+          </div>
+        </Panel>
+      ) : (
+        <section id="plans" className="mb-6" aria-labelledby="plans-title">
+          <h2 id="plans-title" className="mb-3 text-[15px] font-semibold">
+            {org.plan === "none" ? "Choose a plan" : "Change plan"}
+          </h2>
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            {plans.map((p) => {
+              const current = org.plan === p.key;
+              const highlighted = wanted ? wanted === p.key : p.featured;
+              return (
+                <div
+                  key={p.key}
+                  className="flex flex-col rounded-lg border bg-surface p-5"
+                  style={{ borderColor: highlighted ? "var(--accent)" : "var(--border)", boxShadow: highlighted ? "0 0 0 1px var(--accent)" : undefined }}
+                >
+                  <p className="font-semibold">{p.name}</p>
+                  <p className="text-[13px] text-muted">{p.tagline}</p>
+                  <p className="mt-3">
+                    <span className="text-[22px] font-semibold tabular-nums">{p.price}</span>
+                    <span className="ml-1 text-[12.5px] text-muted">{p.unit}</span>
+                  </p>
+                  <ul className="mt-3 flex-1 space-y-1 text-[13px] text-muted">
+                    {p.features.map((f) => (
+                      <li key={f}>· {f}</li>
+                    ))}
+                  </ul>
+                  {current ? (
+                    <p className="mt-4 text-[13px] font-medium">Your current plan</p>
+                  ) : (
+                    <ActionForm
+                      action={orderPlan}
+                      submitLabel={`Choose ${p.name}`}
+                      pendingLabel="Ordering…"
+                      variant={highlighted ? "primary" : "default"}
+                      className="mt-4 [&_button]:w-full"
+                      hasVisibleFields={false}
+                    >
+                      <input type="hidden" name="org_id" value={org.id} />
+                      <input type="hidden" name="plan" value={p.key} />
+                    </ActionForm>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          <p className="mt-3 text-[12.5px] text-muted">
+            After you choose, we email you a secure payment link (card or bank transfer). Nothing is charged until you pay it.
+          </p>
+        </section>
+      )}
 
       <Panel title="Invoices" bodyClassName={null}>
         {invoices.length === 0 ? (
@@ -109,8 +199,8 @@ export default async function BillingPage() {
                     </td>
                     <td className="text-right">
                       {i.url ? (
-                        <a href={i.url} target="_blank" rel="noopener noreferrer" className="pt-btn" data-size="sm" aria-label={`View invoice ${i.number} (opens in a new tab)`}>
-                          View
+                        <a href={i.url} target="_blank" rel="noopener noreferrer" className="pt-btn" data-size="sm" aria-label={`${i.status === "open" || i.status === "overdue" ? "Pay" : "View"} invoice ${i.number} (opens in a new tab)`}>
+                          {i.status === "open" || i.status === "overdue" ? "Pay" : "View"}
                           <IconExternal className="h-3.5 w-3.5" />
                         </a>
                       ) : null}

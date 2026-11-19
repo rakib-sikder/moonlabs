@@ -29,6 +29,8 @@ import {
   uuid,
 } from "@/lib/portal/validate";
 import { STAGES } from "@/lib/portal/format";
+import { plans } from "@/lib/content/company";
+import { sendAccountMail } from "@/lib/portal/mail";
 import type {
   ActionState,
   AutomationStatus,
@@ -501,6 +503,78 @@ export async function setInvoiceStatus(formData: FormData): Promise<ActionState>
     const id = uuid(formData, "invoice_id", "Invoice");
     const status = oneOf(formData, "status", INVOICE_STATUSES, "Status");
     await ctx.db.prepare("UPDATE invoices SET status = ? WHERE id = ? AND org_id = ?").bind(status, id, orgId).run();
+
+    // An invoice that belongs to a pending plan order: paid switches the plan on, void cancels the order.
+    const order = await ctx.db
+      .prepare("SELECT id, plan FROM plan_orders WHERE invoice_id = ? AND org_id = ? AND status = 'pending'")
+      .bind(id, orgId)
+      .first<{ id: string; plan: OrgPlan }>();
+    if (order && status === "paid") {
+      await ctx.db.batch([
+        ctx.db.prepare("UPDATE plan_orders SET status = 'paid' WHERE id = ?").bind(order.id),
+        ctx.db.prepare("UPDATE organizations SET plan = ?, plan_started_on = ? WHERE id = ?").bind(order.plan, new Date().toISOString().slice(0, 10), orgId),
+      ]);
+      const label = plans.find((p) => p.key === order.plan)?.name ?? order.plan;
+      for (const to of await memberEmails(ctx, orgId)) {
+        await sendAccountMail({
+          to,
+          subject: `Payment received: ${label} is active`,
+          greeting: "Hi,",
+          lines: [`Thank you. We received your payment and your ${label} plan is now active.`, "Send your first request from the portal and we will get started."],
+          button: { label: "Open your portal", href: `${await requestOrigin()}/dashboard` },
+          footer: "Questions? Reply to this email.",
+        });
+      }
+      return done(`Invoice paid. ${label} plan is now active and the client was emailed.`);
+    }
+    if (order && status === "void") {
+      await ctx.db.prepare("UPDATE plan_orders SET status = 'cancelled' WHERE id = ?").bind(order.id).run();
+      return done("Invoice voided and the plan order cancelled.");
+    }
     return done("Invoice updated.");
+  });
+}
+
+async function memberEmails(ctx: PortalContext, orgId: string): Promise<string[]> {
+  const { results } = await ctx.db
+    .prepare("SELECT u.email FROM memberships m JOIN users u ON u.id = m.user_id WHERE m.org_id = ?")
+    .bind(orgId)
+    .all<{ email: string }>();
+  return results.map((r) => r.email);
+}
+
+/** Adds or changes the payment link on an invoice (e.g. a Payoneer request) and can email it to the client. */
+export async function setInvoiceLink(formData: FormData): Promise<ActionState> {
+  return guarded(async () => {
+    const { ctx, orgId } = await adminFor(formData);
+    const id = uuid(formData, "invoice_id", "Invoice");
+    const url = optionalUrl(formData, "url", "Payment link");
+    if (!url) return { ok: false, message: "Paste the payment link first." };
+    const invoice = await ctx.db
+      .prepare("SELECT number, amount_cents, currency, status FROM invoices WHERE id = ? AND org_id = ?")
+      .bind(id, orgId)
+      .first<{ number: string; amount_cents: number; currency: string; status: InvoiceStatus }>();
+    if (!invoice) return { ok: false, message: "That invoice was not found." };
+    await ctx.db
+      .prepare("UPDATE invoices SET url = ?, status = CASE WHEN status = 'draft' THEN 'open' ELSE status END WHERE id = ? AND org_id = ?")
+      .bind(url, id, orgId)
+      .run();
+
+    if (!checkbox(formData, "email_client")) return done("Payment link saved.");
+    const amount = new Intl.NumberFormat("en-US", { style: "currency", currency: invoice.currency }).format(invoice.amount_cents / 100);
+    const recipients = await memberEmails(ctx, orgId);
+    let sent = 0;
+    for (const to of recipients) {
+      const ok = await sendAccountMail({
+        to,
+        subject: `Payment link for invoice ${invoice.number} (${amount})`,
+        greeting: "Hi,",
+        lines: [`Your invoice ${invoice.number} for ${amount} is ready.`, "Use the secure link below to pay by card or bank transfer. It is also on the Billing page of your portal."],
+        button: { label: `Pay ${amount}`, href: url },
+        footer: "Questions? Reply to this email.",
+      });
+      if (ok) sent++;
+    }
+    return done(`Payment link saved and emailed to ${sent} of ${recipients.length} member${recipients.length === 1 ? "" : "s"}.`);
   });
 }

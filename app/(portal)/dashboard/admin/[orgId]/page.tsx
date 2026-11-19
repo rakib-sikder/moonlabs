@@ -7,6 +7,7 @@ import {
   listAutomations,
   listFiles,
   listInvoices,
+  listPendingPlanOrders,
   listMembers,
   listProjectOptions,
   listProjects,
@@ -33,6 +34,7 @@ import {
   requestStatusLabel,
   requestTone,
 } from "@/lib/portal/format";
+import { plans } from "@/lib/content/company";
 import type { AutomationStatus, InvoiceStatus, OrgPlan, ProjectStatus } from "@/lib/portal/types";
 import type { OrgAccess, PortalContext } from "@/lib/portal/access";
 import { Badge, EmptyState, Field, PageHeader, Panel, currentStageLabel } from "../../../_components/ui";
@@ -48,6 +50,7 @@ import {
   inviteMember,
   removeMember,
   revokeInvite,
+  setInvoiceLink,
   setInvoiceStatus,
   updateMemberRole,
   updateOrganization,
@@ -576,7 +579,9 @@ async function FilesTab({ ctx, org }: TabProps) {
 
 // ---------------------------------------------------------------------------
 async function InvoicesTab({ ctx, org }: TabProps) {
-  const invoices = await listInvoices(ctx, org.id);
+  const [invoices, orders] = await Promise.all([listInvoices(ctx, org.id), listPendingPlanOrders(ctx, org.id)]);
+  const orderFor = new Map(orders.map((o) => [o.invoiceId, plans.find((p) => p.key === o.plan)?.name ?? o.plan]));
+  const unpaid = invoices.filter((i) => i.status === "open" || i.status === "overdue" || i.status === "draft");
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
       <Panel title={`Invoices (${invoices.length})`} className="lg:col-span-2" bodyClassName={null}>
@@ -607,6 +612,11 @@ async function InvoicesTab({ ctx, org }: TabProps) {
                       ) : (
                         i.number
                       )}
+                      {orderFor.has(i.id) && (
+                        <span className="ml-2">
+                          <Badge tone="warn">Plan order: {orderFor.get(i.id)}</Badge>
+                        </span>
+                      )}
                     </td>
                     <td className="pt-kbd-muted whitespace-nowrap">{formatShortDate(i.issued_on)}</td>
                     <td className="pt-num">{formatMoney(i.amount_cents, i.currency)}</td>
@@ -636,6 +646,29 @@ async function InvoicesTab({ ctx, org }: TabProps) {
           </div>
         )}
       </Panel>
+      {unpaid.length > 0 && (
+        <Panel title="Payment links" className="lg:col-span-2">
+          <p className="mb-4 text-[13px] text-muted">
+            Create a payment request in Payoneer for the invoice amount, paste its link here and email it. Marking a plan-order invoice
+            &quot;Paid&quot; switches that plan on for the client.
+          </p>
+          <div className="space-y-4">
+            {unpaid.map((i) => (
+              <ActionForm key={i.id} action={setInvoiceLink} submitLabel="Save link" size="sm" variant="default">
+                <input type="hidden" name="org_id" value={org.id} />
+                <input type="hidden" name="invoice_id" value={i.id} />
+                <Field label={`${i.number} · ${formatMoney(i.amount_cents, i.currency)}${orderFor.has(i.id) ? ` · ${orderFor.get(i.id)} order` : ""}`} htmlFor={`inv-url-${i.id}`}>
+                  <input id={`inv-url-${i.id}`} name="url" type="url" required defaultValue={i.url ?? ""} className="pt-input" placeholder="https://link.payoneer.com/..." />
+                </Field>
+                <label className="mt-2 flex items-center gap-2 text-[13px]">
+                  <input type="checkbox" name="email_client" defaultChecked />
+                  Email the link to the client
+                </label>
+              </ActionForm>
+            ))}
+          </div>
+        </Panel>
+      )}
       <Panel title="Add invoice">
         <ActionForm action={createInvoice} submitLabel="Add invoice" resetOnSuccess>
           <input type="hidden" name="org_id" value={org.id} />
@@ -670,7 +703,7 @@ async function InvoicesTab({ ctx, org }: TabProps) {
                 <input id="i-due" name="due_on" type="date" className="pt-input" />
               </Field>
             </div>
-            <Field label="Link (Stripe, PDF…)" htmlFor="i-url">
+            <Field label="Payment link (Payoneer, PDF…)" htmlFor="i-url">
               <input id="i-url" name="url" type="url" className="pt-input" placeholder="https://" />
             </Field>
             <Field label="Notes" htmlFor="i-notes">

@@ -90,12 +90,15 @@ export default function PricingPage() {
                 ))}
               </ul>
               <Link
-                href="/contact"
+                href={`/signup?next=${encodeURIComponent(`/dashboard/billing?plan=${p.key}`)}`}
                 className={`mt-10 rounded-full px-6 py-3 text-center text-sm font-medium transition-opacity hover:opacity-90 ${
                   p.featured ? "bg-accent text-accent-ink" : "border border-border hover:border-muted"
                 }`}
               >
                 {p.cta}
+              </Link>
+              <Link href="/contact" className="mt-3 text-center text-xs text-muted hover:text-foreground">
+                Not sure yet? Book a free audit first
               </Link>
             </div>
           </Reveal>

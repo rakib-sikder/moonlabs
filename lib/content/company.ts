@@ -123,13 +123,25 @@ export const processStages = [
 ];
 
 /* Prices are the owner's to confirm — edit here and every page updates. */
-export const plans = [
+export const plans: {
+  key: "crescent" | "half_moon" | "full_moon";
+  name: string;
+  amountCents: number;
+  tagline: string;
+  price: string;
+  unit: string;
+  cta: string;
+  featured: boolean;
+  features: string[];
+}[] = [
   {
+    key: "crescent",
     name: "Crescent",
+    amountCents: 9900,
     tagline: "One automation, done properly.",
     price: "$99",
     unit: "one-time, from",
-    cta: "Start with one",
+    cta: "Buy Crescent",
     featured: false,
     features: [
       "One workflow, connecting up to 3 tools",
@@ -139,11 +151,13 @@ export const plans = [
     ],
   },
   {
+    key: "half_moon",
     name: "Half Moon",
+    amountCents: 19900,
     tagline: "New automations every month.",
     price: "$199",
     unit: "per month",
-    cta: "Book a free audit",
+    cta: "Start Half Moon",
     featured: true,
     features: [
       "Up to 2 new automations every month",
@@ -154,11 +168,13 @@ export const plans = [
     ],
   },
   {
+    key: "full_moon",
     name: "Full Moon",
+    amountCents: 39900,
     tagline: "For teams with a long list.",
     price: "$399",
     unit: "per month",
-    cta: "Talk to us",
+    cta: "Start Full Moon",
     featured: false,
     features: [
       "Unlimited requests, one at a time",

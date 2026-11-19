@@ -537,3 +537,30 @@ export async function listProjectOptions(ctx: PortalContext, orgId: string): Pro
     .all<{ id: string; name: string }>();
   return results;
 }
+
+export type PendingPlanOrder = { plan: string; number: string | null; url: string | null };
+
+/** The organization's plan order that is waiting for payment, if any. */
+export async function getPendingPlanOrder(ctx: PortalContext, orgId: string): Promise<PendingPlanOrder | null> {
+  assertMember(ctx, orgId);
+  const { results } = await ctx.db
+    .prepare(
+      `SELECT o.plan, i.number, i.url FROM plan_orders o
+         LEFT JOIN invoices i ON i.id = o.invoice_id
+        WHERE o.org_id = ? AND o.status = 'pending' ORDER BY o.created_at DESC LIMIT 1`,
+    )
+    .bind(orgId)
+    .all<PendingPlanOrder>();
+  const row = results[0];
+  return row ? { plan: String(row.plan), number: row.number == null ? null : String(row.number), url: row.url == null ? null : String(row.url) } : null;
+}
+
+/** Pending plan orders by invoice id (admin view). */
+export async function listPendingPlanOrders(ctx: PortalContext, orgId: string): Promise<{ invoiceId: string; plan: string }[]> {
+  assertMember(ctx, orgId);
+  const { results } = await ctx.db
+    .prepare("SELECT invoice_id, plan FROM plan_orders WHERE org_id = ? AND status = 'pending' AND invoice_id IS NOT NULL")
+    .bind(orgId)
+    .all<{ invoice_id: string; plan: string }>();
+  return results.map((r) => ({ invoiceId: String(r.invoice_id), plan: String(r.plan) }));
+}
