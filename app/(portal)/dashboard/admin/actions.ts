@@ -33,6 +33,7 @@ import { blockedMessage, blockingGate } from "@/lib/portal/gates";
 import { plans } from "@/lib/content/company";
 import { sendAccountMail } from "@/lib/portal/mail";
 import { projectInsertStatements } from "@/lib/portal/projects";
+import { getVaultKey, isVaultConfigured, openSecret } from "@/lib/portal/vault";
 import type {
   ActionState,
   AutomationStatus,
@@ -306,11 +307,16 @@ export async function updateProject(formData: FormData): Promise<ActionState> {
     const { ctx, orgId } = await adminFor(formData);
     const projectId = uuid(formData, "project_id", "Project");
     const f = projectFields(formData);
-    await ctx.db
-      .prepare("UPDATE projects SET name = ?, summary = ?, status = ?, started_on = ?, target_on = ? WHERE id = ? AND org_id = ?")
-      .bind(f.name, f.summary, f.status, f.started_on, f.target_on, projectId, orgId)
-      .run();
-    return done("Project saved.");
+    const ended = f.status === "completed" || f.status === "cancelled";
+    const results = await ctx.db.batch([
+      ctx.db
+        .prepare("UPDATE projects SET name = ?, summary = ?, status = ?, started_on = ?, target_on = ? WHERE id = ? AND org_id = ?")
+        .bind(f.name, f.summary, f.status, f.started_on, f.target_on, projectId, orgId),
+      // Client secrets are kept only while the project runs.
+      ...(ended ? [ctx.db.prepare("DELETE FROM project_secrets WHERE project_id = ? AND org_id = ?").bind(projectId, orgId)] : []),
+    ]);
+    const purged = ended ? (results[1]?.meta.changes ?? 0) : 0;
+    return done(purged ? `Project saved. ${purged} client secret${purged === 1 ? " was" : "s were"} deleted.` : "Project saved.");
   });
 }
 
@@ -414,6 +420,97 @@ export async function withdrawApproval(formData: FormData): Promise<ActionState>
       .run();
     if (!res.meta.changes) return { ok: false, message: "Only a waiting approval can be withdrawn." };
     return done("Approval request withdrawn.");
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Secrets the client hands over
+// ---------------------------------------------------------------------------
+/**
+ * Lists what Moonlab needs from the client, one item per line ("Label: optional hint").
+ * Creates one empty slot per line and emails the client members once.
+ */
+export async function requestSecrets(formData: FormData): Promise<ActionState> {
+  return guarded(async () => {
+    const { ctx, orgId } = await adminFor(formData);
+    const projectId = uuid(formData, "project_id", "Project");
+    const raw = text(formData, "items", { label: "Items", max: 4000 });
+    const items = raw
+      .split("\n")
+      .map((l) => l.trim())
+      .filter(Boolean)
+      .map((l) => {
+        const i = l.indexOf(":");
+        const label = (i > 0 ? l.slice(0, i) : l).trim().slice(0, 120);
+        const hint = i > 0 ? l.slice(i + 1).trim().slice(0, 500) || null : null;
+        return { label, hint };
+      });
+    if (items.length === 0 || items.length > 20) return { ok: false, message: "List 1 to 20 items, one per line." };
+    if (items.some((it) => it.label.length < 2)) return { ok: false, message: "Each item needs a name of at least 2 characters." };
+    if (!(await isVaultConfigured())) return { ok: false, message: "Secure storage is not set up: add the SECRETS_KEY Worker secret first." };
+    const project = await ctx.db.prepare("SELECT name FROM projects WHERE id = ? AND org_id = ?").bind(projectId, orgId).first<{ name: string }>();
+    if (!project) return { ok: false, message: "That project was not found." };
+
+    await ctx.db.batch(
+      items.map((it) =>
+        ctx.db
+          .prepare("INSERT INTO project_secrets (id, project_id, org_id, label, hint, requested_by) VALUES (?, ?, ?, ?, ?, ?)")
+          .bind(crypto.randomUUID(), projectId, orgId, it.label, it.hint, ctx.userId),
+      ),
+    );
+    const origin = await requestOrigin();
+    const approvers = await approverEmails(ctx, orgId);
+    for (const to of approvers) {
+      await sendAccountMail({
+        to,
+        subject: `We need a few details for ${project.name}`,
+        greeting: "Hi,",
+        lines: [
+          `To continue ${project.name} we need: ${items.map((it) => it.label).join(", ")}.`,
+          "Please add them in your portal, not by email or chat. They are encrypted, only the Moonlab team can open them, and they are deleted when the project ends.",
+        ],
+        button: { label: "Add them securely", href: `${origin}/dashboard/projects/${projectId}#access` },
+        footer: "Questions? Reply to this email.",
+      });
+    }
+    return done(`${items.length} item${items.length === 1 ? "" : "s"} requested${approvers.length ? " and the client was emailed" : ""}.`);
+  });
+}
+
+/** Decrypts one secret for Moonlab. Every reveal is counted and timestamped on the row. */
+export async function revealSecret(formData: FormData): Promise<ActionState> {
+  return guarded(async () => {
+    const { ctx, orgId } = await adminFor(formData);
+    const secretId = uuid(formData, "secret_id", "Secret");
+    const key = await getVaultKey();
+    if (!key) return { ok: false, message: "Secure storage is not set up: SECRETS_KEY is missing." };
+    const row = await ctx.db
+      .prepare("SELECT label, ciphertext, iv FROM project_secrets WHERE id = ? AND org_id = ? AND status = 'provided'")
+      .bind(secretId, orgId)
+      .first<{ label: string; ciphertext: string; iv: string }>();
+    if (!row) return { ok: false, message: "Nothing saved for this item yet." };
+    let value: string;
+    try {
+      value = await openSecret(key, secretId, { ciphertext: row.ciphertext, iv: row.iv });
+    } catch {
+      return { ok: false, message: "This value could not be decrypted (the SECRETS_KEY changed?). Ask the client to add it again." };
+    }
+    await ctx.db
+      .prepare(
+        "UPDATE project_secrets SET reveal_count = reveal_count + 1, last_revealed_by = ?, last_revealed_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ? AND org_id = ?",
+      )
+      .bind(ctx.userId, secretId, orgId)
+      .run();
+    return { ok: true, message: `${row.label} (this view is logged)`, secret: value };
+  });
+}
+
+export async function deleteSecretAdmin(formData: FormData): Promise<ActionState> {
+  return guarded(async () => {
+    const { ctx, orgId } = await adminFor(formData);
+    const secretId = uuid(formData, "secret_id", "Secret");
+    await ctx.db.prepare("DELETE FROM project_secrets WHERE id = ? AND org_id = ?").bind(secretId, orgId).run();
+    return done("Deleted.");
   });
 }
 

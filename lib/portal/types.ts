@@ -116,7 +116,20 @@ export type ProjectGate = {
   decider: PersonRef;
 };
 
-export type BriefStatus ="submitted" | "accepted" | "declined" | "withdrawn";
+/** A secret's metadata. The value never leaves the server except through an admin reveal. */
+export type ProjectSecret = {
+  id: string;
+  label: string;
+  hint: string | null;
+  status: "requested" | "provided";
+  provided_at: string | null;
+  reveal_count: number;
+  last_revealed_at: string | null;
+  created_at: string;
+  provider: PersonRef;
+};
+
+export type BriefStatus = "submitted" | "accepted" | "declined" | "withdrawn";
 
 export type ProjectBrief = {
   id: string;
@@ -232,4 +245,6 @@ export type ActionState = {
   message?: string;
   /** One-time link to show with a Copy button (invites, password resets). */
   link?: string;
+  /** A decrypted client secret, shown once with Copy and Hide buttons (admin reveal). */
+  secret?: string;
 };

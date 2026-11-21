@@ -5,7 +5,8 @@ import { redirect } from "next/navigation";
 import { assertMember, getPortalContext } from "@/lib/portal/access";
 import { requestOrigin } from "@/lib/portal/auth";
 import { guarded } from "@/lib/portal/action-utils";
-import { oneOf, optionalDate, optionalText, text, uuid } from "@/lib/portal/validate";
+import { oneOf, optionalDate, optionalText, optionalUuid, text, uuid } from "@/lib/portal/validate";
+import { getVaultKey, sealSecret } from "@/lib/portal/vault";
 import { alertMail, emailOwner } from "@/lib/notify";
 import { sendAccountMail } from "@/lib/portal/mail";
 import { STAGES, formatDate, gateKindLabel, gateUnlocks, stageLabel } from "@/lib/portal/format";
@@ -172,6 +173,101 @@ export async function decideGate(formData: FormData): Promise<ActionState> {
     revalidatePath("/dashboard", "layout");
     // The answered item leaves the list, so the confirmation is shown by the page instead.
     redirect(`/dashboard/projects/${gate.project_id}?decided=${decision === "approved" ? gate.kind : "changes"}`);
+  });
+}
+
+/**
+ * A member saves a secret: fills a requested item (or replaces its value), or adds a new item.
+ * The value is encrypted before it reaches the database and is never shown back to the client.
+ * Moonlab is emailed the item name only.
+ */
+export async function provideSecret(formData: FormData): Promise<ActionState> {
+  return guarded(async () => {
+    const orgId = uuid(formData, "org_id", "Organization");
+    const projectId = uuid(formData, "project_id", "Project");
+    const secretId = optionalUuid(formData, "secret_id", "Item");
+    const value = String(formData.get("value") ?? "");
+    if (!value.trim()) return { ok: false, message: "Paste the value first." };
+    if (value.length > 10000) return { ok: false, message: "That value is too long (10,000 characters at most)." };
+
+    const ctx = await getPortalContext();
+    assertMember(ctx, orgId);
+    const key = await getVaultKey();
+    if (!key) return { ok: false, message: "Secure storage is not available right now. Please try again later." };
+    const project = await ctx.db
+      .prepare("SELECT name, status FROM projects WHERE id = ? AND org_id = ?")
+      .bind(projectId, orgId)
+      .first<{ name: string; status: string }>();
+    if (!project) return { ok: false, message: "That project was not found." };
+    if (project.status === "completed" || project.status === "cancelled") return { ok: false, message: "This project has ended, so nothing new can be stored." };
+
+    let id: string;
+    let label: string;
+    if (secretId) {
+      const row = await ctx.db
+        .prepare("SELECT label FROM project_secrets WHERE id = ? AND project_id = ? AND org_id = ?")
+        .bind(secretId, projectId, orgId)
+        .first<{ label: string }>();
+      if (!row) return { ok: false, message: "That item was not found." };
+      id = secretId;
+      label = String(row.label);
+    } else {
+      id = crypto.randomUUID();
+      label = text(formData, "label", { label: "Name", min: 2, max: 120 });
+      await ctx.db
+        .prepare("INSERT INTO project_secrets (id, project_id, org_id, label) VALUES (?, ?, ?, ?)")
+        .bind(id, projectId, orgId, label)
+        .run();
+    }
+    const sealed = await sealSecret(key, id, value);
+    await ctx.db
+      .prepare(
+        `UPDATE project_secrets SET status = 'provided', ciphertext = ?, iv = ?, provided_by = ?,
+                provided_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ? AND org_id = ?`,
+      )
+      .bind(sealed.ciphertext, sealed.iv, ctx.userId, id, orgId)
+      .run();
+
+    if (!ctx.isStaff) {
+      const origin = await requestOrigin();
+      const who = ctx.profile?.full_name || ctx.email || "The client";
+      const mail = alertMail(
+        "A client saved a secret",
+        [
+          ["Project", project.name],
+          ["Item", label],
+          ["By", who],
+        ],
+        "The value is encrypted in the portal. Open the project to reveal it.",
+        { text: "Every reveal is logged on the item.", href: `${origin}/dashboard/admin/${orgId}/projects/${projectId}#access`, label: "Open the project" },
+      );
+      await emailOwner({ subject: `Secret saved: ${label} (${project.name})`, ...mail });
+    }
+    revalidatePath("/dashboard", "layout");
+    return { ok: true, message: `${label} saved securely.` };
+  });
+}
+
+/**
+ * Removes a saved value. An item Moonlab asked for goes back to "needed"; an item the client
+ * added is deleted.
+ */
+export async function removeSecret(formData: FormData): Promise<ActionState> {
+  return guarded(async () => {
+    const orgId = uuid(formData, "org_id", "Organization");
+    const secretId = uuid(formData, "secret_id", "Item");
+    const ctx = await getPortalContext();
+    assertMember(ctx, orgId);
+    await ctx.db.batch([
+      ctx.db.prepare("DELETE FROM project_secrets WHERE id = ? AND org_id = ? AND requested_by IS NULL").bind(secretId, orgId),
+      ctx.db
+        .prepare(
+          "UPDATE project_secrets SET status = 'requested', ciphertext = NULL, iv = NULL, provided_by = NULL, provided_at = NULL WHERE id = ? AND org_id = ? AND requested_by IS NOT NULL",
+        )
+        .bind(secretId, orgId),
+    ]);
+    revalidatePath("/dashboard", "layout");
+    return { ok: true, message: "Removed." };
   });
 }
 

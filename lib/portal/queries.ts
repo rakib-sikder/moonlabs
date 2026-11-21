@@ -23,6 +23,7 @@ import type {
   ProjectWithStages,
   ProjectBrief,
   ProjectGate,
+  ProjectSecret,
   GateKind,
   GateStatus,
   BriefStatus,
@@ -682,4 +683,34 @@ export async function waitingGateCounts(ctx: PortalContext, orgId: string): Prom
     .bind(orgId)
     .all<{ project_id: string; n: number }>();
   return Object.fromEntries(results.map((r) => [String(r.project_id), Number(r.n)]));
+}
+
+// ---------------------------------------------------------------------------
+// Project secrets (metadata only; values are never selected here)
+// ---------------------------------------------------------------------------
+export async function listSecrets(ctx: PortalContext, orgId: string, projectId: string): Promise<ProjectSecret[]> {
+  assertMember(ctx, orgId);
+  const [{ results }, person] = await Promise.all([
+    ctx.db
+      .prepare(
+        `SELECT s.id, s.label, s.hint, s.status, s.provided_at, s.reveal_count, s.last_revealed_at, s.created_at, ${PERSON_COLS}
+           FROM project_secrets s LEFT JOIN users a ON a.id = s.provided_by
+          WHERE s.project_id = ? AND s.org_id = ?
+          ORDER BY s.created_at`,
+      )
+      .bind(projectId, orgId)
+      .all<Omit<ProjectSecret, "provider"> & PersonCols>(),
+    personResolver(ctx),
+  ]);
+  return results.map((r) => ({
+    id: String(r.id),
+    label: String(r.label),
+    hint: r.hint == null ? null : String(r.hint),
+    status: String(r.status) as ProjectSecret["status"],
+    provided_at: r.provided_at == null ? null : String(r.provided_at),
+    reveal_count: Number(r.reveal_count),
+    last_revealed_at: r.last_revealed_at == null ? null : String(r.last_revealed_at),
+    created_at: String(r.created_at),
+    provider: person(r),
+  }));
 }

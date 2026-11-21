@@ -164,6 +164,26 @@ Admin > Files then shows **Upload a deliverable** next to **Share a link**.
    new version as a new approval; every decision stays on record.
 4. Staff cannot approve for the client. A project with no gates works as before.
 
+### Client secrets (keys and logins)
+
+Off until the Worker has a `SECRETS_KEY` secret (32 random bytes, base64):
+
+```
+node -e "process.stdout.write(require('crypto').randomBytes(32).toString('base64'))" | npx wrangler secret put SECRETS_KEY
+```
+
+Keep a copy of the key somewhere safe (a password manager). If it is lost or changed, saved
+values cannot be decrypted and clients must add them again. For local testing put a different
+key in `.dev.vars`.
+
+1. Admin project page > **Client secrets**: list what you need, one per line
+   ("Label: hint"), **Ask the client**. Client members are emailed once.
+2. The client fills each item under **Access and keys** on the project page, or adds their
+   own. Values are AES-GCM encrypted before they reach D1 and are never shown to the client
+   again. You are emailed the item name only.
+3. **Reveal** shows a value to you; every reveal is counted and timestamped on the item.
+4. Setting the project to Completed or Cancelled deletes all its secrets.
+
 ## 8. Optional: Facebook sign-in
 
 The button is hidden until both secrets are set.

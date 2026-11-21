@@ -67,7 +67,12 @@ export function ActionForm({
       {state.message}
     </p>
   ) : null;
-  const link = state?.ok && state.link ? <CopyLink key={state.link} link={state.link} /> : null;
+  const link =
+    state?.ok && state.secret != null ? (
+      <SecretBox key={state.message} value={state.secret} onHide={() => setState(null)} />
+    ) : state?.ok && state.link ? (
+      <CopyLink key={state.link} link={state.link} />
+    ) : null;
 
   const button = (
     <button
@@ -104,6 +109,40 @@ export function ActionForm({
       </div>
       {link}
     </form>
+  );
+}
+
+/** A revealed secret: read-only, copyable, and removed from the page with Hide. */
+function SecretBox({ value, onHide }: { value: string; onHide: () => void }) {
+  const [copied, setCopied] = useState(false);
+  async function copy() {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(true);
+    } catch {
+      setCopied(false);
+    }
+  }
+  return (
+    <div className="mt-3 rounded-md border border-border bg-surface-2 p-2">
+      <textarea
+        readOnly
+        value={value}
+        aria-label="Secret value"
+        rows={Math.min(8, value.split("\n").length)}
+        spellCheck={false}
+        className="pt-textarea font-mono text-[12px]"
+        onFocus={(e) => e.currentTarget.select()}
+      />
+      <div className="mt-2 flex gap-2">
+        <button type="button" className="pt-btn" data-size="sm" onClick={copy}>
+          {copied ? "Copied" : "Copy"}
+        </button>
+        <button type="button" className="pt-btn" data-size="sm" data-variant="ghost" onClick={onHide}>
+          Hide
+        </button>
+      </div>
+    </div>
   );
 }
 

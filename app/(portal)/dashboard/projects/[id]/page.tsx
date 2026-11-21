@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getOrgPage } from "@/lib/portal/access";
-import { getProject, getProjectBrief, listGates } from "@/lib/portal/queries";
+import { getProject, getProjectBrief, listGates, listSecrets } from "@/lib/portal/queries";
+import { isVaultConfigured } from "@/lib/portal/vault";
+import { ClientSecretsPanel } from "../../../_components/secret-views";
 import { BriefView } from "../../../_components/brief-view";
 import { GateBody, GateHistory } from "../../../_components/gate-views";
 import { ActionForm } from "../../../_components/action-form";
@@ -34,7 +36,13 @@ export default async function ProjectPage({
   if (!org) return <NoWorkspace canAdmin={ctx.canAdmin} />;
   if (!isUuid(id)) notFound();
 
-  const [data, brief, gates] = await Promise.all([getProject(ctx, org.id, id), getProjectBrief(ctx, org.id, id), listGates(ctx, org.id, id)]);
+  const [data, brief, gates, secrets, vault] = await Promise.all([
+    getProject(ctx, org.id, id),
+    getProjectBrief(ctx, org.id, id),
+    listGates(ctx, org.id, id),
+    listSecrets(ctx, org.id, id),
+    isVaultConfigured(),
+  ]);
   if (!data) notFound();
   const waiting = gates.filter((g) => g.status === "waiting");
   const answered = gates.filter((g) => g.status !== "waiting");
@@ -127,6 +135,10 @@ export default async function ProjectPage({
           <MilestoneList milestones={milestones} />
         </Panel>
       </div>
+
+      {vault && project.status !== "completed" && project.status !== "cancelled" && (
+        <ClientSecretsPanel orgId={org.id} projectId={project.id} secrets={secrets} />
+      )}
 
       {answered.length > 0 && (
         <Panel title="Approvals" className="mt-6" bodyClassName={null}>

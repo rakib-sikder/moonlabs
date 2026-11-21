@@ -3,7 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isPortalConfigured } from "@/lib/portal/env";
 import { requireOrgAdmin } from "@/lib/portal/access";
-import { getProject, getProjectBrief, listGates } from "@/lib/portal/queries";
+import { getProject, getProjectBrief, listGates, listSecrets } from "@/lib/portal/queries";
+import { isVaultConfigured } from "@/lib/portal/vault";
+import { AdminSecretList } from "../../../../../_components/secret-views";
 import { BriefView } from "../../../../../_components/brief-view";
 import { GateBody, GateHistory } from "../../../../../_components/gate-views";
 import { isUuid } from "@/lib/portal/validate";
@@ -28,6 +30,7 @@ import {
   deleteUpdate,
   postUpdate,
   requestApproval,
+  requestSecrets,
   setMilestoneDone,
   withdrawApproval,
   updateProject,
@@ -44,10 +47,12 @@ export default async function AdminProjectPage({ params }: { params: Promise<{ o
   if (!(await isPortalConfigured())) return null;
   if (!isUuid(orgId) || !isUuid(projectId)) notFound();
   const { ctx, org } = await requireOrgAdmin(orgId);
-  const [data, brief, gates] = await Promise.all([
+  const [data, brief, gates, secrets, vault] = await Promise.all([
     getProject(ctx, org.id, projectId),
     getProjectBrief(ctx, org.id, projectId),
     listGates(ctx, org.id, projectId),
+    listSecrets(ctx, org.id, projectId),
+    isVaultConfigured(),
   ]);
   if (!data) notFound();
   // Suggest the first gate kind not approved yet.
@@ -190,6 +195,27 @@ export default async function AdminProjectPage({ params }: { params: Promise<{ o
                 <GateHistory gates={gates.filter((g) => g.status !== "waiting")} />
               </>
             )}
+          </Panel>
+
+          <Panel id="access" title="Client secrets" bodyClassName={null}>
+            {vault ? (
+              <div className="border-b border-border p-4">
+                <ActionForm action={requestSecrets} submitLabel="Ask the client" resetOnSuccess>
+                  {hidden}
+                  <Field label="What do you need?" htmlFor="s-items" hint="One per line. Add a hint after a colon, e.g. “bKash API key: from the merchant panel”. The client is emailed once.">
+                    <textarea id="s-items" name="items" required rows={3} maxLength={4000} className="pt-textarea" />
+                  </Field>
+                </ActionForm>
+                <p className="mt-2 text-[12.5px] text-muted">
+                  Values are encrypted with SECRETS_KEY. Reveals are counted on each item. Setting the project to Completed or Cancelled deletes them all.
+                </p>
+              </div>
+            ) : (
+              <p className="border-b border-border p-4 text-[12.5px] text-muted">
+                Secure storage is off. Set the SECRETS_KEY Worker secret (32 random bytes, base64) to let clients share keys and logins.
+              </p>
+            )}
+            {secrets.length === 0 ? <EmptyState title="Nothing asked or saved yet" /> : <AdminSecretList orgId={org.id} secrets={secrets} />}
           </Panel>
 
           {brief && (
