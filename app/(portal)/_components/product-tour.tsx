@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { markTourDone } from "../actions";
@@ -9,54 +9,74 @@ import { markTourDone } from "../actions";
 /** Fired by "Show the guide" in the account menu. */
 export const TOUR_EVENT = "ml:start-tour";
 
-type Step = { target?: string; title: string; body: string; final?: boolean };
+/** `path`: the page the step happens on (the guide opens it). `target`: data-tour anchor to point at. */
+type Step = { path?: string; target?: string; title: string; body: string; final?: boolean };
 
 const ALL_STEPS: Step[] = [
   {
+    path: "/dashboard",
     title: "Welcome to your Moonlab portal",
-    body: "Everything about your work with us lives here. This one-minute guide shows you around. You can skip it and open it again any time from your account menu.",
+    body: "Everything about your work with us lives here. This two-minute guide opens each page and shows what it is for. Skip it any time, and reopen it from your account menu.",
   },
   {
-    target: "nav-overview",
-    title: "Overview",
-    body: "Your home page: what is running, what changed lately, and anything waiting for you, such as an approval.",
+    path: "/dashboard",
+    target: "overview-kpis",
+    title: "Overview: your numbers",
+    body: "What is running for you, how many runs went through this week, the hours saved this month, and open requests. When something needs your approval or input, a yellow note appears above these.",
   },
   {
-    target: "nav-projects",
-    title: "Projects",
-    body: "Tell us what you want built with “Start a new project”. Each project shows its stages, milestones and updates. When we need your approval or a login, it appears at the top of the project.",
+    path: "/dashboard/projects",
+    target: "projects-new",
+    title: "Projects: start here",
+    body: "Press “Start a new project” and tell us what you need in your own words. We reply within one business day. Every project then shows its stages (Audit, Design, Build, Test, Live), milestones and updates.",
   },
   {
-    target: "nav-automations",
+    path: "/dashboard/projects",
+    title: "Inside a project",
+    body: "When we need you, it appears at the top of the project: approve a spec, mockup or release, or ask for changes. “Access and keys” is where you share logins and API keys safely, never by email. Blocked tasks say clearly who they wait on.",
+  },
+  {
+    path: "/dashboard/automations",
+    target: "automations-list",
     title: "Automations",
-    body: "The workflows we run for you, with their recent runs, success rate and the hours they save.",
+    body: "Every workflow we run for you, with its health, recent runs, success rate and the hours it saves. Open one to see its run log.",
   },
   {
-    target: "nav-requests",
+    path: "/dashboard/requests",
+    target: "requests-new",
     title: "Requests",
-    body: "Ask a question, report a problem or ask for a change. Each request keeps the whole conversation in one place, so nothing gets lost in email.",
+    body: "Questions, problems and change requests go here with “New request”. Each request keeps the whole conversation in one thread, so nothing gets lost in email.",
   },
   {
-    target: "nav-files",
+    path: "/dashboard/files",
+    target: "files-list",
     title: "Files",
-    body: "Deliverables, documents and links we share with you.",
+    body: "Deliverables, documents and handover material we share with you. Only people in your organization can open them.",
   },
   {
-    target: "nav-billing",
-    title: "Billing",
-    body: "Choose a monthly plan for automations and see your invoices. Websites and apps are quoted per project. You pay through a secure link we email you, by card, PayPal or bank transfer.",
+    path: "/dashboard/billing",
+    target: "billing-plans",
+    title: "Billing: plans",
+    body: "Crescent is a one-time automation build. Full Moon adds one new automation every month with care. Half Moon keeps what you have running. When a seasonal offer is on, the lower first payment shows here and is applied for you.",
+  },
+  {
+    path: "/dashboard/billing",
+    target: "billing-invoices",
+    title: "Billing: invoices",
+    body: "Every invoice, with a “Pay” button once we add the secure payment link (card, PayPal or bank transfer). Websites and apps are quoted per project and paid in three steps.",
   },
   {
     target: "assistant",
     title: "Ask Moon",
-    body: "Moon, our AI assistant, answers questions about the portal in your language. Tell it what you want to build, and it asks a few questions, gives you an estimate and prepares a brief for our team.",
+    body: "Moon, our AI assistant, answers questions about the portal in your language. Tell it what you want to build: it asks a few questions, gives you an estimate and prepares a brief for our team.",
   },
   {
     target: "user-menu",
     title: "Your account",
-    body: "Sign out, go back to the website, or open this guide again.",
+    body: "Switch workspace, go back to the website, sign out, or open this guide again.",
   },
   {
+    path: "/dashboard",
     title: "Where to start",
     body: "Most clients begin by telling us what they need. It takes about five minutes, and we reply within one business day.",
     final: true,
@@ -65,6 +85,7 @@ const ALL_STEPS: Step[] = [
 
 const PAD = 6;
 const CARD_W = 340;
+const CARD_H = 240;
 
 /** The first element for this step that is actually on screen (the sidebar is hidden on mobile). */
 function findTarget(key: string | undefined): HTMLElement | null {
@@ -77,9 +98,9 @@ function findTarget(key: string | undefined): HTMLElement | null {
 }
 
 /**
- * Guided tour of the portal. Starts by itself for people who have not finished or skipped it,
- * and again whenever TOUR_EVENT fires. Highlights one menu item per step; when the item is not
- * visible (small screens) the step shows as a centred card.
+ * Guided tour of the portal. Starts by itself once for people who have not finished or skipped
+ * it (only on Overview), and again whenever TOUR_EVENT fires. Each step opens its page and points
+ * at the real control; when that control is not on screen the step shows as a centred card.
  */
 export function ProductTour({ autoStart, assistant = false }: { autoStart: boolean; assistant?: boolean }) {
   const STEPS = assistant ? ALL_STEPS : ALL_STEPS.filter((s) => s.target !== "assistant");
@@ -87,18 +108,18 @@ export function ProductTour({ autoStart, assistant = false }: { autoStart: boole
   const [index, setIndex] = useState(0);
   const [rect, setRect] = useState<DOMRect | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
+  // Finished or skipped in this session: the layout's autoStart prop is stale until a full reload.
+  const done = useRef(false);
   const step = STEPS[index];
-
-  // Opens by itself only on Overview, so it never interrupts someone who came to order a plan
-  // or fill in a form.
+  const router = useRouter();
   const pathname = usePathname();
-  const onOverview = pathname === "/dashboard";
+
   useEffect(() => {
-    if (autoStart && onOverview) {
+    if (autoStart && !done.current && pathname === "/dashboard") {
       const t = setTimeout(() => setOpen(true), 400);
       return () => clearTimeout(t);
     }
-  }, [autoStart, onOverview]);
+  }, [autoStart, pathname]);
 
   useEffect(() => {
     const start = () => {
@@ -109,29 +130,49 @@ export function ProductTour({ autoStart, assistant = false }: { autoStart: boole
     return () => window.removeEventListener(TOUR_EVENT, start);
   }, []);
 
-  const measure = useCallback(() => {
-    const el = findTarget(step?.target);
-    setRect(el ? el.getBoundingClientRect() : null);
-  }, [step]);
+  // Go to the step's page when needed.
+  useEffect(() => {
+    if (open && step?.path && pathname !== step.path) router.push(step.path);
+  }, [open, step, pathname, router]);
 
+  const onPage = !step?.path || pathname === step.path;
+
+  const measure = useCallback(() => {
+    const el = onPage ? findTarget(step?.target) : null;
+    setRect(el ? el.getBoundingClientRect() : null);
+  }, [step, onPage]);
+
+  // The page may still be loading: look for the target for a couple of seconds.
   useLayoutEffect(() => {
     if (!open) return;
-    findTarget(step?.target)?.scrollIntoView({ block: "nearest" });
-    const frame = requestAnimationFrame(measure);
+    let tries = 0;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    const seek = () => {
+      const el = onPage ? findTarget(step?.target) : null;
+      if (el) {
+        el.scrollIntoView({ block: "nearest" });
+        requestAnimationFrame(measure);
+      } else {
+        requestAnimationFrame(measure);
+        if (step?.target && tries++ < 15) timer = setTimeout(seek, 150);
+      }
+    };
+    seek();
     window.addEventListener("resize", measure);
     window.addEventListener("scroll", measure, true);
     return () => {
-      cancelAnimationFrame(frame);
+      if (timer) clearTimeout(timer);
       window.removeEventListener("resize", measure);
       window.removeEventListener("scroll", measure, true);
     };
-  }, [open, measure, step]);
+  }, [open, measure, step, onPage]);
 
   useEffect(() => {
     if (open) cardRef.current?.focus();
   }, [open, index]);
 
   const finish = useCallback(() => {
+    done.current = true;
     setOpen(false);
     setIndex(0);
     void markTourDone().catch(() => {});
@@ -153,14 +194,19 @@ export function ProductTour({ autoStart, assistant = false }: { autoStart: boole
 
   if (!open || !step) return null;
 
-  // Card placement: right of the highlighted item, or under it, or centred.
+  // Card placement: right of the target, else below it, else above it, else bottom-right.
   let cardStyle: React.CSSProperties;
   const vw = window.innerWidth;
   const vh = window.innerHeight;
-  if (rect && rect.right + 16 + CARD_W < vw) {
-    cardStyle = { left: rect.right + 16, top: Math.min(Math.max(12, rect.top - 8), vh - 260) };
+  const left = (x: number) => Math.min(Math.max(12, x), vw - CARD_W - 12);
+  if (rect && rect.right + 16 + CARD_W < vw && rect.height < vh * 0.6) {
+    cardStyle = { left: rect.right + 16, top: Math.min(Math.max(12, rect.top - 8), vh - CARD_H - 12) };
+  } else if (rect && rect.bottom + 12 + CARD_H < vh) {
+    cardStyle = { left: left(rect.left), top: rect.bottom + 12 };
+  } else if (rect && rect.top - 12 - CARD_H > 0) {
+    cardStyle = { left: left(rect.left), top: rect.top - 12 - CARD_H };
   } else if (rect) {
-    cardStyle = { left: Math.min(Math.max(12, rect.right - CARD_W), vw - CARD_W - 12), top: Math.min(rect.bottom + 12, vh - 260) };
+    cardStyle = { right: 16, bottom: 16 };
   } else {
     cardStyle = { left: "50%", top: "50%", transform: "translate(-50%, -50%)" };
   }

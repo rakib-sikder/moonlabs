@@ -21,7 +21,7 @@ export default async function AutomationsPage() {
   return (
     <>
       <PageHeader title="Automations" description="Health and activity of everything running for you. Times are UTC." />
-      <Panel bodyClassName={null}>
+      <Panel bodyClassName={null} tour="automations-list">
         {sorted.length === 0 ? (
           <EmptyState title="No automations yet">Once an automation goes live, its runs and health show up here.</EmptyState>
         ) : (

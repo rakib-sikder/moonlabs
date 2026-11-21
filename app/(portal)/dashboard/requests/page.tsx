@@ -33,7 +33,7 @@ export default async function RequestsPage({ searchParams }: { searchParams: Pro
         title="Requests"
         description="Changes, fixes and questions for the Moonlab team."
         actions={
-          <Link href="/dashboard/requests/new" className="pt-btn" data-variant="primary">
+          <Link href="/dashboard/requests/new" className="pt-btn" data-variant="primary" data-tour="requests-new">
             New request
           </Link>
         }

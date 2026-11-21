@@ -18,7 +18,7 @@ export default async function FilesPage() {
   return (
     <>
       <PageHeader title="Files" description="Deliverables, documentation and handover material. Only people in your organization can open them." />
-      <Panel bodyClassName={null}>
+      <Panel bodyClassName={null} tour="files-list">
         {files.length === 0 ? (
           <EmptyState title="No files yet">Docs, diagrams and handover material will be shared here.</EmptyState>
         ) : (

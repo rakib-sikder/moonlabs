@@ -20,7 +20,7 @@ export default async function ProjectsPage() {
     blockedCounts(ctx, org.id),
   ]);
   const newButton = (
-    <Link href="/dashboard/projects/new" className="pt-btn" data-variant="primary">
+    <Link href="/dashboard/projects/new" className="pt-btn" data-variant="primary" data-tour="projects-new">
       Start a new project
     </Link>
   );

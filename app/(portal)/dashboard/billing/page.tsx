@@ -118,7 +118,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
           </div>
         </Panel>
       ) : (
-        <section id="plans" className="mb-6" aria-labelledby="plans-title">
+        <section id="plans" className="mb-6" aria-labelledby="plans-title" data-tour="billing-plans">
           <h2 id="plans-title" className="mb-3 text-[15px] font-semibold">
             {org.plan === "none" ? "Choose a plan" : "Change plan"}
           </h2>
@@ -188,7 +188,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
         </section>
       )}
 
-      <Panel title="Invoices" bodyClassName={null}>
+      <Panel title="Invoices" bodyClassName={null} tour="billing-invoices">
         {invoices.length === 0 ? (
           <EmptyState title="No invoices yet">Invoices appear here as soon as they are issued.</EmptyState>
         ) : (

@@ -48,7 +48,10 @@ export function Panel({
   className = "",
   bodyClassName,
   id,
+  tour,
 }: {
+  /** Anchor for the portal guide (data-tour). */
+  tour?: string;
   title?: React.ReactNode;
   actions?: React.ReactNode;
   children: React.ReactNode;
@@ -59,7 +62,7 @@ export function Panel({
 }) {
   const headingId = id ? `${id}-title` : undefined;
   return (
-    <section className={`pt-panel ${className}`} aria-labelledby={title ? headingId : undefined} id={id}>
+    <section className={`pt-panel ${className}`} aria-labelledby={title ? headingId : undefined} id={id} data-tour={tour}>
       {title && (
         <div className="pt-panel-head">
           <h2 className="pt-panel-title" id={headingId}>

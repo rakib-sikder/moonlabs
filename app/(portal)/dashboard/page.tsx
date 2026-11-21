@@ -83,7 +83,7 @@ export default async function OverviewPage() {
         </Link>
       )}
 
-      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4" data-tour="overview-kpis">
         <KpiTile
           label="Active automations"
           value={formatNumber(data.activeAutomations)}
