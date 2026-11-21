@@ -114,7 +114,7 @@ const baseGuides: Guide[] = [
         heading: "How Moonlab works",
         paragraphs: [
           "Moonlab is an AI automation agency for small businesses. Every project starts with a free 30-minute audit. We look at how your team spends its week, point out the tasks worth automating, and tell you plainly if something is not worth it.",
-          "The price is fixed and agreed before any work starts. A single automation starts from $349 as a one-time project. The monthly plan is $199 per month for one new automation a month plus monitoring and fixes, and there is a larger plan at $399 per month. Details are at /pricing.",
+          "The price is fixed and agreed before any work starts. A single automation starts from $349 as a one-time project. Monthly plans are $199 per month to monitor and fix what you run, and $399 per month for one new automation every month plus care. Details are at /pricing.",
           "Everything is built in your own accounts, so you keep the automations if we stop working together. Risky steps, such as anything that sends money or makes a promise to a customer, wait for a person on your team to approve them.",
           "Book the audit at /contact. Related services: sales and lead follow-up at /services/sales-and-leads, customer support at /services/customer-support, and operations at /services/operations.",
         ],
@@ -139,7 +139,7 @@ const baseGuides: Guide[] = [
       },
       {
         q: "How much does an AI automation agency cost?",
-        a: "It varies by agency and by task. At Moonlab a single automation starts from $349 one-time, the monthly plan is $199 per month for one new automation a month with monitoring, and a larger plan is $399 per month. The price is fixed before work starts.",
+        a: "It varies by agency and by task. At Moonlab a single automation starts from $349 one-time, monitoring and fixes cost $199 per month, and $399 per month adds one new automation every month. The price is fixed before work starts.",
       },
     ],
     services: ["sales-and-leads", "customer-support", "operations"],
@@ -572,7 +572,7 @@ const baseGuides: Guide[] = [
         heading: "The three ways automation is sold",
         paragraphs: [
           "Most agencies and freelancers sell automation in one of three ways. None of them is wrong. Each one moves the risk to a different place.",
-          "Moonlab uses the first two. A single automation starts from $349 as a one-time project. The monthly plan is $199 per month, which covers one new automation a month with monitoring included, and there is a larger plan at $399 per month. Every project starts with a free 30-minute audit, and the fixed price is agreed before work starts. Current details are at /pricing.",
+          "Moonlab uses the first two. A single automation starts from $349 as a one-time project. Monthly plans are $199 per month for monitoring and fixes, and $399 per month for one new automation every month with care included. Every project starts with a free 30-minute audit, and the fixed price is agreed before work starts. Current details are at /pricing.",
         ],
         bullets: [
           "One-off fixed-price project. You agree the scope and the price, and the work is delivered for that price. You know the total before you start, and the builder carries the risk if it takes longer. The trade-off is that the scope has to be written down clearly, and changes after that are a new conversation. It also does not cover what happens when something breaks six months later, unless support is included.",
@@ -596,7 +596,7 @@ const baseGuides: Guide[] = [
         heading: "How to work out whether it pays back",
         paragraphs: [
           "You can test any automation idea with one sum. Take the hours it saves per week, multiply by what an hour of that person's time costs you, and compare the yearly total against the build cost plus the running cost.",
-          "Here is a made-up example to show the arithmetic. Say a task takes 5 hours a week, and the automation removes 4 of them because 1 hour of checking and exceptions remains. Say that person's time costs you $15 an hour. The saving is 4 x $15 = $60 a week, and $60 x 52 weeks = $3,120 a year. If the build were a one-time project at a fixed quote, the payback time is the quote divided by $60. At the $349 starting price that is 349 / 60 = 5.8, so about six weeks. On a $199 monthly plan the yearly cost is $199 x 12 = $2,388, which leaves $3,120 - $2,388 = $732 a year from this one task, before tool fees. That is a thin margin for one task, and it shows why a monthly plan makes sense when you have several tasks to automate, not one.",
+          "Here is a made-up example to show the arithmetic. Say a task takes 5 hours a week, and the automation removes 4 of them because 1 hour of checking and exceptions remains. Say that person's time costs you $15 an hour. The saving is 4 x $15 = $60 a week, and $60 x 52 weeks = $3,120 a year. If the build were a one-time project at a fixed quote, the payback time is the quote divided by $60. At the $349 starting price that is 349 / 60 = 5.8, so about six weeks. On the $399 monthly plan, which adds one new automation every month, the yearly cost is $399 x 12 = $4,788, more than the $3,120 this one task saves. That is why a monthly plan makes sense when you have several tasks to automate, and a one-time build makes sense for one.",
           "Then subtract the running costs from the section above. If the number is still clearly positive, the project is worth doing. If it only works when every estimate goes your way, it is not. The same sum works in taka. Use your own hours and your own wage figure, not ours.",
         ],
         bullets: [
@@ -652,7 +652,7 @@ const baseGuides: Guide[] = [
       },
       {
         q: "Is a monthly plan or a one-off project better?",
-        a: "A one-off project suits a single, clearly defined task. A monthly plan suits a business with several tasks to automate over time, or one that wants monitoring and fixes included. Moonlab's monthly plan is $199 per month for one new automation a month with monitoring, and there is a larger plan at $399 per month.",
+        a: "A one-off project suits a single, clearly defined task. A monthly plan suits a business with several tasks to automate over time, or one that wants monitoring and fixes included. Moonlab's monthly plans are $199 per month for monitoring and fixes, and $399 per month for one new automation every month with care included.",
       },
       {
         q: "What other costs are there besides the build?",

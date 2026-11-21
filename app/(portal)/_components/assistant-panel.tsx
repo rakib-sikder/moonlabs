@@ -248,7 +248,8 @@ export function AssistantPanel() {
                     send(input);
                   }
                 }}
-                placeholder="Type a message…"
+                disabled={pending}
+                placeholder={pending ? "One moment…" : "Type a message…"}
                 className="pt-textarea min-h-0 flex-1 resize-none text-[13.5px]"
               />
               <button type="submit" className="pt-btn" data-variant="primary" disabled={pending || !input.trim()}>

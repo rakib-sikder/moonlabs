@@ -147,10 +147,10 @@ export function estimatePrice(input: EstimateInput): Estimate {
   if (automations > 0 && !nonAutomation) {
     plan_hint =
       automations === 1 && !aiAutomation
-        ? "One standard automation fits Crescent ($349 one-time) or, with ongoing care and one new automation a month, Half Moon ($199/month)."
+        ? "One standard automation fits Crescent ($349 one-time), with Half Moon ($199/month) if they want it monitored and fixed afterwards."
         : aiAutomation || automations >= 3
-          ? "Several automations or AI steps fit Full Moon ($399/month: up to 3 new a month, AI steps, care for up to 15)."
-          : "Two or three automations over time fit Half Moon ($199/month, one new each month) or Full Moon ($399/month, up to 3 a month).";
+          ? "Several automations or AI steps fit Full Moon ($399/month: one new automation every month, AI steps, care for up to 15)."
+          : "Two or three automations over time fit Full Moon ($399/month, one new every month), or Crescent ($349 each) plus Half Moon ($199/month) for care.";
   }
   notes.push("Not included: hosting, tool subscriptions (for example Zapier, n8n, GoHighLevel), SMS and AI usage, paid directly by the client.");
 
