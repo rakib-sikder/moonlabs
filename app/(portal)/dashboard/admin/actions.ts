@@ -28,7 +28,7 @@ import {
   text,
   uuid,
 } from "@/lib/portal/validate";
-import { GATE_KINDS, STAGES, gateKindLabel, gateUnlocks, stageLabel } from "@/lib/portal/format";
+import { BLOCKED_ON, GATE_KINDS, STAGES, gateKindLabel, gateUnlocks, stageLabel } from "@/lib/portal/format";
 import { blockedMessage, blockingGate } from "@/lib/portal/gates";
 import { plans } from "@/lib/content/company";
 import { sendAccountMail } from "@/lib/portal/mail";
@@ -37,6 +37,7 @@ import { getVaultKey, isVaultConfigured, openSecret } from "@/lib/portal/vault";
 import type {
   ActionState,
   AutomationStatus,
+  BlockedOn,
   GateKind,
   InvoiceStatus,
   MemberRole,
@@ -545,10 +546,62 @@ export async function setMilestoneDone(formData: FormData): Promise<ActionState>
     const { ctx, orgId } = await adminFor(formData);
     const id = uuid(formData, "milestone_id", "Milestone");
     await ctx.db
-      .prepare("UPDATE project_milestones SET done = ? WHERE id = ? AND org_id = ?")
+      .prepare(
+        "UPDATE project_milestones SET done = ?1, blocked_on = CASE WHEN ?1 = 1 THEN NULL ELSE blocked_on END, blocked_reason = CASE WHEN ?1 = 1 THEN NULL ELSE blocked_reason END, blocked_since = CASE WHEN ?1 = 1 THEN NULL ELSE blocked_since END WHERE id = ?2 AND org_id = ?3",
+      )
       .bind(checkbox(formData, "done") ? 1 : 0, id, orgId)
       .run();
     return done("Milestone updated.");
+  });
+}
+
+/**
+ * Marks an open milestone blocked, with who it waits on and why. When it waits on the client,
+ * the client's members are emailed the reason.
+ */
+export async function blockMilestone(formData: FormData): Promise<ActionState> {
+  return guarded(async () => {
+    const { ctx, orgId } = await adminFor(formData);
+    const id = uuid(formData, "milestone_id", "Milestone");
+    const on = oneOf<BlockedOn>(formData, "blocked_on", BLOCKED_ON, "Waiting on");
+    const reason = text(formData, "blocked_reason", { label: "Reason", min: 3, max: 1000 });
+    const m = await ctx.db
+      .prepare("SELECT m.title, m.project_id, p.name AS project_name FROM project_milestones m JOIN projects p ON p.id = m.project_id WHERE m.id = ? AND m.org_id = ? AND m.done = 0")
+      .bind(id, orgId)
+      .first<{ title: string; project_id: string; project_name: string }>();
+    if (!m) return { ok: false, message: "Only an open milestone can be blocked." };
+    await ctx.db
+      .prepare("UPDATE project_milestones SET blocked_on = ?, blocked_reason = ?, blocked_since = COALESCE(blocked_since, ?) WHERE id = ? AND org_id = ?")
+      .bind(on, reason, new Date().toISOString().slice(0, 10), id, orgId)
+      .run();
+    let emailed = 0;
+    if (on === "client") {
+      const origin = await requestOrigin();
+      for (const to of await approverEmails(ctx, orgId)) {
+        await sendAccountMail({
+          to,
+          subject: `We need something from you: ${m.title}`,
+          greeting: "Hi,",
+          lines: [`${m.project_name} is waiting on you for "${m.title}".`, reason],
+          button: { label: "Open the project", href: `${origin}/dashboard/projects/${m.project_id}` },
+          footer: "Reply to this email or send a request from the project page.",
+        });
+        emailed++;
+      }
+    }
+    return done(emailed ? "Marked blocked and the client was emailed." : "Marked blocked.");
+  });
+}
+
+export async function unblockMilestone(formData: FormData): Promise<ActionState> {
+  return guarded(async () => {
+    const { ctx, orgId } = await adminFor(formData);
+    const id = uuid(formData, "milestone_id", "Milestone");
+    await ctx.db
+      .prepare("UPDATE project_milestones SET blocked_on = NULL, blocked_reason = NULL, blocked_since = NULL WHERE id = ? AND org_id = ?")
+      .bind(id, orgId)
+      .run();
+    return done("Unblocked.");
   });
 }
 

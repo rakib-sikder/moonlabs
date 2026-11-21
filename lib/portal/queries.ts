@@ -714,3 +714,16 @@ export async function listSecrets(ctx: PortalContext, orgId: string, projectId: 
     provider: person(r),
   }));
 }
+
+/** Open blocked milestones per project id: total, and how many wait on the client. */
+export async function blockedCounts(ctx: PortalContext, orgId: string): Promise<Record<string, { total: number; client: number }>> {
+  assertMember(ctx, orgId);
+  const { results } = await ctx.db
+    .prepare(
+      `SELECT project_id, COUNT(*) AS total, SUM(CASE WHEN blocked_on = 'client' THEN 1 ELSE 0 END) AS client
+         FROM project_milestones WHERE org_id = ? AND done = 0 AND blocked_on IS NOT NULL GROUP BY project_id`,
+    )
+    .bind(orgId)
+    .all<{ project_id: string; total: number; client: number }>();
+  return Object.fromEntries(results.map((r) => [String(r.project_id), { total: Number(r.total), client: Number(r.client) }]));
+}

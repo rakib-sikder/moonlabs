@@ -10,7 +10,9 @@ import { BriefView } from "../../../../../_components/brief-view";
 import { GateBody, GateHistory } from "../../../../../_components/gate-views";
 import { isUuid } from "@/lib/portal/validate";
 import {
+  BLOCKED_ON,
   GATE_KINDS,
+  blockedOnAdminLabel,
   STAGES,
   formatDate,
   formatShortDate,
@@ -25,12 +27,14 @@ import { EmptyState, Field, PageHeader, Panel, StageTracker } from "../../../../
 import { ActionForm } from "../../../../../_components/action-form";
 import {
   addMilestone,
+  blockMilestone,
   deleteMilestone,
   deleteProject,
   deleteUpdate,
   postUpdate,
   requestApproval,
   requestSecrets,
+  unblockMilestone,
   setMilestoneDone,
   withdrawApproval,
   updateProject,
@@ -300,14 +304,54 @@ export default async function AdminProjectPage({ params }: { params: Promise<{ o
             {milestones.length > 0 && (
               <ul className="divide-y divide-border">
                 {milestones.map((m) => (
-                  <li key={m.id} className="flex items-center gap-2 px-4 py-2">
+                  <li key={m.id} className="flex flex-wrap items-center gap-2 px-4 py-2">
                     <div className="min-w-0 flex-1">
                       <p className={m.done ? "text-muted line-through" : ""}>{m.title}</p>
                       <p className="text-[12px] text-muted">
                         {m.stage ? stageLabel[m.stage] : "No stage"}
                         {m.due_on && ` · Due ${formatShortDate(m.due_on)}`}
                       </p>
+                      {!m.done && m.blocked_on && (
+                        <p className="text-[12px]" style={{ color: "var(--pt-bad)" }}>
+                          Blocked on {blockedOnAdminLabel[m.blocked_on].toLowerCase()}: {m.blocked_reason}
+                        </p>
+                      )}
                     </div>
+                    {!m.done &&
+                      (m.blocked_on ? (
+                        <ActionForm action={unblockMilestone} submitLabel="Unblock" size="sm" variant="default" submitAriaLabel={`Unblock ${m.title}`}>
+                          <input type="hidden" name="org_id" value={org.id} />
+                          <input type="hidden" name="milestone_id" value={m.id} />
+                        </ActionForm>
+                      ) : (
+                        <details className="order-last w-full">
+                          <summary className="cursor-pointer text-[12px] text-muted">Mark blocked</summary>
+                          <ActionForm action={blockMilestone} submitLabel="Mark blocked" size="sm" variant="danger" className="mt-2">
+                            <input type="hidden" name="org_id" value={org.id} />
+                            <input type="hidden" name="milestone_id" value={m.id} />
+                            <div className="space-y-2">
+                              <div>
+                                <label htmlFor={`bo-${m.id}`} className="pt-label">
+                                  Waiting on
+                                </label>
+                                <select id={`bo-${m.id}`} name="blocked_on" defaultValue="client" className="pt-select">
+                                  {BLOCKED_ON.map((b) => (
+                                    <option key={b} value={b}>
+                                      {blockedOnAdminLabel[b]}
+                                    </option>
+                                  ))}
+                                </select>
+                              </div>
+                              <div>
+                                <label htmlFor={`br-${m.id}`} className="pt-label">
+                                  Why (the client sees this)
+                                </label>
+                                <textarea id={`br-${m.id}`} name="blocked_reason" required minLength={3} maxLength={1000} rows={2} className="pt-textarea" />
+                              </div>
+                            </div>
+                          </ActionForm>
+                        </details>
+                      ))}
                     <ActionForm action={setMilestoneDone} submitLabel={m.done ? "Reopen" : "Done"} size="sm" variant="default" submitAriaLabel={`${m.done ? "Reopen" : "Mark done"}: ${m.title}`}>
                       <input type="hidden" name="org_id" value={org.id} />
                       <input type="hidden" name="milestone_id" value={m.id} />

@@ -184,6 +184,13 @@ key in `.dev.vars`.
 3. **Reveal** shows a value to you; every reveal is counted and timestamped on the item.
 4. Setting the project to Completed or Cancelled deletes all its secrets.
 
+### Blocked milestones
+
+On the admin project page, an open milestone has **Mark blocked**: choose who it waits on (the
+client, Moonlab, a third party) and why. The client sees it in red on the project page. When it
+waits on the client, their members are emailed and Overview and Projects show
+"Waiting on you". **Unblock** clears it; marking the milestone Done clears it too.
+
 ## 8. Optional: Facebook sign-in
 
 The button is hidden until both secrets are set.

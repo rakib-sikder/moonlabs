@@ -3,6 +3,7 @@
 
 import type {
   AutomationStatus,
+  BlockedOn,
   BriefStatus,
   GateKind,
   GateStatus,
@@ -197,6 +198,12 @@ export const invoiceTone: Record<InvoiceStatus, Tone> = {
   overdue: "bad",
   void: "neutral",
 };
+export const BLOCKED_ON: BlockedOn[] = ["client", "moonlab", "third_party"];
+/** Client-facing wording for who a blocked milestone is waiting on. */
+export const blockedOnLabel: Record<BlockedOn, string> = { client: "Waiting on you", moonlab: "Waiting on Moonlab", third_party: "Waiting on a third party" };
+/** Admin wording for the same. */
+export const blockedOnAdminLabel: Record<BlockedOn, string> = { client: "The client", moonlab: "Moonlab", third_party: "A third party" };
+
 export const GATE_KINDS: GateKind[] = ["spec", "mockup", "release"];
 export const gateKindLabel: Record<GateKind, string> = { spec: "Spec", mockup: "Mockup", release: "Release" };
 /** The stage a gate unlocks: approving the spec starts Design, the mockup Build, the release Live. */

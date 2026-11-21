@@ -1,5 +1,6 @@
 import type { ProjectMilestone, ProjectStage, ProjectUpdate } from "@/lib/portal/types";
 import {
+  blockedOnLabel,
   STAGES,
   formatDate,
   formatShortDate,
@@ -53,10 +54,12 @@ export function StageTable({ stages }: { stages: ProjectStage[] }) {
 export function MilestoneList({ milestones }: { milestones: ProjectMilestone[] }) {
   if (milestones.length === 0) return <EmptyState title="No milestones yet">The checklist fills in as the project is planned.</EmptyState>;
   const done = milestones.filter((m) => m.done).length;
+  const blocked = milestones.filter((m) => !m.done && m.blocked_on).length;
   return (
     <>
       <p className="px-4 pt-3 text-[12.5px] text-muted">
         {done} of {milestones.length} complete
+        {blocked > 0 && <span style={{ color: "var(--pt-bad)" }}> · {blocked} blocked</span>}
       </p>
       <ul className="divide-y divide-border">
         {milestones.map((m) => (
@@ -82,6 +85,15 @@ export function MilestoneList({ milestones }: { milestones: ProjectMilestone[] }
                 {m.stage && m.due_on && " · "}
                 {m.due_on && `Due ${formatShortDate(m.due_on)}`}
               </p>
+              {!m.done && m.blocked_on && (
+                <div className="mt-1.5 rounded-md px-2.5 py-1.5 text-[12.5px]" style={{ background: "var(--pt-bad-soft)" }}>
+                  <p className="font-medium" style={{ color: "var(--pt-bad)" }}>
+                    Blocked: {blockedOnLabel[m.blocked_on].toLowerCase()}
+                    {m.blocked_since && <span className="font-normal"> since {formatShortDate(m.blocked_since)}</span>}
+                  </p>
+                  {m.blocked_reason && <p className="whitespace-pre-wrap">{m.blocked_reason}</p>}
+                </div>
+              )}
             </div>
           </li>
         ))}

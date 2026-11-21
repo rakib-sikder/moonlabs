@@ -84,7 +84,12 @@ export type ProjectMilestone = {
   done: boolean;
   due_on: string | null;
   position: number;
+  blocked_on: BlockedOn | null;
+  blocked_reason: string | null;
+  blocked_since: string | null;
 };
+
+export type BlockedOn = "client" | "moonlab" | "third_party";
 
 export type ProjectUpdate = {
   id: string;

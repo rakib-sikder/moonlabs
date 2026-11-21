@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getOrgPage } from "@/lib/portal/access";
-import { listBriefs, listProjects, waitingGateCounts } from "@/lib/portal/queries";
+import { blockedCounts, listBriefs, listProjects, waitingGateCounts } from "@/lib/portal/queries";
 import { briefStatusLabel, briefTone, formatShortDate, projectStatusLabel, projectTone } from "@/lib/portal/format";
 import { Badge, EmptyState, NoWorkspace, PageHeader, Panel, StageTracker, currentStageLabel } from "../../_components/ui";
 
@@ -13,7 +13,12 @@ export default async function ProjectsPage() {
   const { ctx, org } = page;
   if (!org) return <NoWorkspace canAdmin={ctx.canAdmin} />;
 
-  const [projects, briefs, waiting] = await Promise.all([listProjects(ctx, org.id), listBriefs(ctx, org.id, true), waitingGateCounts(ctx, org.id)]);
+  const [projects, briefs, waiting, blocked] = await Promise.all([
+    listProjects(ctx, org.id),
+    listBriefs(ctx, org.id, true),
+    waitingGateCounts(ctx, org.id),
+    blockedCounts(ctx, org.id),
+  ]);
   const newButton = (
     <Link href="/dashboard/projects/new" className="pt-btn" data-variant="primary">
       Start a new project
@@ -77,6 +82,13 @@ export default async function ProjectsPage() {
                           <Link href={`/dashboard/projects/${p.id}#approvals`}>
                             <Badge tone="warn">Needs your approval</Badge>
                           </Link>
+                        ) : null}
+                        {blocked[p.id]?.client ? (
+                          <Link href={`/dashboard/projects/${p.id}`}>
+                            <Badge tone="warn">Waiting on you</Badge>
+                          </Link>
+                        ) : blocked[p.id]?.total ? (
+                          <Badge tone="bad">Blocked</Badge>
                         ) : null}
                       </div>
                     </td>

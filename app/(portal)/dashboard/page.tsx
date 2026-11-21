@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getOrgPage } from "@/lib/portal/access";
-import { getOverview, requestNow, waitingGateCounts } from "@/lib/portal/queries";
+import { blockedCounts, getOverview, requestNow, waitingGateCounts } from "@/lib/portal/queries";
 import type { ActivityItem } from "@/lib/portal/types";
 import {
   formatNumber,
@@ -41,8 +41,16 @@ export default async function OverviewPage() {
   if (!org) return <NoWorkspace canAdmin={ctx.canAdmin} />;
 
   const now = requestNow();
-  const [data, gateCounts] = await Promise.all([getOverview(ctx, org.id, now), waitingGateCounts(ctx, org.id)]);
+  const [data, gateCounts, blocks] = await Promise.all([getOverview(ctx, org.id, now), waitingGateCounts(ctx, org.id), blockedCounts(ctx, org.id)]);
   const approvals = Object.values(gateCounts).reduce((a, b) => a + b, 0);
+  const onYou = Object.values(blocks).reduce((a, b) => a + b.client, 0);
+  const pending = approvals + onYou;
+  const pendingText = [
+    approvals ? `${approvals} ${approvals === 1 ? "item needs" : "items need"} your approval` : null,
+    onYou ? `${onYou} ${onYou === 1 ? "task is" : "tasks are"} waiting on you` : null,
+  ]
+    .filter(Boolean)
+    .join(" and ");
   const monthName = new Intl.DateTimeFormat("en-US", { month: "long", timeZone: "UTC" }).format(now);
 
   return (
@@ -62,14 +70,14 @@ export default async function OverviewPage() {
         }
       />
 
-      {approvals > 0 && (
+      {pending > 0 && (
         <Link
           href="/dashboard/projects"
           className="mb-6 flex items-center justify-between gap-3 rounded-lg border px-4 py-3 text-[13.5px]"
           style={{ borderColor: "var(--pt-warn)", background: "var(--pt-warn-soft)" }}
         >
           <span>
-            <b>{approvals === 1 ? "1 item is" : `${approvals} items are`} waiting for your approval.</b> We continue once you approve.
+            <b>{pendingText.charAt(0).toUpperCase() + pendingText.slice(1)}.</b> We continue once you respond.
           </span>
           <span className="pt-link whitespace-nowrap">Review</span>
         </Link>
