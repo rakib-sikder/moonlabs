@@ -28,7 +28,8 @@ function writeStored(id: string | null) {
 const isSmall = () => typeof window !== "undefined" && window.innerWidth < 640;
 
 /** Turns portal paths in the assistant's text into links. */
-function Linkified({ text, onNavigate }: { text: string; onNavigate: () => void }) {
+function Linkified({ text: raw, onNavigate }: { text: string; onNavigate: () => void }) {
+  const text = raw.replace(/\*\*(.+?)\*\*/g, "$1").replace(/(^|\n)#{1,4}\s+/g, "$1");
   const parts = text.split(/(\/dashboard(?:\/[a-z-]+)*)/g);
   return (
     <>
@@ -129,19 +130,19 @@ export function AssistantPanel() {
           <svg aria-hidden viewBox="0 0 20 20" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.6">
             <path d="M4 4h12v9H8l-4 3V4z" strokeLinejoin="round" />
           </svg>
-          Ask Moonlab
+          Ask Moon
         </button>
       )}
       {open && (
         <section
           role="dialog"
-          aria-label="Moonlab assistant"
+          aria-label="Moon assistant"
           className="pt-panel fixed inset-x-2 bottom-2 top-14 z-40 flex flex-col shadow-xl shadow-black/30 sm:inset-x-auto sm:right-4 sm:top-auto sm:h-[min(600px,calc(100dvh-5rem))] sm:w-[400px]"
         >
           <header className="flex items-center justify-between gap-2 border-b border-border px-3 py-2">
             <div>
-              <h2 className="text-[14px] font-semibold">Moonlab assistant</h2>
-              <p className="text-[11.5px] text-muted">Help with the portal and planning a project</p>
+              <h2 className="text-[14px] font-semibold">Moon</h2>
+              <p className="text-[11.5px] text-muted">Moonlab&apos;s AI assistant</p>
             </div>
             <div className="flex gap-1">
               {(state.lines?.length ?? 0) > 0 && (
@@ -157,8 +158,8 @@ export function AssistantPanel() {
 
           <div ref={listRef} className="flex-1 space-y-3 overflow-y-auto px-3 py-3 text-[13.5px]" aria-live="polite">
             <p className="max-w-[90%] rounded-lg bg-surface-2 px-3 py-2">
-              Hi! Ask me where things are in the portal, or tell me what you want to build. I will ask a few questions, give you an estimate and
-              prepare a brief for the Moonlab team. You can write in any language.
+              Hi, I am Moon! Ask me where things are in the portal, or tell me what you want to build. I will ask a few questions, give you an
+              estimate and prepare a brief for the Moonlab team. You can write in any language.
             </p>
             {lines.length === 0 && (
               <div className="flex flex-wrap gap-1.5">

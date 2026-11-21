@@ -3,7 +3,7 @@
 // brief always needs the client's click on "Send to Moonlab"; the model only proposes it.
 
 import { ADD_ONS, PROJECT_TYPES, estimatePrice, type Estimate, type EstimateInput } from "./price-book";
-import { chat, type AiConfig, type ChatMessage, type ToolSpec } from "./llm";
+import { chatWithFallback, type AiConfig, type ChatMessage, type ToolSpec } from "./llm";
 
 export type BriefDraft = {
   title: string;
@@ -82,12 +82,14 @@ const TOOLS: ToolSpec[] = [
   },
 ];
 
-function systemPrompt(c: AssistantContext): string {
-  return `You are the assistant inside the Moonlab client portal. Moonlab is an automation and software agency.
+function systemPrompt(c: AssistantContext, language: string | null): string {
+  return `${language ? `The client's latest message is written in ${language}. Reply in ${language}.\n\n` : ""}You are Moon, the assistant inside the Moonlab client portal. Moonlab is an automation and software agency.
+If asked who you are: you are Moon, Moonlab's AI assistant; a person from the team reads every brief.
 You talk to ${c.firstName ?? "a client"} from the workspace "${c.orgName}" (current plan: ${c.plan}).
 
-Language: always reply in the language and script the client writes in (English, Bangla, Banglish, or any other).
-Style: short, friendly, plain words. Ask at most two questions at a time. No jargon.
+Language: reply in the language and script the client writes in. Bangla script gets Bangla script. Bangla written in English letters (Banglish, e.g. "amar ekta app lagbe") gets Banglish in English letters, not English and not Bangla script. English gets English. Any other language gets that language.
+Greeting: only in your first reply, as a short sentence on its own line, neutral ("Hi!", "Hello!", or "হ্যালো!" in Bangla). No religious greetings unless the client used one first. Later replies start directly with the answer.
+Style: short, friendly, plain words. Ask at most two questions at a time. No jargon. Plain text, no formatting. Put each question on its own numbered line.
 
 You can help with two things.
 
@@ -109,23 +111,57 @@ Rules:
 - If asked something unrelated to Moonlab or their project, answer briefly and steer back.`;
 }
 
-export type TurnResult = { added: ChatMessage[]; reply: string; draft: BriefDraft | null; estimate: Estimate | null; usage: { input: number; output: number } };
+export type TurnResult = {
+  added: ChatMessage[];
+  reply: string;
+  draft: BriefDraft | null;
+  estimate: Estimate | null;
+  usage: { input: number; output: number };
+  /** The model that answered last (after any fallback). */
+  model: string;
+};
+
+/** Bangla script, Banglish (Bangla in English letters) or null (let the model follow the client). */
+const BANGLISH = /\b(ami|amar|apni|apnar|tumi|kemon|ki|koto|lagbe|dorkar|jonno|ache|nai|hobe|korte|chai|bolen|bolo|dite|kotha|valo|bhalo|taka|dam|ekta|kaj|kaaj|kivabe|keno|amra|amader)\b/gi;
+export function detectLanguage(text: string): string | null {
+  if (/[\u0980-\u09FF]/.test(text)) return "Bangla (Bengali script)";
+  const hits = text.match(BANGLISH)?.length ?? 0;
+  return hits >= 2 ? "Banglish: Bangla words written in English letters, like the client does. Do not use Bengali script and do not switch to English" : null;
+}
+
+/** The chat window shows plain text, so strip markdown a model adds anyway. */
+export function plainText(t: string): string {
+  return t
+    .replace(/\*\*(.+?)\*\*/g, "$1")
+    .replace(/__(.+?)__/g, "$1")
+    .replace(/(^|\s)\*(\S[^*\n]*?)\*(?=\s|[.,!?]|$)/g, "$1$2")
+    .replace(/`([^`\n]+)`/g, "$1")
+    .replace(/^#{1,6}\s+/gm, "")
+    .replace(/^\s*[-*]\s+/gm, "- ")
+    .trim();
+}
 
 const str = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slice(0, max) : "");
 
 /** Runs one client message through the model, executing tools until it answers in text. */
-export async function runTurn(cfg: AiConfig, ctx: AssistantContext, history: ChatMessage[]): Promise<TurnResult> {
+export async function runTurn(chain: AiConfig[], ctx: AssistantContext, history: ChatMessage[]): Promise<TurnResult> {
   const added: ChatMessage[] = [];
   let draft: BriefDraft | null = null;
   let estimate: Estimate | null = null;
   const usage = { input: 0, output: 0 };
+  let model = chain[0]?.model ?? "none";
+  const lastUser = [...history].reverse().find((m) => m.role === "user");
+  const language = lastUser && lastUser.role === "user" ? detectLanguage(lastUser.text) : null;
+  const system = systemPrompt(ctx, language);
 
   for (let round = 0; round < MAX_ROUNDS; round++) {
-    const out = await chat(cfg, systemPrompt(ctx), [...history, ...added], TOOLS);
+    const out = await chatWithFallback(chain, system, [...history, ...added], TOOLS);
+    model = out.used.model;
+    out.text = plainText(out.text);
     usage.input += out.usage.input;
     usage.output += out.usage.output;
     added.push({ role: "assistant", text: out.text, toolCalls: out.toolCalls, raw: out.raw ?? undefined });
-    if (out.toolCalls.length === 0) return { added, reply: out.text, draft, estimate, usage };
+    if (out.toolCalls.length === 0) return { added, reply: out.text, draft, estimate, usage, model };
 
     const results = out.toolCalls.map((call) => {
       if (call.name === "estimate_price") {
@@ -151,12 +187,14 @@ export async function runTurn(cfg: AiConfig, ctx: AssistantContext, history: Cha
     added.push({ role: "tool", results });
     if (draft) {
       // The card speaks for itself; a short line from the model is enough.
-      const out2 = await chat(cfg, systemPrompt(ctx), [...history, ...added], TOOLS);
+      const out2 = await chatWithFallback(chain, system, [...history, ...added], TOOLS);
+      model = out2.used.model;
+      out2.text = plainText(out2.text);
       usage.input += out2.usage.input;
       usage.output += out2.usage.output;
       added.push({ role: "assistant", text: out2.text, toolCalls: [], raw: out2.raw ?? undefined });
-      return { added, reply: out2.text, draft, estimate, usage };
+      return { added, reply: out2.text, draft, estimate, usage, model };
     }
   }
-  return { added, reply: "Sorry, I got stuck on that one. Could you say it another way?", draft, estimate, usage };
+  return { added, reply: "Sorry, I got stuck on that one. Could you say it another way?", draft, estimate, usage, model };
 }

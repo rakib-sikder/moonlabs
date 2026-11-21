@@ -184,28 +184,32 @@ key in `.dev.vars`.
 3. **Reveal** shows a value to you; every reveal is counted and timestamped on the item.
 4. Setting the project to Completed or Cancelled deletes all its secrets.
 
-### AI assistant ("Ask Moonlab")
+### Moon, the AI assistant ("Ask Moon")
 
 A chat button for clients that explains the portal, interviews them about a project, prices it
 from `lib/ai/price-book.ts` (the model never invents numbers) and proposes a brief. The brief is
 only created when the client presses **Send to Moonlab**; it arrives like a form brief, marked
-"Written with the Moonlab assistant" with the estimate the client saw. Conversations are kept in
-`ai_conversations` / `ai_messages`. Limits: 30 messages per conversation, 80 per person per day.
+"Written with Moon, the AI assistant" with the estimate the client saw. Replies follow the
+client's language (Bangla script, Banglish or English, detected in code) and markdown is stripped.
 
-Off until a model is configured (the button is hidden):
+Admin > **Moon, the AI assistant** (staff only):
+- **API keys**: add Groq, Gemini, OpenAI or OpenRouter keys. They are stored encrypted with
+  `SECRETS_KEY`, tested on save, and tried in order; a failing, rate-limited or down provider
+  falls through to the next key. Only the last 4 characters are ever shown.
+- **Settings**: on/off for every client, messages per person per day, a monthly token cap, and
+  token prices for the cost estimate.
+- **Usage**: messages and tokens today, 7 days, this month, per day and per person.
+- **Conversations**: every chat, with its transcript, price-tool calls and brief status.
 
-```
-npx wrangler secret put GEMINI_API_KEY      # key from aistudio.google.com
-# optional: AI_MODEL (default gemini-2.5-flash), AI_PROVIDER (gemini | mock)
-```
-
-The free Gemini tier may use prompts to improve Google's products, so move to a paid key before
-real client conversations. `AI_PROVIDER=mock` in `.dev.vars` gives a scripted stand-in for UI tests.
+The chat button is hidden until at least one key works and Moon is switched on. Free tiers may
+use conversations to train models; check each provider's terms before real client chats.
+`AI_PROVIDER=mock` in `.dev.vars` gives a scripted stand-in for UI tests (used only when no admin
+key is enabled).
 
 After changing the prompt, model or price book, run the regression test against a local server
-with a real key: `EMAIL=... PASSWORD=... node scripts/assistant-eval.mjs` (8 cases: language,
-portal help, plan fit, prices only from the price book, handoff for big projects, no passwords in
-chat, instruction injection).
+with a real key: `EMAIL=... PASSWORD=... node scripts/assistant-eval.mjs` (8 cases: Bangla,
+Banglish, portal help, plan fit, prices only from the price book, handoff for big projects, no
+passwords in chat, instruction injection; also fails on markdown).
 
 ### Blocked milestones
 

@@ -31,7 +31,7 @@ export function BriefView({ brief }: { brief: ProjectBrief }) {
       </dl>
       {brief.source === "assistant" && (
         <p className="rounded-md bg-surface-2 px-3 py-2 text-[12.5px]">
-          Written with the Moonlab assistant.
+          Written with Moon, the AI assistant.
           {brief.estimate && (
             <>
               {" "}

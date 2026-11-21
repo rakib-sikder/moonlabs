@@ -48,8 +48,8 @@ const ALL_STEPS: Step[] = [
   },
   {
     target: "assistant",
-    title: "Ask Moonlab",
-    body: "Our assistant answers questions about the portal in your language. Tell it what you want to build, and it asks a few questions, gives you an estimate and prepares a brief for our team.",
+    title: "Ask Moon",
+    body: "Moon, our AI assistant, answers questions about the portal in your language. Tell it what you want to build, and it asks a few questions, gives you an estimate and prepares a brief for our team.",
   },
   {
     target: "user-menu",

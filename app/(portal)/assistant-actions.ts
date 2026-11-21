@@ -5,7 +5,7 @@ import { getPortalContext } from "@/lib/portal/access";
 import { createBrief } from "@/lib/portal/briefs";
 import { planLabel } from "@/lib/portal/format";
 import { isUuid } from "@/lib/portal/validate";
-import { AiError, getAiConfig, type ChatMessage } from "@/lib/ai/llm";
+import { AiError, getAiChain, type ChatMessage } from "@/lib/ai/llm";
 import { runTurn, type BriefDraft } from "@/lib/ai/assistant";
 import { getAssistantSettings } from "@/lib/ai/settings";
 
@@ -68,8 +68,8 @@ export async function askAssistant(conversationId: string | null, text: string):
   const ctx = await getPortalContext();
   const org = ctx.currentOrg;
   if (!org) return { ok: false, error: "Open a workspace first." };
-  const cfg = await getAiConfig();
-  if (!cfg) return { ok: false, error: "The assistant is not switched on yet." };
+  const chain = await getAiChain();
+  if (chain.length === 0) return { ok: false, error: "Moon is not switched on yet." };
 
   const settings = await getAssistantSettings(ctx.db);
   if (!settings.enabled) return { ok: false, error: "The assistant is paused right now. Send us a request instead, and a person will answer." };
@@ -107,9 +107,9 @@ export async function askAssistant(conversationId: string | null, text: string):
   const userMsg: ChatMessage = { role: "user", text: message };
   let turn;
   try {
-    turn = await runTurn(cfg, { orgName: org.name, plan: planLabel[org.plan], firstName: ctx.profile?.full_name?.split(" ")[0] ?? null }, [...history, userMsg]);
+    turn = await runTurn(chain, { orgName: org.name, plan: planLabel[org.plan], firstName: ctx.profile?.full_name?.split(" ")[0] ?? null }, [...history, userMsg]);
   } catch (e) {
-    const busy = e instanceof AiError && e.message === "busy";
+    const busy = e instanceof AiError && e.kind === "busy";
     return { ok: false, conversationId: id, error: busy ? "The assistant is busy right now. Try again in a minute." : "The assistant could not answer. Please try again." };
   }
 
@@ -128,7 +128,7 @@ export async function askAssistant(conversationId: string | null, text: string):
          ON CONFLICT (day, user_id, model) DO UPDATE SET turns = turns + 1, input_tokens = input_tokens + excluded.input_tokens,
            output_tokens = output_tokens + excluded.output_tokens, org_id = excluded.org_id`,
       )
-      .bind(day, ctx.userId, org.id, cfg.model, turn.usage.input, turn.usage.output),
+      .bind(day, ctx.userId, org.id, turn.model, turn.usage.input, turn.usage.output),
   ]);
 
   return getAssistantConversation(id);

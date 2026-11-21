@@ -32,12 +32,20 @@ const CASES = [
   {
     name: "Bangla script gets a Bangla reply",
     say: ["আমার দোকানের জন্য একটা ওয়েবসাইট লাগবে"],
-    check: ({ replies }) => (BANGLA.test(replies.join(" ")) ? null : "reply is not in Bangla script"),
+    check: ({ replies }) => {
+      const t = replies.join(" ");
+      if (!BANGLA.test(t)) return "reply is not in Bangla script";
+      return /নমস্কার|আসসালামু/.test(t) ? "used a religious greeting" : null;
+    },
   },
   {
-    name: "Banglish gets a Banglish/English reply (not Bangla script only)",
+    name: "Banglish gets a Banglish reply",
     say: ["amar ekta booking app lagbe, salon er jonno"],
-    check: ({ replies }) => (replies.join(" ").trim().length > 0 ? null : "no reply"),
+    check: ({ replies }) => {
+      const t = replies.join(" ");
+      if (BANGLA.test(t)) return "answered in Bangla script";
+      return /\b(apnar|ami|kono|koto|lagbe|jonno|ki|kotha|hobe|ache|korte|bolun|janan)\b/i.test(t) ? null : "answered in English, not Banglish";
+    },
   },
   {
     name: "Portal help points to Billing",
@@ -110,14 +118,14 @@ for (const c of CASES) {
   await page.goto(`${BASE}/dashboard`, { timeout: 120000 });
   await page.evaluate(() => sessionStorage.clear());
   await page.reload();
-  await page.click("button:has-text('Ask Moonlab')");
-  const panel = page.locator("[role=dialog][aria-label='Moonlab assistant']");
+  await page.click("button:has-text('Ask Moon')");
+  const panel = page.locator("[role=dialog][aria-label='Moon assistant']");
   for (const msg of c.say) {
     const before = await panel.locator("p.whitespace-pre-wrap").count();
     await panel.locator("#assistant-input").fill(msg);
     await panel.locator("#assistant-input").press("Enter");
     await page.waitForFunction(
-      (n) => document.querySelectorAll("[aria-label='Moonlab assistant'] p.whitespace-pre-wrap").length >= n + 2 || document.querySelector("[aria-label='Moonlab assistant'] [role=alert]"),
+      (n) => document.querySelectorAll("[aria-label='Moon assistant'] p.whitespace-pre-wrap").length >= n + 2 || document.querySelector("[aria-label='Moon assistant'] [role=alert]"),
       before,
       { timeout: 90000 },
     );
@@ -126,7 +134,7 @@ for (const c of CASES) {
   const rows = d1(`SELECT role, content FROM ai_messages WHERE conversation_id='${conv.id}' ORDER BY id`).map((r) => JSON.parse(r.content));
   const replies = rows.filter((m) => m.role === "assistant" && m.text).map((m) => m.text);
   const estimates = rows.filter((m) => m.role === "tool").flatMap((m) => m.results.filter((r) => r.name === "estimate_price").map((r) => r.result));
-  const problem = c.check({ replies, estimates }) ?? priceProvenance(replies, estimates);
+  const problem = c.check({ replies, estimates }) ?? priceProvenance(replies, estimates) ?? (replies.some((r) => /\*\*/.test(r)) ? "used markdown" : null);
   if (problem) failed++;
   console.log(`${problem ? "FAIL" : "pass"}  ${c.name}${problem ? `: ${problem}` : ""}`);
   console.log(`      > ${replies.join(" | ").replace(/\s+/g, " ").slice(0, 220)}`);

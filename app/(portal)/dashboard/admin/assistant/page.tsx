@@ -6,10 +6,11 @@ import { getPortalContext } from "@/lib/portal/access";
 import { formatDateTime, formatNumber } from "@/lib/portal/format";
 import { getAiConfig } from "@/lib/ai/llm";
 import { costUsd, getAssistantSettings } from "@/lib/ai/settings";
-import { listConversations, usageByClient, usageByDay, usageTotals } from "@/lib/ai/usage";
+import { listAiKeys, listConversations, usageByClient, usageByDay, usageTotals } from "@/lib/ai/usage";
+import { PROVIDERS, PROVIDER_INFO } from "@/lib/ai/llm";
 import { Badge, EmptyState, Field, KpiTile, PageHeader, Panel } from "../../../_components/ui";
 import { ActionForm } from "../../../_components/action-form";
-import { saveAssistantSettings } from "./actions";
+import { addAiKey, deleteAiKey, saveAssistantSettings, testAiKey, updateAiKey } from "./actions";
 
 export const metadata: Metadata = { title: "AI assistant" };
 
@@ -27,7 +28,7 @@ export default async function AssistantAdminPage({ searchParams }: { searchParam
 
   const today = isoDay(0);
   const monthStart = `${today.slice(0, 7)}-01`;
-  const [cfg, settings, tToday, t7, tMonth, days, clients, convs] = await Promise.all([
+  const [cfg, settings, tToday, t7, tMonth, days, clients, convs, keys] = await Promise.all([
     getAiConfig(),
     getAssistantSettings(ctx.db),
     usageTotals(ctx.db, today),
@@ -36,6 +37,7 @@ export default async function AssistantAdminPage({ searchParams }: { searchParam
     usageByDay(ctx.db, isoDay(13 * DAY)),
     usageByClient(ctx.db, isoDay(29 * DAY)),
     listConversations(ctx.db, { limit: PAGE + 1, offset: (page - 1) * PAGE, withBrief }),
+    listAiKeys(ctx.db),
   ]);
   const more = convs.length > PAGE;
   const rows = convs.slice(0, PAGE);
@@ -52,11 +54,11 @@ export default async function AssistantAdminPage({ searchParams }: { searchParam
     <>
       <PageHeader
         back={{ href: "/dashboard/admin", label: "Admin" }}
-        title="AI assistant"
+        title="Moon, the AI assistant"
         description={
           <span className="flex flex-wrap items-center gap-2">
             <Badge tone={live ? "ok" : "neutral"}>{live ? "On for clients" : "Off"}</Badge>
-            <span>{cfg ? `${cfg.provider} · ${cfg.model}` : "No model configured (set GEMINI_API_KEY)"}</span>
+            <span>{cfg ? `Answering with ${cfg.label ?? cfg.provider} · ${cfg.model}` : "No working key yet. Add one under API keys."}</span>
           </span>
         }
       />
@@ -79,6 +81,104 @@ export default async function AssistantAdminPage({ searchParams }: { searchParam
         />
         <KpiTile label="Cost this month" value={money(tMonth.input, tMonth.output) ?? "$0"} sub={money(tMonth.input, tMonth.output) ? "Estimate from your token prices" : "Free tier, or prices not set"} />
       </div>
+
+      <Panel id="keys" title="API keys" className="mb-6" bodyClassName={null}>
+        <p className="border-b border-border px-4 py-3 text-[12.5px] text-muted">
+          Moon uses the first working key in this order (lowest number first). If a key fails, is rate limited or the provider is down, it tries
+          the next one. Keys are stored encrypted and never shown again; only the last 4 characters are visible.
+        </p>
+        {keys.length === 0 ? (
+          <EmptyState title="No keys yet">Add one below. Groq and Gemini both have free tiers.</EmptyState>
+        ) : (
+          <ul className="divide-y divide-border">
+            {keys.map((k) => (
+              <li key={k.id} className="px-4 py-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="font-medium">
+                      {k.label} <span className="font-mono text-[12px] text-muted">…{k.hint}</span>
+                    </p>
+                    <p className="text-[12.5px] text-muted">
+                      {PROVIDER_INFO[k.provider as keyof typeof PROVIDER_INFO]?.label ?? k.provider} · {k.model}
+                      {k.last_checked_at && ` · checked ${formatDateTime(k.last_checked_at)}`}
+                    </p>
+                    {k.last_status === "failing" && k.last_error && (
+                      <p className="mt-1 break-words text-[12px]" style={{ color: "var(--pt-bad)" }}>
+                        {k.last_error}
+                      </p>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Badge tone={!k.enabled ? "neutral" : k.last_status === "ok" ? "ok" : k.last_status === "failing" ? "bad" : "info"}>
+                      {!k.enabled ? "Off" : k.last_status === "ok" ? "Working" : k.last_status === "failing" ? "Failing" : "Not tested"}
+                    </Badge>
+                    <ActionForm action={testAiKey} submitLabel="Test" size="sm" variant="default" hasVisibleFields={false} submitAriaLabel={`Test ${k.label}`}>
+                      <input type="hidden" name="key_id" value={k.id} />
+                    </ActionForm>
+                    <ActionForm action={deleteAiKey} submitLabel="Delete" size="sm" variant="ghost" hasVisibleFields={false} confirm={`Delete the key ${k.label}?`} submitAriaLabel={`Delete ${k.label}`}>
+                      <input type="hidden" name="key_id" value={k.id} />
+                    </ActionForm>
+                  </div>
+                </div>
+                <details className="mt-2">
+                  <summary className="cursor-pointer text-[12px] text-muted">Edit model, order, on/off</summary>
+                  <ActionForm action={updateAiKey} submitLabel="Save" size="sm" variant="default" inline className="mt-2">
+                    <input type="hidden" name="key_id" value={k.id} />
+                    <div className="min-w-[14rem] flex-1">
+                      <label className="pt-label" htmlFor={`m-${k.id}`}>
+                        Model
+                      </label>
+                      <input id={`m-${k.id}`} name="model" required maxLength={120} defaultValue={k.model} className="pt-input" />
+                    </div>
+                    <div className="w-24">
+                      <label className="pt-label" htmlFor={`p-${k.id}`}>
+                        Order
+                      </label>
+                      <input id={`p-${k.id}`} name="priority" type="number" min={0} max={999} defaultValue={k.priority} className="pt-input" />
+                    </div>
+                    <label className="flex h-9 items-center gap-2 text-[13px]">
+                      <input type="checkbox" name="enabled" defaultChecked={k.enabled} className="h-4 w-4" />
+                      On
+                    </label>
+                  </ActionForm>
+                </details>
+              </li>
+            ))}
+          </ul>
+        )}
+        <div className="border-t border-border p-4">
+          <p className="mb-3 text-[13px] font-medium">Add a key</p>
+          <ActionForm action={addAiKey} submitLabel="Save and test" pendingLabel="Testing…" resetOnSuccess>
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[160px_1fr_1fr_1.4fr_90px]">
+              <Field label="Provider" htmlFor="k-provider">
+                <select id="k-provider" name="provider" className="pt-select">
+                  {PROVIDERS.map((p) => (
+                    <option key={p} value={p}>
+                      {PROVIDER_INFO[p].label}
+                    </option>
+                  ))}
+                </select>
+              </Field>
+              <Field label="Name" htmlFor="k-label">
+                <input id="k-label" name="label" required maxLength={80} placeholder="e.g. Groq free" className="pt-input" />
+              </Field>
+              <Field label="Model (blank = default)" htmlFor="k-model">
+                <input id="k-model" name="model" maxLength={120} placeholder="openai/gpt-oss-120b" className="pt-input" />
+              </Field>
+              <Field label="API key" htmlFor="k-key">
+                <input id="k-key" name="api_key" type="password" required autoComplete="off" spellCheck={false} className="pt-input font-mono" />
+              </Field>
+              <Field label="Order" htmlFor="k-priority">
+                <input id="k-priority" name="priority" type="number" min={0} max={999} defaultValue={keys.length ? keys[keys.length - 1].priority + 10 : 10} className="pt-input" />
+              </Field>
+            </div>
+            <p className="mt-2 text-[12px] text-muted">
+              Defaults: Groq {PROVIDER_INFO.groq.defaultModel}, Gemini {PROVIDER_INFO.gemini.defaultModel}. For OpenAI or OpenRouter, enter the model
+              name. Free tiers may use conversations to improve their models; check each provider&apos;s terms before real client chats.
+            </p>
+          </ActionForm>
+        </div>
+      </Panel>
 
       <div className="mb-6 grid grid-cols-1 gap-6 lg:grid-cols-3">
         <Panel title="Settings">

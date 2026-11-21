@@ -148,3 +148,35 @@ export async function getTranscript(db: D1Database, id: string): Promise<{ conv:
   }
   return { conv, items, draft: draftRow?.draft_json ?? null };
 }
+
+export type AiKeyRow = {
+  id: string;
+  provider: string;
+  label: string;
+  model: string;
+  hint: string;
+  priority: number;
+  enabled: boolean;
+  last_status: "untested" | "ok" | "failing";
+  last_error: string | null;
+  last_checked_at: string | null;
+};
+
+/** Key metadata for the admin. Never selects the ciphertext. */
+export async function listAiKeys(db: D1Database): Promise<AiKeyRow[]> {
+  const { results } = await db
+    .prepare("SELECT id, provider, label, model, hint, priority, enabled, last_status, last_error, last_checked_at FROM ai_keys ORDER BY enabled DESC, priority, created_at")
+    .all<Record<string, unknown>>();
+  return results.map((r) => ({
+    id: String(r.id),
+    provider: String(r.provider),
+    label: String(r.label),
+    model: String(r.model),
+    hint: String(r.hint),
+    priority: Number(r.priority),
+    enabled: Number(r.enabled) === 1,
+    last_status: String(r.last_status) as AiKeyRow["last_status"],
+    last_error: r.last_error == null ? null : String(r.last_error),
+    last_checked_at: r.last_checked_at == null ? null : String(r.last_checked_at),
+  }));
+}
