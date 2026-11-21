@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Fragment, useEffect, useRef, useState, useTransition } from "react";
 import { askAssistant, getAssistantConversation, sendAssistantBrief, type AssistantState, type ChatLine } from "../assistant-actions";
 
@@ -54,6 +55,7 @@ export function AssistantPanel() {
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const restored = useRef(false);
+  const onAdmin = usePathname().startsWith("/dashboard/admin");
 
   useEffect(() => {
     if (!open || restored.current) return;
@@ -115,7 +117,7 @@ export function AssistantPanel() {
 
   return (
     <>
-      {!open && (
+      {!open && !onAdmin && (
         <button
           type="button"
           onClick={() => setOpen(true)}

@@ -7,6 +7,7 @@ import { planLabel } from "@/lib/portal/format";
 import { isUuid } from "@/lib/portal/validate";
 import { AiError, getAiConfig, type ChatMessage } from "@/lib/ai/llm";
 import { runTurn, type BriefDraft } from "@/lib/ai/assistant";
+import { getAssistantSettings } from "@/lib/ai/settings";
 
 export type ChatLine = { role: "user" | "assistant"; text: string };
 export type AssistantState = {
@@ -20,7 +21,6 @@ export type AssistantState = {
 
 const MAX_TEXT = 2000;
 const MAX_TURNS_PER_CONVERSATION = 30;
-const MAX_TURNS_PER_DAY = 80;
 
 type Row = { role: "user" | "assistant" | "tool"; content: string };
 
@@ -71,11 +71,22 @@ export async function askAssistant(conversationId: string | null, text: string):
   const cfg = await getAiConfig();
   if (!cfg) return { ok: false, error: "The assistant is not switched on yet." };
 
-  const today = await ctx.db
-    .prepare("SELECT COALESCE(SUM(turns), 0) AS n FROM ai_conversations WHERE user_id = ? AND updated_at >= strftime('%Y-%m-%dT00:00:00Z', 'now')")
-    .bind(ctx.userId)
-    .first<{ n: number }>();
-  if ((today?.n ?? 0) >= MAX_TURNS_PER_DAY) return { ok: false, error: "You have reached today's limit for the assistant. Send us a request instead, and a person will answer." };
+  const settings = await getAssistantSettings(ctx.db);
+  if (!settings.enabled) return { ok: false, error: "The assistant is paused right now. Send us a request instead, and a person will answer." };
+  const day = new Date().toISOString().slice(0, 10);
+  const [today, month] = await Promise.all([
+    ctx.db.prepare("SELECT COALESCE(SUM(turns), 0) AS n FROM ai_usage WHERE user_id = ? AND day = ?").bind(ctx.userId, day).first<{ n: number }>(),
+    settings.monthlyTokenBudget
+      ? ctx.db
+          .prepare("SELECT COALESCE(SUM(input_tokens + output_tokens), 0) AS n FROM ai_usage WHERE day >= ?")
+          .bind(`${day.slice(0, 7)}-01`)
+          .first<{ n: number }>()
+      : Promise.resolve({ n: 0 }),
+  ]);
+  if ((today?.n ?? 0) >= settings.dailyLimit) return { ok: false, error: "You have reached today's limit for the assistant. Send us a request instead, and a person will answer." };
+  if (settings.monthlyTokenBudget && (month?.n ?? 0) >= settings.monthlyTokenBudget) {
+    return { ok: false, error: "The assistant is resting for now. Send us a request instead, and a person will answer." };
+  }
 
   let id = conversationId && isUuid(conversationId) ? conversationId : null;
   let rows: Row[] = [];
@@ -111,6 +122,13 @@ export async function askAssistant(conversationId: string | null, text: string):
                 draft_json = COALESCE(?, draft_json), updated_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ?`,
       )
       .bind(turn.usage.input, turn.usage.output, turn.draft ? JSON.stringify(turn.draft) : null, id),
+    ctx.db
+      .prepare(
+        `INSERT INTO ai_usage (day, user_id, org_id, model, turns, input_tokens, output_tokens) VALUES (?, ?, ?, ?, 1, ?, ?)
+         ON CONFLICT (day, user_id, model) DO UPDATE SET turns = turns + 1, input_tokens = input_tokens + excluded.input_tokens,
+           output_tokens = output_tokens + excluded.output_tokens, org_id = excluded.org_id`,
+      )
+      .bind(day, ctx.userId, org.id, cfg.model, turn.usage.input, turn.usage.output),
   ]);
 
   return getAssistantConversation(id);

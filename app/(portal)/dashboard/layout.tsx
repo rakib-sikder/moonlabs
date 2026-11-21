@@ -8,6 +8,7 @@ import { UserMenu } from "../_components/user-menu";
 import { ProductTour } from "../_components/product-tour";
 import { AssistantPanel } from "../_components/assistant-panel";
 import { getAiConfig } from "@/lib/ai/llm";
+import { getAssistantSettings } from "@/lib/ai/settings";
 
 /** Signed-in portal shell: compact top bar, sidebar on desktop, drawer on smaller screens. */
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -26,7 +27,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     ? null
     : await ctx.db.prepare("SELECT tour_done_at FROM users WHERE id = ?").bind(ctx.userId).first<{ tour_done_at: string | null }>();
   const autoTour = !ctx.isStaff && !tour?.tour_done_at;
-  const assistant = Boolean(ctx.currentOrg) && (await getAiConfig()) !== null;
+  const assistant = Boolean(ctx.currentOrg) && (await getAiConfig()) !== null && (await getAssistantSettings(ctx.db)).enabled;
 
   return (
     <div className="min-h-dvh">
