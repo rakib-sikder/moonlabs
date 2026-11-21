@@ -29,6 +29,17 @@ export function BriefView({ brief }: { brief: ProjectBrief }) {
           <dd>{brief.deadline ? formatDate(brief.deadline) : "Not given"}</dd>
         </div>
       </dl>
+      {brief.source === "assistant" && (
+        <p className="rounded-md bg-surface-2 px-3 py-2 text-[12.5px]">
+          Written with the Moonlab assistant.
+          {brief.estimate && (
+            <>
+              {" "}
+              Estimate shown: <b>{brief.estimate}</b> (not a quote).
+            </>
+          )}
+        </p>
+      )}
       {sections
         .filter(([, v]) => v)
         .map(([label, value]) => (

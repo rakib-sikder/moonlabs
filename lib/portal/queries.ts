@@ -577,7 +577,7 @@ export async function listPendingPlanOrders(ctx: PortalContext, orgId: string): 
 type BriefRow = Omit<ProjectBrief, "author"> & PersonCols;
 
 const BRIEF_SELECT = `SELECT b.id, b.org_id, b.project_id, b.title, b.goal, b.audience, b.features, b.examples, b.budget,
-         b.deadline, b.status, b.staff_note, b.decided_at, b.created_at, ${PERSON_COLS}
+         b.deadline, b.status, b.source, b.estimate, b.staff_note, b.decided_at, b.created_at, ${PERSON_COLS}
     FROM project_briefs b LEFT JOIN users a ON a.id = b.created_by`;
 
 /** Copies a row into a plain object (D1 rows can carry proxies that do not serialize). */
@@ -595,6 +595,8 @@ function toBrief(r: BriefRow, person: (row: PersonCols) => PersonRef): ProjectBr
     budget: s(r.budget),
     deadline: s(r.deadline),
     status: String(r.status) as BriefStatus,
+    source: r.source === "assistant" ? "assistant" : "form",
+    estimate: s(r.estimate),
     staff_note: s(r.staff_note),
     decided_at: s(r.decided_at),
     created_at: String(r.created_at),

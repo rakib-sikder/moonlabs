@@ -10,7 +10,7 @@ export const TOUR_EVENT = "ml:start-tour";
 
 type Step = { target?: string; title: string; body: string; final?: boolean };
 
-const STEPS: Step[] = [
+const ALL_STEPS: Step[] = [
   {
     title: "Welcome to your Moonlab portal",
     body: "Everything about your work with us lives here. This one-minute guide shows you around. You can skip it and open it again any time from your account menu.",
@@ -46,6 +46,11 @@ const STEPS: Step[] = [
     body: "Choose a monthly plan for automations and see your invoices. Websites and apps are quoted per project. You pay through a secure link we email you, by card, PayPal or bank transfer.",
   },
   {
+    target: "assistant",
+    title: "Ask Moonlab",
+    body: "Our assistant answers questions about the portal in your language. Tell it what you want to build, and it asks a few questions, gives you an estimate and prepares a brief for our team.",
+  },
+  {
     target: "user-menu",
     title: "Your account",
     body: "Sign out, go back to the website, or open this guide again.",
@@ -75,7 +80,8 @@ function findTarget(key: string | undefined): HTMLElement | null {
  * and again whenever TOUR_EVENT fires. Highlights one menu item per step; when the item is not
  * visible (small screens) the step shows as a centred card.
  */
-export function ProductTour({ autoStart }: { autoStart: boolean }) {
+export function ProductTour({ autoStart, assistant = false }: { autoStart: boolean; assistant?: boolean }) {
+  const STEPS = assistant ? ALL_STEPS : ALL_STEPS.filter((s) => s.target !== "assistant");
   const [open, setOpen] = useState(false);
   const [index, setIndex] = useState(0);
   const [rect, setRect] = useState<DOMRect | null>(null);
@@ -126,7 +132,7 @@ export function ProductTour({ autoStart }: { autoStart: boolean }) {
     void markTourDone().catch(() => {});
   }, []);
 
-  const next = useCallback(() => (index < STEPS.length - 1 ? setIndex(index + 1) : finish()), [index, finish]);
+  const next = useCallback(() => (index < STEPS.length - 1 ? setIndex(index + 1) : finish()), [index, finish, STEPS.length]);
   const back = useCallback(() => setIndex((i) => Math.max(0, i - 1)), []);
 
   useEffect(() => {

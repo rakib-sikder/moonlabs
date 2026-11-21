@@ -6,6 +6,8 @@ import { NotConfigured } from "../_components/ui";
 import { MobileNav, NavLinks, OrgSwitcher } from "../_components/shell";
 import { UserMenu } from "../_components/user-menu";
 import { ProductTour } from "../_components/product-tour";
+import { AssistantPanel } from "../_components/assistant-panel";
+import { getAiConfig } from "@/lib/ai/llm";
 
 /** Signed-in portal shell: compact top bar, sidebar on desktop, drawer on smaller screens. */
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -24,6 +26,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     ? null
     : await ctx.db.prepare("SELECT tour_done_at FROM users WHERE id = ?").bind(ctx.userId).first<{ tour_done_at: string | null }>();
   const autoTour = !ctx.isStaff && !tour?.tour_done_at;
+  const assistant = Boolean(ctx.currentOrg) && (await getAiConfig()) !== null;
 
   return (
     <div className="min-h-dvh">
@@ -62,7 +65,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
           <div className="mx-auto max-w-6xl">{children}</div>
         </main>
       </div>
-      <ProductTour autoStart={autoTour} />
+      <ProductTour autoStart={autoTour} assistant={assistant} />
+      {assistant && <AssistantPanel />}
     </div>
   );
 }

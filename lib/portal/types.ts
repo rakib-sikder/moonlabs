@@ -148,6 +148,8 @@ export type ProjectBrief = {
   budget: string | null;
   deadline: string | null;
   status: BriefStatus;
+  source: "form" | "assistant";
+  estimate: string | null;
   staff_note: string | null;
   decided_at: string | null;
   created_at: string;
