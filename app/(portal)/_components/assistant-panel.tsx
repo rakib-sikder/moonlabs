@@ -222,6 +222,7 @@ export function AssistantPanel() {
           </div>
 
           <form
+            method="post"
             className="border-t border-border p-2"
             onSubmit={(e) => {
               e.preventDefault();

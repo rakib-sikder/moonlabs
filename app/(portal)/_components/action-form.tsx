@@ -89,7 +89,7 @@ export function ActionForm({
 
   if (inline) {
     return (
-      <form onSubmit={onSubmit} className={className} aria-busy={pending}>
+      <form method="post" onSubmit={onSubmit} className={className} aria-busy={pending}>
         <div className="flex flex-wrap items-end gap-2">
           {children}
           {button}
@@ -101,7 +101,7 @@ export function ActionForm({
   }
 
   return (
-    <form onSubmit={onSubmit} className={className} aria-busy={pending}>
+    <form method="post" onSubmit={onSubmit} className={className} aria-busy={pending}>
       {children}
       <div className={`flex flex-wrap items-center gap-3 ${size === "md" && hasVisibleFields ? "mt-4" : ""}`}>
         {button}

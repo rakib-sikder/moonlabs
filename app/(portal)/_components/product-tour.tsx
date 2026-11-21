@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { markTourDone } from "../actions";
@@ -88,12 +89,16 @@ export function ProductTour({ autoStart, assistant = false }: { autoStart: boole
   const cardRef = useRef<HTMLDivElement>(null);
   const step = STEPS[index];
 
+  // Opens by itself only on Overview, so it never interrupts someone who came to order a plan
+  // or fill in a form.
+  const pathname = usePathname();
+  const onOverview = pathname === "/dashboard";
   useEffect(() => {
-    if (autoStart) {
+    if (autoStart && onOverview) {
       const t = setTimeout(() => setOpen(true), 400);
       return () => clearTimeout(t);
     }
-  }, [autoStart]);
+  }, [autoStart, onOverview]);
 
   useEffect(() => {
     const start = () => {

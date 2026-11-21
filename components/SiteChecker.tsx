@@ -130,7 +130,7 @@ function FixListForm({ result }: { result: CheckResult }) {
     );
 
   return (
-    <form onSubmit={submit} className="grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
+    <form method="post" onSubmit={submit} className="grid gap-3 sm:grid-cols-[1fr_1fr_auto]">
       <label className="sr-only" htmlFor="fix-name">Your name</label>
       <input id="fix-name" required minLength={2} value={name} onChange={(e) => setName(e.target.value)} placeholder="Your name"
         className="rounded-xl border border-border bg-background/60 px-4 py-3 text-sm outline-none transition-colors placeholder:text-muted/70 focus:border-accent" />
@@ -299,6 +299,7 @@ export function SiteChecker() {
   return (
     <div className="space-y-8">
       <form
+        method="post"
         onSubmit={(e) => {
           e.preventDefault();
           run(input);

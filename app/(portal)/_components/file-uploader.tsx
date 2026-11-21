@@ -58,7 +58,7 @@ export function FileUploader({ orgId, projects }: { orgId: string; projects: { i
   }
 
   return (
-    <form ref={formRef} onSubmit={onSubmit} aria-busy={pending} className="space-y-4">
+    <form method="post" ref={formRef} onSubmit={onSubmit} aria-busy={pending} className="space-y-4">
       <div>
         <label htmlFor="upload-file" className="pt-label">
           File (max 50 MB)

@@ -71,7 +71,7 @@ export function ReviewForm() {
   const shown = hover || data.rating;
 
   return (
-    <form onSubmit={submit} noValidate className="space-y-6 rounded-3xl border border-border bg-surface/80 p-6 backdrop-blur-sm sm:p-8">
+    <form method="post" onSubmit={submit} noValidate className="space-y-6 rounded-3xl border border-border bg-surface/80 p-6 backdrop-blur-sm sm:p-8">
       <fieldset>
         <legend className="mb-3 text-sm">How was working with us?</legend>
         <div className="flex items-center gap-1" onMouseLeave={() => setHover(0)}>
