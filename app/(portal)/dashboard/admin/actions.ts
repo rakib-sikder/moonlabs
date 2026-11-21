@@ -28,13 +28,15 @@ import {
   text,
   uuid,
 } from "@/lib/portal/validate";
-import { STAGES } from "@/lib/portal/format";
+import { GATE_KINDS, STAGES, gateKindLabel, gateUnlocks, stageLabel } from "@/lib/portal/format";
+import { blockedMessage, blockingGate } from "@/lib/portal/gates";
 import { plans } from "@/lib/content/company";
 import { sendAccountMail } from "@/lib/portal/mail";
 import { projectInsertStatements } from "@/lib/portal/projects";
 import type {
   ActionState,
   AutomationStatus,
+  GateKind,
   InvoiceStatus,
   MemberRole,
   OrgPlan,
@@ -333,6 +335,10 @@ export async function updateStage(formData: FormData): Promise<ActionState> {
     const completedOn = optionalDate(formData, "completed_on", "Completed date");
     const notes = optionalText(formData, "notes", { label: "Notes", max: 1000 });
     await projectInOrg(ctx, orgId, projectId);
+    if (status !== "pending") {
+      const gate = await blockingGate(ctx.db, orgId, projectId, stage);
+      if (gate) return { ok: false, message: blockedMessage(stageLabel[stage], gate) };
+    }
     // Upsert so projects created outside the portal (missing stage rows) still work.
     await ctx.db
       .prepare(
@@ -346,6 +352,78 @@ export async function updateStage(formData: FormData): Promise<ActionState> {
       .run();
     return done("Stage saved.");
   });
+}
+
+/**
+ * Asks the client to approve a spec, mockup or release. Emails the organization's client
+ * members. Only one gate of a kind can wait at a time; a new version after "changes requested"
+ * is simply a new gate, so every decision stays on record.
+ */
+export async function requestApproval(formData: FormData): Promise<ActionState> {
+  return guarded(async () => {
+    const { ctx, orgId } = await adminFor(formData);
+    const projectId = uuid(formData, "project_id", "Project");
+    const kind = oneOf<GateKind>(formData, "kind", GATE_KINDS, "Type");
+    const title = text(formData, "title", { label: "Title", min: 3, max: 200 });
+    const details = optionalText(formData, "details", { label: "What to check", max: 10000 });
+    const link = optionalUrl(formData, "link_url", "Link");
+    const project = await ctx.db.prepare("SELECT name FROM projects WHERE id = ? AND org_id = ?").bind(projectId, orgId).first<{ name: string }>();
+    if (!project) return { ok: false, message: "That project was not found." };
+    const waiting = await ctx.db
+      .prepare("SELECT 1 AS x FROM project_gates WHERE project_id = ? AND org_id = ? AND kind = ? AND status = 'waiting'")
+      .bind(projectId, orgId, kind)
+      .first();
+    if (waiting) return { ok: false, message: `A ${gateKindLabel[kind].toLowerCase()} is already waiting for approval. Withdraw it first to send a new one.` };
+
+    await ctx.db
+      .prepare("INSERT INTO project_gates (id, project_id, org_id, kind, title, details, link_url, created_by) VALUES (?, ?, ?, ?, ?, ?, ?, ?)")
+      .bind(crypto.randomUUID(), projectId, orgId, kind, title, details, link, ctx.userId)
+      .run();
+
+    const origin = await requestOrigin();
+    const approvers = await approverEmails(ctx, orgId);
+    for (const to of approvers) {
+      await sendAccountMail({
+        to,
+        subject: `Please review: ${title} (${project.name})`,
+        greeting: "Hi,",
+        lines: [
+          `The ${gateKindLabel[kind].toLowerCase()} for ${project.name} is ready for your review: ${title}.`,
+          `Approve it, or tell us what to change. We start ${stageLabel[gateUnlocks[kind]]} once you approve.`,
+        ],
+        button: { label: "Review and approve", href: `${origin}/dashboard/projects/${projectId}#approvals` },
+        footer: "Questions? Reply to this email.",
+      });
+    }
+    return done(
+      approvers.length
+        ? `Sent for approval. ${approvers.length} client member${approvers.length === 1 ? " was" : "s were"} emailed.`
+        : "Saved, but this organization has no client members to approve it yet. Invite one first.",
+    );
+  });
+}
+
+/** Withdraws a gate that is still waiting (e.g. sent by mistake or replaced). */
+export async function withdrawApproval(formData: FormData): Promise<ActionState> {
+  return guarded(async () => {
+    const { ctx, orgId } = await adminFor(formData);
+    const gateId = uuid(formData, "gate_id", "Approval");
+    const res = await ctx.db
+      .prepare("UPDATE project_gates SET status = 'cancelled', decided_by = ?, decided_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ? AND org_id = ? AND status = 'waiting'")
+      .bind(ctx.userId, gateId, orgId)
+      .run();
+    if (!res.meta.changes) return { ok: false, message: "Only a waiting approval can be withdrawn." };
+    return done("Approval request withdrawn.");
+  });
+}
+
+/** Client members who can approve: role client, not Moonlab staff. */
+async function approverEmails(ctx: PortalContext, orgId: string): Promise<string[]> {
+  const { results } = await ctx.db
+    .prepare("SELECT u.email FROM memberships m JOIN users u ON u.id = m.user_id WHERE m.org_id = ? AND m.role = 'client' AND u.is_staff = 0")
+    .bind(orgId)
+    .all<{ email: string }>();
+  return results.map((r) => String(r.email));
 }
 
 export async function addMilestone(formData: FormData): Promise<ActionState> {

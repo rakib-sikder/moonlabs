@@ -4,6 +4,8 @@
 import type {
   AutomationStatus,
   BriefStatus,
+  GateKind,
+  GateStatus,
   InvoiceStatus,
   OrgPlan,
   ProjectStatus,
@@ -195,6 +197,18 @@ export const invoiceTone: Record<InvoiceStatus, Tone> = {
   overdue: "bad",
   void: "neutral",
 };
+export const GATE_KINDS: GateKind[] = ["spec", "mockup", "release"];
+export const gateKindLabel: Record<GateKind, string> = { spec: "Spec", mockup: "Mockup", release: "Release" };
+/** The stage a gate unlocks: approving the spec starts Design, the mockup Build, the release Live. */
+export const gateUnlocks: Record<GateKind, StageKey> = { spec: "design", mockup: "build", release: "live" };
+export const gateStatusLabel: Record<GateStatus, string> = {
+  waiting: "Waiting for approval",
+  approved: "Approved",
+  changes_requested: "Changes requested",
+  cancelled: "Withdrawn",
+};
+export const gateTone: Record<GateStatus, Tone> = { waiting: "warn", approved: "ok", changes_requested: "bad", cancelled: "neutral" };
+
 export const briefStatusLabel: Record<BriefStatus, string> = {
   submitted: "Waiting for review",
   accepted: "Project started",

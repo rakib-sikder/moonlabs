@@ -3,10 +3,21 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isPortalConfigured } from "@/lib/portal/env";
 import { requireOrgAdmin } from "@/lib/portal/access";
-import { getProject, getProjectBrief } from "@/lib/portal/queries";
+import { getProject, getProjectBrief, listGates } from "@/lib/portal/queries";
 import { BriefView } from "../../../../../_components/brief-view";
+import { GateBody, GateHistory } from "../../../../../_components/gate-views";
 import { isUuid } from "@/lib/portal/validate";
-import { STAGES, formatDate, formatShortDate, projectStatusLabel, stageLabel, stageStatusLabel } from "@/lib/portal/format";
+import {
+  GATE_KINDS,
+  STAGES,
+  formatDate,
+  formatShortDate,
+  gateKindLabel,
+  gateUnlocks,
+  projectStatusLabel,
+  stageLabel,
+  stageStatusLabel,
+} from "@/lib/portal/format";
 import type { ProjectStatus, StageStatus } from "@/lib/portal/types";
 import { EmptyState, Field, PageHeader, Panel, StageTracker } from "../../../../../_components/ui";
 import { ActionForm } from "../../../../../_components/action-form";
@@ -16,7 +27,9 @@ import {
   deleteProject,
   deleteUpdate,
   postUpdate,
+  requestApproval,
   setMilestoneDone,
+  withdrawApproval,
   updateProject,
   updateStage,
 } from "../../../actions";
@@ -31,8 +44,14 @@ export default async function AdminProjectPage({ params }: { params: Promise<{ o
   if (!(await isPortalConfigured())) return null;
   if (!isUuid(orgId) || !isUuid(projectId)) notFound();
   const { ctx, org } = await requireOrgAdmin(orgId);
-  const [data, brief] = await Promise.all([getProject(ctx, org.id, projectId), getProjectBrief(ctx, org.id, projectId)]);
+  const [data, brief, gates] = await Promise.all([
+    getProject(ctx, org.id, projectId),
+    getProjectBrief(ctx, org.id, projectId),
+    listGates(ctx, org.id, projectId),
+  ]);
   if (!data) notFound();
+  // Suggest the first gate kind not approved yet.
+  const nextGate = GATE_KINDS.find((k) => !gates.some((g) => g.kind === k && g.status === "approved")) ?? "release";
   const { project, stages, milestones, updates } = data;
   const stageByKey = new Map(stages.map((s) => [s.stage, s]));
   const hidden = (
@@ -114,6 +133,63 @@ export default async function AdminProjectPage({ params }: { params: Promise<{ o
                 );
               })}
             </ul>
+          </Panel>
+
+          <Panel id="approvals" title="Client approvals" bodyClassName={null}>
+            <div className="border-b border-border p-4">
+              <ActionForm action={requestApproval} submitLabel="Send for approval" resetOnSuccess>
+                {hidden}
+                <div className="space-y-3">
+                  <div className="grid gap-3 sm:grid-cols-[220px_1fr]">
+                    <Field label="Type" htmlFor="g-kind">
+                      <select id="g-kind" name="kind" defaultValue={nextGate} className="pt-select">
+                        {GATE_KINDS.map((k) => (
+                          <option key={k} value={k}>
+                            {gateKindLabel[k]} (unlocks {stageLabel[gateUnlocks[k]]})
+                          </option>
+                        ))}
+                      </select>
+                    </Field>
+                    <Field label="Title" htmlFor="g-title">
+                      <input id="g-title" name="title" required minLength={3} maxLength={200} placeholder="e.g. Spec v1: booking and payments" className="pt-input" />
+                    </Field>
+                  </div>
+                  <Field label="Link to the work" htmlFor="g-link" hint="A doc, Figma, preview site or a file from the Files tab.">
+                    <input id="g-link" name="link_url" type="url" maxLength={2000} placeholder="https://" className="pt-input" />
+                  </Field>
+                  <Field label="What to check" htmlFor="g-details">
+                    <textarea id="g-details" name="details" rows={3} maxLength={10000} className="pt-textarea" />
+                  </Field>
+                </div>
+              </ActionForm>
+              <p className="mt-2 text-[12.5px] text-muted">
+                The client&apos;s members are emailed. Until they approve, the stage it unlocks cannot be started. Approving finishes the stage before it and starts it.
+              </p>
+            </div>
+            {gates.length === 0 ? (
+              <EmptyState title="No approvals asked yet" />
+            ) : (
+              <>
+                {gates
+                  .filter((g) => g.status === "waiting")
+                  .map((g) => (
+                    <div key={g.id} className="flex flex-wrap items-start justify-between gap-3 border-b border-border px-4 py-3">
+                      <div className="min-w-0">
+                        <p className="font-medium">
+                          <span className="text-muted">{gateKindLabel[g.kind]}:</span> {g.title}
+                        </p>
+                        <p className="text-[12.5px] text-muted">Waiting since {formatDate(g.created_at)}</p>
+                        <GateBody gate={g} />
+                      </div>
+                      <ActionForm action={withdrawApproval} submitLabel="Withdraw" size="sm" variant="ghost" hasVisibleFields={false} confirm="Withdraw this approval request?">
+                        <input type="hidden" name="org_id" value={org.id} />
+                        <input type="hidden" name="gate_id" value={g.id} />
+                      </ActionForm>
+                    </div>
+                  ))}
+                <GateHistory gates={gates.filter((g) => g.status !== "waiting")} />
+              </>
+            )}
           </Panel>
 
           {brief && (

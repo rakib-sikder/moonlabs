@@ -5,11 +5,11 @@ import { redirect } from "next/navigation";
 import { assertMember, getPortalContext } from "@/lib/portal/access";
 import { requestOrigin } from "@/lib/portal/auth";
 import { guarded } from "@/lib/portal/action-utils";
-import { optionalDate, optionalText, text, uuid } from "@/lib/portal/validate";
+import { oneOf, optionalDate, optionalText, text, uuid } from "@/lib/portal/validate";
 import { alertMail, emailOwner } from "@/lib/notify";
 import { sendAccountMail } from "@/lib/portal/mail";
-import { formatDate } from "@/lib/portal/format";
-import type { ActionState } from "@/lib/portal/types";
+import { STAGES, formatDate, gateKindLabel, gateUnlocks, stageLabel } from "@/lib/portal/format";
+import type { ActionState, GateKind } from "@/lib/portal/types";
 
 /** Open briefs an organization may have waiting at once, so a loop cannot flood the inbox. */
 const MAX_OPEN_BRIEFS = 5;
@@ -94,6 +94,84 @@ export async function submitBrief(formData: FormData): Promise<ActionState> {
 
     revalidatePath("/dashboard", "layout");
     redirect(`/dashboard/projects/briefs/${id}`);
+  });
+}
+
+/**
+ * A client member approves a gate or asks for changes (a reason is required). Approving
+ * finishes the stage before the unlocked one and starts the unlocked stage. Moonlab staff
+ * cannot decide for the client. Moonlab is emailed either way.
+ */
+export async function decideGate(formData: FormData): Promise<ActionState> {
+  return guarded(async () => {
+    const orgId = uuid(formData, "org_id", "Organization");
+    const gateId = uuid(formData, "gate_id", "Approval");
+    const decision = oneOf(formData, "decision", ["approved", "changes_requested"] as const, "Decision");
+    const note =
+      decision === "changes_requested"
+        ? text(formData, "client_note", { label: "What should change", min: 3, max: 4000 })
+        : optionalText(formData, "client_note", { label: "Comment", max: 4000 });
+
+    const ctx = await getPortalContext();
+    assertMember(ctx, orgId);
+    const membership = ctx.orgs.find((o) => o.id === orgId);
+    if (ctx.isStaff || membership?.role !== "client") {
+      return { ok: false, message: "Only the client can approve or ask for changes." };
+    }
+
+    const gate = await ctx.db
+      .prepare(
+        `SELECT g.project_id, g.kind, g.title, p.name AS project_name FROM project_gates g JOIN projects p ON p.id = g.project_id
+          WHERE g.id = ? AND g.org_id = ? AND g.status = 'waiting'`,
+      )
+      .bind(gateId, orgId)
+      .first<{ project_id: string; kind: GateKind; title: string; project_name: string }>();
+    if (!gate) return { ok: false, message: "This approval was already answered or withdrawn." };
+
+    const today = new Date().toISOString().slice(0, 10);
+    const statements = [
+      ctx.db
+        .prepare(
+          "UPDATE project_gates SET status = ?, client_note = ?, decided_by = ?, decided_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ? AND org_id = ? AND status = 'waiting'",
+        )
+        .bind(decision, note, ctx.userId, gateId, orgId),
+    ];
+    const unlocked = gateUnlocks[gate.kind];
+    if (decision === "approved") {
+      const previous = STAGES[STAGES.indexOf(unlocked) - 1];
+      statements.push(
+        ctx.db
+          .prepare("UPDATE project_stages SET status = 'done', completed_on = COALESCE(completed_on, ?) WHERE project_id = ? AND org_id = ? AND stage = ? AND status <> 'done'")
+          .bind(today, gate.project_id, orgId, previous),
+        ctx.db
+          .prepare("UPDATE project_stages SET status = 'active', started_on = COALESCE(started_on, ?) WHERE project_id = ? AND org_id = ? AND stage = ? AND status = 'pending'")
+          .bind(today, gate.project_id, orgId, unlocked),
+      );
+    }
+    await ctx.db.batch(statements);
+
+    const origin = await requestOrigin();
+    const who = ctx.profile?.full_name || ctx.email || "The client";
+    const verdict = decision === "approved" ? "approved" : "asked for changes to";
+    const mail = alertMail(
+      `${who} ${verdict} the ${gateKindLabel[gate.kind].toLowerCase()}`,
+      [
+        ["Project", gate.project_name],
+        [gateKindLabel[gate.kind], gate.title],
+        ["Decision", decision === "approved" ? `Approved. ${stageLabel[unlocked]} has started.` : "Changes requested"],
+      ],
+      note || "No comment.",
+      { text: "Open the project in the admin.", href: `${origin}/dashboard/admin/${orgId}/projects/${gate.project_id}`, label: "Open the project" },
+    );
+    await emailOwner({
+      subject: `${decision === "approved" ? "Approved" : "Changes requested"}: ${gate.title} (${gate.project_name})`,
+      ...mail,
+      ...(ctx.email ? { replyTo: { email: ctx.email, name: who } } : {}),
+    });
+
+    revalidatePath("/dashboard", "layout");
+    // The answered item leaves the list, so the confirmation is shown by the page instead.
+    redirect(`/dashboard/projects/${gate.project_id}?decided=${decision === "approved" ? gate.kind : "changes"}`);
   });
 }
 

@@ -98,7 +98,25 @@ export type ProjectUpdate = {
 
 export type ProjectWithStages = Project & { stages: ProjectStage[] };
 
-export type BriefStatus = "submitted" | "accepted" | "declined" | "withdrawn";
+export type GateKind = "spec" | "mockup" | "release";
+export type GateStatus = "waiting" | "approved" | "changes_requested" | "cancelled";
+
+export type ProjectGate = {
+  id: string;
+  project_id: string;
+  org_id: string;
+  kind: GateKind;
+  title: string;
+  details: string | null;
+  link_url: string | null;
+  status: GateStatus;
+  client_note: string | null;
+  decided_at: string | null;
+  created_at: string;
+  decider: PersonRef;
+};
+
+export type BriefStatus ="submitted" | "accepted" | "declined" | "withdrawn";
 
 export type ProjectBrief = {
   id: string;

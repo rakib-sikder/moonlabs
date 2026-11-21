@@ -150,6 +150,20 @@ Admin > Files then shows **Upload a deliverable** next to **Share a link**.
 3. The brief text is never edited. It shows on the project page for you and the client.
    The client can withdraw a brief until you answer it.
 
+### Client approvals (gates)
+
+1. On the admin project page, **Client approvals**: pick Spec, Mockup or Release, give a title,
+   a link to the work and what to check, then **Send for approval**. Client members (role
+   client, not staff) are emailed. One of each kind can wait at a time; **Withdraw** it to
+   replace it.
+2. The client sees it at the top of the project page, on Overview and on Projects. They
+   **Approve**, or **Request changes** with a reason. You are emailed either way.
+3. Spec unlocks Design, Mockup unlocks Build, Release unlocks Live. While the newest gate of a
+   kind is waiting or has changes requested, that stage cannot be set to In progress or Done.
+   Approving marks the stage before it Done and starts it. After "changes requested", send a
+   new version as a new approval; every decision stays on record.
+4. Staff cannot approve for the client. A project with no gates works as before.
+
 ## 8. Optional: Facebook sign-in
 
 The button is hidden until both secrets are set.

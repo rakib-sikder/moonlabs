@@ -22,6 +22,9 @@ import type {
   ProjectUpdate,
   ProjectWithStages,
   ProjectBrief,
+  ProjectGate,
+  GateKind,
+  GateStatus,
   BriefStatus,
   RequestComment,
 } from "./types";
@@ -631,4 +634,52 @@ export async function getProjectBrief(ctx: PortalContext, orgId: string, project
     personResolver(ctx),
   ]);
   return row ? toBrief(row, person) : null;
+}
+
+// ---------------------------------------------------------------------------
+// Approval gates
+// ---------------------------------------------------------------------------
+type GateRow = Omit<ProjectGate, "decider"> & PersonCols;
+
+/** Every gate of a project, newest first (the record of each approval). */
+export async function listGates(ctx: PortalContext, orgId: string, projectId: string): Promise<ProjectGate[]> {
+  assertMember(ctx, orgId);
+  const [{ results }, person] = await Promise.all([
+    ctx.db
+      .prepare(
+        `SELECT g.id, g.project_id, g.org_id, g.kind, g.title, g.details, g.link_url, g.status, g.client_note,
+                g.decided_at, g.created_at, ${PERSON_COLS}
+           FROM project_gates g LEFT JOIN users a ON a.id = g.decided_by
+          WHERE g.project_id = ? AND g.org_id = ?
+          ORDER BY g.created_at DESC`,
+      )
+      .bind(projectId, orgId)
+      .all<GateRow>(),
+    personResolver(ctx),
+  ]);
+  const s = (v: unknown) => (v == null ? null : String(v));
+  return results.map((r) => ({
+    id: String(r.id),
+    project_id: String(r.project_id),
+    org_id: String(r.org_id),
+    kind: String(r.kind) as GateKind,
+    title: String(r.title),
+    details: s(r.details),
+    link_url: s(r.link_url),
+    status: String(r.status) as GateStatus,
+    client_note: s(r.client_note),
+    decided_at: s(r.decided_at),
+    created_at: String(r.created_at),
+    decider: person(r),
+  }));
+}
+
+/** Number of gates waiting for the client, per project id. */
+export async function waitingGateCounts(ctx: PortalContext, orgId: string): Promise<Record<string, number>> {
+  assertMember(ctx, orgId);
+  const { results } = await ctx.db
+    .prepare("SELECT project_id, COUNT(*) AS n FROM project_gates WHERE org_id = ? AND status = 'waiting' GROUP BY project_id")
+    .bind(orgId)
+    .all<{ project_id: string; n: number }>();
+  return Object.fromEntries(results.map((r) => [String(r.project_id), Number(r.n)]));
 }

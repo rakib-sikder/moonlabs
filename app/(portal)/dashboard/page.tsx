@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getOrgPage } from "@/lib/portal/access";
-import { getOverview, requestNow } from "@/lib/portal/queries";
+import { getOverview, requestNow, waitingGateCounts } from "@/lib/portal/queries";
 import type { ActivityItem } from "@/lib/portal/types";
 import {
   formatNumber,
@@ -41,7 +41,8 @@ export default async function OverviewPage() {
   if (!org) return <NoWorkspace canAdmin={ctx.canAdmin} />;
 
   const now = requestNow();
-  const data = await getOverview(ctx, org.id, now);
+  const [data, gateCounts] = await Promise.all([getOverview(ctx, org.id, now), waitingGateCounts(ctx, org.id)]);
+  const approvals = Object.values(gateCounts).reduce((a, b) => a + b, 0);
   const monthName = new Intl.DateTimeFormat("en-US", { month: "long", timeZone: "UTC" }).format(now);
 
   return (
@@ -60,6 +61,19 @@ export default async function OverviewPage() {
           </Link>
         }
       />
+
+      {approvals > 0 && (
+        <Link
+          href="/dashboard/projects"
+          className="mb-6 flex items-center justify-between gap-3 rounded-lg border px-4 py-3 text-[13.5px]"
+          style={{ borderColor: "var(--pt-warn)", background: "var(--pt-warn-soft)" }}
+        >
+          <span>
+            <b>{approvals === 1 ? "1 item is" : `${approvals} items are`} waiting for your approval.</b> We continue once you approve.
+          </span>
+          <span className="pt-link whitespace-nowrap">Review</span>
+        </Link>
+      )}
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <KpiTile
