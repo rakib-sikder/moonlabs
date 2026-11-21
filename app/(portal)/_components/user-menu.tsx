@@ -2,6 +2,7 @@ import Link from "next/link";
 import { initials } from "@/lib/portal/format";
 import { signOut } from "../actions";
 import { IconChevron } from "./icons";
+import { ShowTourButton } from "./product-tour";
 
 /** Account dropdown built on <details> so it works without client JS. */
 export function UserMenu({ name, email, staff }: { name: string; email: string | null; staff: boolean }) {
@@ -10,6 +11,7 @@ export function UserMenu({ name, email, staff }: { name: string; email: string |
       <summary
         className="flex h-8 cursor-pointer list-none items-center gap-2 rounded-md px-1.5 text-[13px] hover:bg-surface-2 [&::-webkit-details-marker]:hidden"
         aria-label="Account menu"
+        data-tour="user-menu"
       >
         <span
           aria-hidden
@@ -29,6 +31,7 @@ export function UserMenu({ name, email, staff }: { name: string; email: string |
         <Link href="/" className="pt-nav-link mt-1">
           Back to moonlab site
         </Link>
+        <ShowTourButton />
         <form action={signOut}>
           <button type="submit" className="pt-nav-link w-full text-left">
             Sign out

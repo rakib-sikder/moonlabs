@@ -37,7 +37,7 @@ export function NavLinks({ canAdmin, onNavigate }: { canAdmin: boolean; onNaviga
     <nav aria-label="Portal">
       <ul className="space-y-0.5">
         {NAV.map(({ href, label, icon: Icon, exact }) => (
-          <li key={href}>
+          <li key={href} data-tour={`nav-${label.toLowerCase()}`}>
             <Link
               href={href}
               className="pt-nav-link"

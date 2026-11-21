@@ -5,6 +5,7 @@ import { displayName, getPortalContext } from "@/lib/portal/access";
 import { NotConfigured } from "../_components/ui";
 import { MobileNav, NavLinks, OrgSwitcher } from "../_components/shell";
 import { UserMenu } from "../_components/user-menu";
+import { ProductTour } from "../_components/product-tour";
 
 /** Signed-in portal shell: compact top bar, sidebar on desktop, drawer on smaller screens. */
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -18,6 +19,11 @@ export default async function DashboardLayout({ children }: { children: React.Re
 
   const ctx = await getPortalContext();
   const orgOptions = ctx.orgs.map((o) => ({ id: o.id, name: o.name }));
+  // The guide opens by itself once for clients; staff can still open it from the account menu.
+  const tour = ctx.isStaff
+    ? null
+    : await ctx.db.prepare("SELECT tour_done_at FROM users WHERE id = ?").bind(ctx.userId).first<{ tour_done_at: string | null }>();
+  const autoTour = !ctx.isStaff && !tour?.tour_done_at;
 
   return (
     <div className="min-h-dvh">
@@ -56,6 +62,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
           <div className="mx-auto max-w-6xl">{children}</div>
         </main>
       </div>
+      <ProductTour autoStart={autoTour} />
     </div>
   );
 }

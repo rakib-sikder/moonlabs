@@ -31,6 +31,15 @@ export async function switchOrg(formData: FormData): Promise<ActionState> {
   });
 }
 
+/** Records that the signed-in user finished or skipped the portal guide, so it stops opening by itself. */
+export async function markTourDone(): Promise<void> {
+  const ctx = await getPortalContext();
+  await ctx.db
+    .prepare("UPDATE users SET tour_done_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ? AND tour_done_at IS NULL")
+    .bind(ctx.userId)
+    .run();
+}
+
 /** Any member may open a request, always as themselves and always with status 'open'. */
 export async function createRequest(formData: FormData): Promise<ActionState> {
   return guarded(async () => {
