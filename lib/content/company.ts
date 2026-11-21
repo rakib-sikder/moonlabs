@@ -151,23 +151,6 @@ export const plans: {
     ],
   },
   {
-    key: "half_moon",
-    name: "Half Moon",
-    amountCents: 19900,
-    tagline: "Keep your automations running.",
-    price: "$199",
-    unit: "per month",
-    cta: "Start Half Moon",
-    featured: false,
-    features: [
-      "Monitoring, alerts and fixes for up to 5 automations",
-      "Small changes, up to 2 hours a month",
-      "Priority support on Slack or Telegram",
-      "Monthly hours-saved report",
-      "Cancel with 30 days' notice",
-    ],
-  },
-  {
     key: "full_moon",
     name: "Full Moon",
     amountCents: 39900,
@@ -184,17 +167,34 @@ export const plans: {
       "Quarterly automation roadmap",
     ],
   },
+  {
+    key: "half_moon",
+    name: "Half Moon",
+    amountCents: 19900,
+    tagline: "Keep your automations running.",
+    price: "$199",
+    unit: "per month",
+    cta: "Start Half Moon",
+    featured: false,
+    features: [
+      "Monitoring, alerts and fixes for up to 5 automations",
+      "Small changes, up to 2 hours a month",
+      "Priority support on Slack or Telegram",
+      "Monthly hours-saved report",
+      "Cancel with 30 days' notice",
+    ],
+  },
 ];
 
-/** Plan-by-plan feature matrix on the pricing page. `true` = included, `false` = not included. */
+/** Plan-by-plan feature matrix on the pricing page. Values follow the order of `plans`. `true` = included, `false` = not included. */
 export const planMatrix: { group: string; rows: { label: string; values: [string | boolean, string | boolean, string | boolean] }[] }[] = [
   {
     group: "Building",
     rows: [
-      { label: "New standard automations", values: ["1, one-time", false, "1 every month"] },
-      { label: "Small changes to existing automations", values: [false, "Up to 2 hours a month", "Included"] },
-      { label: "Automations monitored", values: ["The one we built, 30 days", "Up to 5", "Up to 15"] },
-      { label: "AI steps in workflows", values: [false, false, true] },
+      { label: "New standard automations", values: ["1, one-time", "1 every month", false] },
+      { label: "Small changes to existing automations", values: [false, "Included", "Up to 2 hours a month"] },
+      { label: "Automations monitored", values: ["The one we built, 30 days", "Up to 15", "Up to 5"] },
+      { label: "AI steps in workflows", values: [false, true, false] },
       { label: "Built in your accounts, owned by you", values: [true, true, true] },
     ],
   },
@@ -209,10 +209,10 @@ export const planMatrix: { group: string; rows: { label: string; values: [string
   {
     group: "Support & reporting",
     rows: [
-      { label: "Support channel", values: ["Email", "Slack or Telegram, priority", "Dedicated channel"] },
-      { label: "Reply time", values: ["2 working days", "Next working day", "Same day"] },
+      { label: "Support channel", values: ["Email", "Dedicated channel", "Slack or Telegram, priority"] },
+      { label: "Reply time", values: ["2 working days", "Same day", "Next working day"] },
       { label: "Hours-saved report", values: [false, "Monthly", "Monthly"] },
-      { label: "Automation roadmap", values: [false, false, "Quarterly"] },
+      { label: "Automation roadmap", values: [false, "Quarterly", false] },
       { label: "Client portal access", values: [true, true, true] },
     ],
   },
