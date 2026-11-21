@@ -5,6 +5,7 @@ import { PageHeader } from "@/components/PageHeader";
 import { CtaBanner } from "@/components/CtaBanner";
 import { Accordion } from "@/components/ui/Accordion";
 import { Check, Reveal, SectionHeading } from "@/components/ui/Section";
+import { OfferBanner } from "@/components/OfferBanner";
 import { comparison, faqs, planMatrix, plans } from "@/lib/content/company";
 import { Check as CheckIcon, Minus } from "lucide-react";
 
@@ -54,6 +55,7 @@ export default function PricingPage() {
       />
 
       <section className="mx-auto max-w-6xl px-6 pb-10">
+        <OfferBanner />
         <Reveal>
           <div className="flex flex-col items-start justify-between gap-4 rounded-2xl border border-dashed border-border bg-surface/60 p-6 backdrop-blur-sm sm:flex-row sm:items-center">
             <div>

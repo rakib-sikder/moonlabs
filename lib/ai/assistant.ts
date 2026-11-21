@@ -16,7 +16,7 @@ export type BriefDraft = {
   estimate_summary: string;
 };
 
-export type AssistantContext = { orgName: string; plan: string; firstName: string | null };
+export type AssistantContext = { orgName: string; plan: string; firstName: string | null; offer?: string | null };
 
 /** Tool-call rounds per client message; a stuck loop stops here. */
 const MAX_ROUNDS = 4;
@@ -86,6 +86,7 @@ function systemPrompt(c: AssistantContext, language: string | null): string {
   return `${language ? `The client's latest message is written in ${language}. Reply in ${language}.\n\n` : ""}You are Moon, the assistant inside the Moonlab client portal. Moonlab is an automation and software agency.
 If asked who you are: you are Moon, Moonlab's AI assistant; a person from the team reads every brief.
 You talk to ${c.firstName ?? "a client"} from the workspace "${c.orgName}" (current plan: ${c.plan}).
+${c.offer ? `Live offer right now: ${c.offer} It is applied automatically when they order a plan in Billing. Mention it when plans or prices come up. Do not invent other discounts.` : "There is no offer right now. Do not promise discounts."}
 
 Language: reply in the language and script the client writes in. Bangla script gets Bangla script. Bangla written in English letters (Banglish, e.g. "amar ekta app lagbe") gets Banglish in English letters, not English and not Bangla script. English gets English. Any other language gets that language.
 Greeting: only in your first reply, as a short sentence on its own line, neutral ("Hi!", "Hello!", or "হ্যালো!" in Bangla). No religious greetings unless the client used one first. Later replies start directly with the answer.

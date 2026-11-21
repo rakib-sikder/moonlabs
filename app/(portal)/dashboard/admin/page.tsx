@@ -51,6 +51,19 @@ export default async function AdminPage() {
 
       {ctx.isStaff && (
         <Link
+          href="/dashboard/admin/offers"
+          className="mb-6 flex items-center justify-between rounded-xl border border-border bg-surface px-5 py-4 text-sm transition-colors hover:border-accent/40"
+        >
+          <span>
+            <span className="font-medium">Offers</span>
+            <span className="text-muted"> · Black Friday, holidays, Ramadan and more, on a yearly calendar</span>
+          </span>
+          <span className="text-accent">Open →</span>
+        </Link>
+      )}
+
+      {ctx.isStaff && (
+        <Link
           href="/dashboard/admin/reviews"
           className="mb-6 flex items-center justify-between rounded-xl border border-border bg-surface px-5 py-4 text-sm transition-colors hover:border-accent/40"
         >

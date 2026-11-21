@@ -8,6 +8,7 @@ import { oneOf, uuid } from "@/lib/portal/validate";
 import { plans } from "@/lib/content/company";
 import { emailOwner } from "@/lib/notify";
 import { sendAccountMail } from "@/lib/portal/mail";
+import { discounted, getLiveOffer, offerApplies } from "@/lib/portal/offers";
 import type { ActionState } from "@/lib/portal/types";
 
 const PLAN_KEYS = plans.map((p) => p.key);
@@ -36,6 +37,10 @@ export async function orderPlan(formData: FormData): Promise<ActionState> {
     if (pending) return { ok: false, message: "You already have a plan order waiting for payment. Cancel it first to choose a different plan." };
     if (org?.plan === key) return { ok: false, message: `You are already on ${plan.name}.` };
 
+    const offer = await getLiveOffer(ctx.db);
+    const applied = offerApplies(offer, key) ? offer : null;
+    const amount = discounted(plan.amountCents, applied, key);
+    const offerNote = applied ? ` ${applied.name}: ${applied.discount_percent}% off this first payment.` : "";
     const today = new Date();
     const issuedOn = today.toISOString().slice(0, 10);
     const dueOn = new Date(today.getTime() + DUE_DAYS * 86400000).toISOString().slice(0, 10);
@@ -48,10 +53,10 @@ export async function orderPlan(formData: FormData): Promise<ActionState> {
           `INSERT INTO invoices (id, org_id, number, issued_on, due_on, amount_cents, currency, status, url, notes)
            VALUES (?, ?, ?, ?, ?, ?, 'USD', 'open', NULL, ?)`,
         )
-        .bind(invoiceId, orgId, number, issuedOn, dueOn, plan.amountCents, `${plan.name} plan (${first}). A secure payment link will be added here and emailed to you.`),
+        .bind(invoiceId, orgId, number, issuedOn, dueOn, amount, `${plan.name} plan (${first}).${offerNote} A secure payment link will be added here and emailed to you.`),
       ctx.db
-        .prepare("INSERT INTO plan_orders (id, org_id, plan, invoice_id, created_by) VALUES (?, ?, ?, ?, ?)")
-        .bind(crypto.randomUUID(), orgId, key, invoiceId, ctx.userId),
+        .prepare("INSERT INTO plan_orders (id, org_id, plan, invoice_id, created_by, offer_id, discount_percent) VALUES (?, ?, ?, ?, ?, ?, ?)")
+        .bind(crypto.randomUUID(), orgId, key, invoiceId, ctx.userId, applied?.id ?? null, applied?.discount_percent ?? null),
     ]);
 
     const origin = await requestOrigin();
@@ -59,8 +64,8 @@ export async function orderPlan(formData: FormData): Promise<ActionState> {
     const orgName = org?.name ?? "their workspace";
     await emailOwner({
       subject: `New plan order: ${plan.name} for ${orgName}`,
-      text: `${who} ordered ${plan.name} (${plan.price} ${plan.unit}) for ${orgName}.\nInvoice ${number} is open.\n\nNext: create a Payoneer payment request for ${plan.price}, then paste the link on the invoice:\n${origin}/dashboard/admin/${orgId}?tab=invoices`,
-      html: `<div style="font-family:system-ui,sans-serif;font-size:15px;line-height:1.5"><p><b>${esc(who)}</b> ordered <b>${esc(plan.name)}</b> (${esc(plan.price)} ${esc(plan.unit)}) for <b>${esc(orgName)}</b>.</p><p>Invoice ${esc(number)} is open.</p><p>Next: create a Payoneer payment request for ${esc(plan.price)}, then paste the link on the invoice.</p><p><a href="${origin}/dashboard/admin/${orgId}?tab=invoices">Open the invoice in the admin</a></p></div>`,
+      text: `${who} ordered ${plan.name} (${plan.price} ${plan.unit}) for ${orgName}.${offerNote}\nInvoice ${number} is open for $${(amount / 100).toFixed(2)}.\n\nNext: create a Payoneer payment request for $${(amount / 100).toFixed(2)}, then paste the link on the invoice:\n${origin}/dashboard/admin/${orgId}?tab=invoices`,
+      html: `<div style="font-family:system-ui,sans-serif;font-size:15px;line-height:1.5"><p><b>${esc(who)}</b> ordered <b>${esc(plan.name)}</b> (${esc(plan.price)} ${esc(plan.unit)}) for <b>${esc(orgName)}</b>.</p><p>Invoice ${esc(number)} is open for <b>$${(amount / 100).toFixed(2)}</b>.${esc(offerNote)}</p><p>Next: create a Payoneer payment request for that amount, then paste the link on the invoice.</p><p><a href="${origin}/dashboard/admin/${orgId}?tab=invoices">Open the invoice in the admin</a></p></div>`,
       ...(ctx.email ? { replyTo: { email: ctx.email, name: ctx.profile?.full_name ?? ctx.email } } : {}),
     });
     if (ctx.email) {
@@ -69,7 +74,7 @@ export async function orderPlan(formData: FormData): Promise<ActionState> {
         subject: `Your ${plan.name} order (${number})`,
         greeting: ctx.profile?.full_name ? `Hi ${ctx.profile.full_name.split(" ")[0]},` : "Hi,",
         lines: [
-          `Thanks for choosing ${plan.name} (${plan.price} ${plan.unit}).`,
+          `Thanks for choosing ${plan.name} (${plan.price} ${plan.unit}).${offerNote}`,
           "We will send you a secure payment link within one business day. You can pay by card or bank transfer. The plan starts as soon as the payment arrives.",
         ],
         button: { label: "View billing", href: `${origin}/dashboard/billing` },

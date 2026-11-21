@@ -10,6 +10,7 @@ import { Badge, EmptyState, NoWorkspace, PageHeader, Panel } from "../../_compon
 import { IconExternal } from "../../_components/icons";
 import { ActionForm } from "../../_components/action-form";
 import { cancelPlanOrder, orderPlan } from "./actions";
+import { discounted, getLiveOffer, offerApplies, offerUntil } from "@/lib/portal/offers";
 
 export const metadata: Metadata = { title: "Billing" };
 
@@ -25,7 +26,7 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
   const { ctx, org } = page;
   if (!org) return <NoWorkspace canAdmin={ctx.canAdmin} />;
 
-  const [invoices, pendingOrder] = await Promise.all([listInvoices(ctx, org.id), getPendingPlanOrder(ctx, org.id)]);
+  const [invoices, pendingOrder, offer] = await Promise.all([listInvoices(ctx, org.id), getPendingPlanOrder(ctx, org.id), getLiveOffer(ctx.db)]);
   const pendingPlan = pendingOrder ? plans.find((p) => p.key === pendingOrder.plan) : undefined;
   const plan = plans.find((p) => p.name === planLabel[org.plan]);
   const outstanding = invoices.filter((i) => i.status === "open" || i.status === "overdue");
@@ -121,6 +122,11 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
           <h2 id="plans-title" className="mb-3 text-[15px] font-semibold">
             {org.plan === "none" ? "Choose a plan" : "Change plan"}
           </h2>
+          {offer && (
+            <p role="status" className="mb-3 rounded-lg border px-4 py-3 text-[13.5px]" style={{ borderColor: "var(--accent)", background: "var(--pt-warn-soft)" }}>
+              <b>{offer.headline}</b> Applied automatically to your first payment. Ends {offerUntil(offer)}.
+            </p>
+          )}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             {plans.map((p) => {
               const current = org.plan === p.key;
@@ -134,9 +140,24 @@ export default async function BillingPage({ searchParams }: { searchParams: Prom
                   <p className="font-semibold">{p.name}</p>
                   <p className="text-[13px] text-muted">{p.tagline}</p>
                   <p className="mt-3">
-                    <span className="text-[22px] font-semibold tabular-nums">{p.price}</span>
-                    <span className="ml-1 text-[12.5px] text-muted">{p.unit}</span>
+                    {offerApplies(offer, p.key) ? (
+                      <>
+                        <span className="mr-2 text-[15px] text-muted line-through tabular-nums">{p.price}</span>
+                        <span className="text-[22px] font-semibold tabular-nums">{formatMoney(discounted(p.amountCents, offer, p.key)).replace(/\.00$/, "")}</span>
+                        <span className="ml-1 text-[12.5px] text-muted">{p.unit.startsWith("per") ? "first month" : p.unit}</span>
+                      </>
+                    ) : (
+                      <>
+                        <span className="text-[22px] font-semibold tabular-nums">{p.price}</span>
+                        <span className="ml-1 text-[12.5px] text-muted">{p.unit}</span>
+                      </>
+                    )}
                   </p>
+                  {offerApplies(offer, p.key) && p.unit.startsWith("per") && (
+                    <p className="text-[12px] text-muted">
+                      then {p.price} {p.unit}
+                    </p>
+                  )}
                   <ul className="mt-3 flex-1 space-y-1 text-[13px] text-muted">
                     {p.features.map((f) => (
                       <li key={f}>· {f}</li>

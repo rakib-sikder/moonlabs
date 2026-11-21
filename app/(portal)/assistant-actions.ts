@@ -8,6 +8,7 @@ import { isUuid } from "@/lib/portal/validate";
 import { AiError, getAiChain, type ChatMessage } from "@/lib/ai/llm";
 import { runTurn, type BriefDraft } from "@/lib/ai/assistant";
 import { getAssistantSettings } from "@/lib/ai/settings";
+import { getLiveOffer, offerUntil } from "@/lib/portal/offers";
 
 export type ChatLine = { role: "user" | "assistant"; text: string };
 export type AssistantState = {
@@ -103,11 +104,12 @@ export async function askAssistant(conversationId: string | null, text: string):
     await ctx.db.prepare("INSERT INTO ai_conversations (id, user_id, org_id) VALUES (?, ?, ?)").bind(id, ctx.userId, org.id).run();
   }
 
+  const liveOffer = await getLiveOffer(ctx.db);
   const history = rows.map((r) => JSON.parse(r.content) as ChatMessage);
   const userMsg: ChatMessage = { role: "user", text: message };
   let turn;
   try {
-    turn = await runTurn(chain, { orgName: org.name, plan: planLabel[org.plan], firstName: ctx.profile?.full_name?.split(" ")[0] ?? null }, [...history, userMsg]);
+    turn = await runTurn(chain, { orgName: org.name, plan: planLabel[org.plan], firstName: ctx.profile?.full_name?.split(" ")[0] ?? null, offer: liveOffer ? `${liveOffer.headline} (until ${offerUntil(liveOffer)})` : null }, [...history, userMsg]);
   } catch (e) {
     const busy = e instanceof AiError && e.kind === "busy";
     return { ok: false, conversationId: id, error: busy ? "The assistant is busy right now. Try again in a minute." : "The assistant could not answer. Please try again." };
