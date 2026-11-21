@@ -168,7 +168,7 @@ export default function SampleAuditPage() {
                   <div className="rounded-xl border border-accent/40 bg-accent-soft p-5">
                     <p className="text-xs uppercase tracking-wider text-muted">Fixed price</p>
                     <p className="mt-2 text-3xl font-semibold tracking-tight">$199</p>
-                    <p className="mt-1 text-sm text-muted">a month, all three live in two months</p>
+                    <p className="mt-1 text-sm text-muted">a month, all three live in three months</p>
                   </div>
                 </div>
                 <p className="mt-4 text-sm leading-relaxed text-muted">

@@ -11,8 +11,17 @@ import { Check as CheckIcon, Minus } from "lucide-react";
 export const metadata: Metadata = pageMeta(
   "/pricing",
   "Pricing: AI Automation Plans for Small Business",
-  "Simple pricing for AI automation and web projects: a free audit, then a fixed-price project or a monthly plan. One automation from $99, no hourly billing.", "page-pricing",
+  "Simple pricing for AI automation and web projects: a free audit, then a fixed-price project or a monthly plan. One automation from $349, no hourly billing.", "page-pricing",
 );
+
+const projectPrices: [string, string][] = [
+  ["Website", "$900"],
+  ["Online shop", "$1,500"],
+  ["AI chatbot", "$800"],
+  ["CRM setup", "$700"],
+  ["Web or booking app", "$7,000"],
+  ["Mobile app", "$18,000"],
+];
 
 const phases = ["Crescent", "Half Moon", "Full Moon"];
 
@@ -159,8 +168,19 @@ export default function PricingPage() {
               <p className="text-xs uppercase tracking-widest text-moon mb-2">Websites, apps, design &amp; marketing</p>
               <p className="text-lg font-medium">Quoted per project, as a fixed price.</p>
               <p className="mt-2 text-sm text-muted leading-relaxed">
-                Development, data, design and growth work varies too much for one price list. After a short call you get a written
-                scope and a fixed quote. It can be combined with any automation plan above.
+                These are not part of the plans above. You describe the project, get a written scope and a fixed quote, and pay in
+                three steps: 30% to start, 40% at the halfway demo and 30% at launch. Every launch includes 60 days of fixes.
+              </p>
+              <ul className="mt-4 grid grid-cols-1 gap-x-6 gap-y-1.5 text-sm sm:grid-cols-2 lg:grid-cols-3">
+                {projectPrices.map(([what, from]) => (
+                  <li key={what} className="flex justify-between gap-3 border-b border-border/60 py-1">
+                    <span className="text-muted">{what}</span>
+                    <span className="whitespace-nowrap font-medium">from {from}</span>
+                  </li>
+                ))}
+              </ul>
+              <p className="mt-3 text-xs text-muted">
+                Tool subscriptions, hosting, SMS and AI usage are paid by you directly, at the provider&apos;s price.
               </p>
             </div>
             <Link
