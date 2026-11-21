@@ -21,6 +21,8 @@ import type {
   ProjectStage,
   ProjectUpdate,
   ProjectWithStages,
+  ProjectBrief,
+  BriefStatus,
   RequestComment,
 } from "./types";
 import { OPEN_REQUEST_STATUSES, STAGES, personName, runStatusLabel } from "./format";
@@ -563,4 +565,70 @@ export async function listPendingPlanOrders(ctx: PortalContext, orgId: string): 
     .bind(orgId)
     .all<{ invoice_id: string; plan: string }>();
   return results.map((r) => ({ invoiceId: String(r.invoice_id), plan: String(r.plan) }));
+}
+
+// ---------------------------------------------------------------------------
+// Project briefs
+// ---------------------------------------------------------------------------
+type BriefRow = Omit<ProjectBrief, "author"> & PersonCols;
+
+const BRIEF_SELECT = `SELECT b.id, b.org_id, b.project_id, b.title, b.goal, b.audience, b.features, b.examples, b.budget,
+         b.deadline, b.status, b.staff_note, b.decided_at, b.created_at, ${PERSON_COLS}
+    FROM project_briefs b LEFT JOIN users a ON a.id = b.created_by`;
+
+/** Copies a row into a plain object (D1 rows can carry proxies that do not serialize). */
+function toBrief(r: BriefRow, person: (row: PersonCols) => PersonRef): ProjectBrief {
+  const s = (v: unknown) => (v == null ? null : String(v));
+  return {
+    id: String(r.id),
+    org_id: String(r.org_id),
+    project_id: s(r.project_id),
+    title: String(r.title),
+    goal: String(r.goal),
+    audience: s(r.audience),
+    features: s(r.features),
+    examples: s(r.examples),
+    budget: s(r.budget),
+    deadline: s(r.deadline),
+    status: String(r.status) as BriefStatus,
+    staff_note: s(r.staff_note),
+    decided_at: s(r.decided_at),
+    created_at: String(r.created_at),
+    author: person(r),
+  };
+}
+
+/** Briefs of an organization, newest first. `openOnly` leaves out briefs that became projects. */
+export async function listBriefs(ctx: PortalContext, orgId: string, openOnly = false): Promise<ProjectBrief[]> {
+  assertMember(ctx, orgId);
+  const [{ results }, person] = await Promise.all([
+    ctx.db
+      .prepare(`${BRIEF_SELECT} WHERE b.org_id = ?${openOnly ? " AND b.status <> 'accepted'" : ""} ORDER BY b.created_at DESC`)
+      .bind(orgId)
+      .all<BriefRow>(),
+    personResolver(ctx),
+  ]);
+  return results.map((r) => toBrief(r, person));
+}
+
+export async function getBrief(ctx: PortalContext, orgId: string, briefId: string): Promise<ProjectBrief | null> {
+  assertMember(ctx, orgId);
+  const [row, person] = await Promise.all([
+    ctx.db.prepare(`${BRIEF_SELECT} WHERE b.id = ? AND b.org_id = ?`).bind(briefId, orgId).first<BriefRow>(),
+    personResolver(ctx),
+  ]);
+  return row ? toBrief(row, person) : null;
+}
+
+/** The brief a project was started from, if any. */
+export async function getProjectBrief(ctx: PortalContext, orgId: string, projectId: string): Promise<ProjectBrief | null> {
+  assertMember(ctx, orgId);
+  const [row, person] = await Promise.all([
+    ctx.db
+      .prepare(`${BRIEF_SELECT} WHERE b.project_id = ? AND b.org_id = ? ORDER BY b.created_at DESC LIMIT 1`)
+      .bind(projectId, orgId)
+      .first<BriefRow>(),
+    personResolver(ctx),
+  ]);
+  return row ? toBrief(row, person) : null;
 }

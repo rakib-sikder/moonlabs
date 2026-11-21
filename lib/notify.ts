@@ -85,7 +85,7 @@ export function emailOwner(mail: OwnerMail): Promise<boolean> {
 }
 
 /** A labelled table, a highlighted message and a footer link: the shape of every owner alert. */
-function alertMail(heading: string, rows: [string, string][], message: string, footer: { text: string; href: string; label: string }) {
+export function alertMail(heading: string, rows: [string, string][], message: string, footer: { text: string; href: string; label: string }) {
   const text = `${rows.map(([k, v]) => `${k}: ${v}`).join("\n")}\n\n${message}\n\n${footer.text}\n${footer.label}: ${footer.href}`;
   const html = `<div style="font-family:system-ui,sans-serif;font-size:15px;line-height:1.5;color:#111">
 <p style="margin:0 0 12px"><b>${esc(heading)}</b></p>

@@ -5,6 +5,7 @@ import { getFilesBucket, isPortalConfigured } from "@/lib/portal/env";
 import { requireOrgAdmin } from "@/lib/portal/access";
 import {
   listAutomations,
+  listBriefs,
   listFiles,
   listInvoices,
   listPendingPlanOrders,
@@ -18,6 +19,8 @@ import { isUuid } from "@/lib/portal/validate";
 import {
   automationStatusLabel,
   automationTone,
+  briefStatusLabel,
+  briefTone,
   formatBytes,
   formatDate,
   formatMoney,
@@ -283,9 +286,29 @@ async function SettingsTab({ ctx, org }: TabProps) {
 
 // ---------------------------------------------------------------------------
 async function ProjectsTab({ ctx, org }: TabProps) {
-  const projects = await listProjects(ctx, org.id);
+  const [projects, briefs] = await Promise.all([listProjects(ctx, org.id), listBriefs(ctx, org.id, true)]);
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+      {briefs.length > 0 && (
+        <Panel title={`Client briefs (${briefs.filter((b) => b.status === "submitted").length} waiting)`} className="lg:col-span-3" bodyClassName={null}>
+          <ul className="divide-y divide-border">
+            {briefs.map((b) => (
+              <li key={b.id} className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
+                <div className="min-w-0">
+                  <Link href={`/dashboard/admin/${org.id}/briefs/${b.id}`} className="pt-row-link">
+                    {b.title}
+                  </Link>
+                  <p className="text-[12.5px] text-muted">
+                    {personName(b.author)} · {formatShortDate(b.created_at)}
+                    {b.budget && ` · ${b.budget}`}
+                  </p>
+                </div>
+                <Badge tone={briefTone[b.status]}>{briefStatusLabel[b.status]}</Badge>
+              </li>
+            ))}
+          </ul>
+        </Panel>
+      )}
       <Panel title={`Projects (${projects.length})`} className="lg:col-span-2" bodyClassName={null}>
         {projects.length === 0 ? (
           <EmptyState title="No projects yet">Create one on the right. Its five stages are added automatically.</EmptyState>

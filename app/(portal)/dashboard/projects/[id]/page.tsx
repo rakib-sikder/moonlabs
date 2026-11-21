@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getOrgPage } from "@/lib/portal/access";
-import { getProject } from "@/lib/portal/queries";
+import { getProject, getProjectBrief } from "@/lib/portal/queries";
+import { BriefView } from "../../../_components/brief-view";
 import { isUuid } from "@/lib/portal/validate";
 import { formatDate, projectStatusLabel, projectTone } from "@/lib/portal/format";
 import { Badge, NoWorkspace, PageHeader, Panel, StageTracker } from "../../../_components/ui";
@@ -18,7 +19,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
   if (!org) return <NoWorkspace canAdmin={ctx.canAdmin} />;
   if (!isUuid(id)) notFound();
 
-  const data = await getProject(ctx, org.id, id);
+  const [data, brief] = await Promise.all([getProject(ctx, org.id, id), getProjectBrief(ctx, org.id, id)]);
   if (!data) notFound();
   const { project, stages, milestones, updates } = data;
 
@@ -64,6 +65,17 @@ export default async function ProjectPage({ params }: { params: Promise<{ id: st
           <MilestoneList milestones={milestones} />
         </Panel>
       </div>
+
+      {brief && (
+        <Panel title="Your brief" className="mt-6">
+          <details>
+            <summary className="cursor-pointer text-[13.5px] text-muted">What you asked for, as you wrote it</summary>
+            <div className="mt-4">
+              <BriefView brief={brief} />
+            </div>
+          </details>
+        </Panel>
+      )}
     </>
   );
 }

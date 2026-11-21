@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getOrgPage } from "@/lib/portal/access";
-import { listProjects } from "@/lib/portal/queries";
-import { formatShortDate, projectStatusLabel, projectTone } from "@/lib/portal/format";
+import { listBriefs, listProjects } from "@/lib/portal/queries";
+import { briefStatusLabel, briefTone, formatShortDate, projectStatusLabel, projectTone } from "@/lib/portal/format";
 import { Badge, EmptyState, NoWorkspace, PageHeader, Panel, StageTracker, currentStageLabel } from "../../_components/ui";
 
 export const metadata: Metadata = { title: "Projects" };
@@ -13,14 +13,40 @@ export default async function ProjectsPage() {
   const { ctx, org } = page;
   if (!org) return <NoWorkspace canAdmin={ctx.canAdmin} />;
 
-  const projects = await listProjects(ctx, org.id);
+  const [projects, briefs] = await Promise.all([listProjects(ctx, org.id), listBriefs(ctx, org.id, true)]);
+  const newButton = (
+    <Link href="/dashboard/projects/new" className="pt-btn" data-variant="primary">
+      Start a new project
+    </Link>
+  );
 
   return (
     <>
-      <PageHeader title="Projects" description="Every build we are doing for you, stage by stage." />
+      <PageHeader title="Projects" description="Every build we are doing for you, stage by stage." actions={newButton} />
+
+      {briefs.length > 0 && (
+        <Panel title="Your briefs" className="mb-6" bodyClassName={null}>
+          <ul className="divide-y divide-border">
+            {briefs.map((b) => (
+              <li key={b.id} className="flex flex-wrap items-center justify-between gap-3 px-4 py-3">
+                <div className="min-w-0">
+                  <Link href={`/dashboard/projects/briefs/${b.id}`} className="pt-row-link">
+                    {b.title}
+                  </Link>
+                  <p className="text-[12.5px] text-muted">Sent {formatShortDate(b.created_at)}</p>
+                </div>
+                <Badge tone={briefTone[b.status]}>{briefStatusLabel[b.status]}</Badge>
+              </li>
+            ))}
+          </ul>
+        </Panel>
+      )}
+
       <Panel bodyClassName={null}>
         {projects.length === 0 ? (
-          <EmptyState title="No projects yet">When we start building for you, each project appears here with its stages and dates.</EmptyState>
+          <EmptyState title="No projects yet" action={newButton}>
+            Tell us what you want built. Once we start, each project appears here with its stages and dates.
+          </EmptyState>
         ) : (
           <div className="pt-table-wrap">
             <table className="pt-table">

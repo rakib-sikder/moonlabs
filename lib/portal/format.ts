@@ -3,6 +3,7 @@
 
 import type {
   AutomationStatus,
+  BriefStatus,
   InvoiceStatus,
   OrgPlan,
   ProjectStatus,
@@ -194,6 +195,13 @@ export const invoiceTone: Record<InvoiceStatus, Tone> = {
   overdue: "bad",
   void: "neutral",
 };
+export const briefStatusLabel: Record<BriefStatus, string> = {
+  submitted: "Waiting for review",
+  accepted: "Project started",
+  declined: "Declined",
+  withdrawn: "Withdrawn",
+};
+export const briefTone: Record<BriefStatus, Tone> = { submitted: "info", accepted: "ok", declined: "neutral", withdrawn: "neutral" };
 export const projectTone: Record<ProjectStatus, Tone> = {
   active: "info",
   on_hold: "warn",

@@ -31,6 +31,7 @@ import {
 import { STAGES } from "@/lib/portal/format";
 import { plans } from "@/lib/content/company";
 import { sendAccountMail } from "@/lib/portal/mail";
+import { projectInsertStatements } from "@/lib/portal/projects";
 import type {
   ActionState,
   AutomationStatus,
@@ -210,20 +211,91 @@ export async function createProject(formData: FormData): Promise<ActionState> {
     const { ctx, orgId } = await adminFor(formData);
     const f = projectFields(formData);
     const id = crypto.randomUUID();
-    const stageInserts = STAGES.map((stage, i) => {
-      const first = i === 0 && f.status === "active";
-      return ctx.db
-        .prepare("INSERT INTO project_stages (id, project_id, org_id, stage, status, started_on) VALUES (?, ?, ?, ?, ?, ?)")
-        .bind(crypto.randomUUID(), id, orgId, stage, first ? "active" : "pending", first ? f.started_on : null);
-    });
-    await ctx.db.batch([
-      ctx.db
-        .prepare("INSERT INTO projects (id, org_id, name, summary, status, started_on, target_on) VALUES (?, ?, ?, ?, ?, ?, ?)")
-        .bind(id, orgId, f.name, f.summary, f.status, f.started_on, f.target_on),
-      ...stageInserts,
-    ]);
+    await ctx.db.batch(
+      projectInsertStatements(ctx.db, { id, orgId, name: f.name, summary: f.summary, status: f.status, startedOn: f.started_on, targetOn: f.target_on }),
+    );
     revalidatePath("/dashboard", "layout");
     redirect(`/dashboard/admin/${orgId}/projects/${id}`);
+  });
+}
+
+/**
+ * Starts a project from a client's brief: creates the project with its stages, links the brief
+ * to it (the brief text is never changed) and emails the organization's members.
+ */
+export async function startProjectFromBrief(formData: FormData): Promise<ActionState> {
+  return guarded(async () => {
+    const { ctx, orgId } = await adminFor(formData);
+    const briefId = uuid(formData, "brief_id", "Brief");
+    const f = projectFields(formData);
+    const note = optionalText(formData, "staff_note", { label: "Note for the client", max: 4000 });
+    const brief = await ctx.db
+      .prepare("SELECT title, status FROM project_briefs WHERE id = ? AND org_id = ?")
+      .bind(briefId, orgId)
+      .first<{ title: string; status: string }>();
+    if (!brief) return { ok: false, message: "That brief was not found." };
+    if (brief.status !== "submitted") return { ok: false, message: "This brief has already been answered." };
+
+    const id = crypto.randomUUID();
+    await ctx.db.batch([
+      ...projectInsertStatements(ctx.db, { id, orgId, name: f.name, summary: f.summary, status: f.status, startedOn: f.started_on, targetOn: f.target_on }),
+      ctx.db
+        .prepare(
+          "UPDATE project_briefs SET status = 'accepted', project_id = ?, staff_note = ?, decided_by = ?, decided_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ? AND org_id = ?",
+        )
+        .bind(id, note, ctx.userId, briefId, orgId),
+    ]);
+
+    const origin = await requestOrigin();
+    for (const to of await memberEmails(ctx, orgId)) {
+      await sendAccountMail({
+        to,
+        subject: `Your project has started: ${f.name}`,
+        greeting: "Hi,",
+        lines: [
+          `We read your brief "${brief.title}" and started the project ${f.name}.`,
+          ...(note ? [note] : []),
+          "You can follow every stage, milestone and update in your portal.",
+        ],
+        button: { label: "Open the project", href: `${origin}/dashboard/projects/${id}` },
+        footer: "Questions? Reply to this email or send a request from the project page.",
+      });
+    }
+    revalidatePath("/dashboard", "layout");
+    redirect(`/dashboard/admin/${orgId}/projects/${id}`);
+  });
+}
+
+/** Declines a brief with a note the client sees, and emails the organization's members. */
+export async function declineBrief(formData: FormData): Promise<ActionState> {
+  return guarded(async () => {
+    const { ctx, orgId } = await adminFor(formData);
+    const briefId = uuid(formData, "brief_id", "Brief");
+    const note = text(formData, "staff_note", { label: "Reason for the client", max: 4000 });
+    const brief = await ctx.db
+      .prepare("SELECT title FROM project_briefs WHERE id = ? AND org_id = ? AND status = 'submitted'")
+      .bind(briefId, orgId)
+      .first<{ title: string }>();
+    if (!brief) return { ok: false, message: "This brief has already been answered." };
+    await ctx.db
+      .prepare(
+        "UPDATE project_briefs SET status = 'declined', staff_note = ?, decided_by = ?, decided_at = strftime('%Y-%m-%dT%H:%M:%fZ', 'now') WHERE id = ? AND org_id = ? AND status = 'submitted'",
+      )
+      .bind(note, ctx.userId, briefId, orgId)
+      .run();
+
+    const origin = await requestOrigin();
+    for (const to of await memberEmails(ctx, orgId)) {
+      await sendAccountMail({
+        to,
+        subject: `About your brief: ${brief.title}`,
+        greeting: "Hi,",
+        lines: [`Thank you for your brief "${brief.title}". We are not able to take it on as it is.`, note],
+        button: { label: "View the brief", href: `${origin}/dashboard/projects/briefs/${briefId}` },
+        footer: "If something changes, send us a new brief or reply to this email.",
+      });
+    }
+    return done("Brief declined and the client was emailed.");
   });
 }
 

@@ -3,7 +3,8 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { isPortalConfigured } from "@/lib/portal/env";
 import { requireOrgAdmin } from "@/lib/portal/access";
-import { getProject } from "@/lib/portal/queries";
+import { getProject, getProjectBrief } from "@/lib/portal/queries";
+import { BriefView } from "../../../../../_components/brief-view";
 import { isUuid } from "@/lib/portal/validate";
 import { STAGES, formatDate, formatShortDate, projectStatusLabel, stageLabel, stageStatusLabel } from "@/lib/portal/format";
 import type { ProjectStatus, StageStatus } from "@/lib/portal/types";
@@ -30,7 +31,7 @@ export default async function AdminProjectPage({ params }: { params: Promise<{ o
   if (!(await isPortalConfigured())) return null;
   if (!isUuid(orgId) || !isUuid(projectId)) notFound();
   const { ctx, org } = await requireOrgAdmin(orgId);
-  const data = await getProject(ctx, org.id, projectId);
+  const [data, brief] = await Promise.all([getProject(ctx, org.id, projectId), getProjectBrief(ctx, org.id, projectId)]);
   if (!data) notFound();
   const { project, stages, milestones, updates } = data;
   const stageByKey = new Map(stages.map((s) => [s.stage, s]));
@@ -114,6 +115,17 @@ export default async function AdminProjectPage({ params }: { params: Promise<{ o
               })}
             </ul>
           </Panel>
+
+          {brief && (
+            <Panel title="Client's brief">
+              <details>
+                <summary className="cursor-pointer text-[13.5px] text-muted">As the client wrote it</summary>
+                <div className="mt-4">
+                  <BriefView brief={brief} />
+                </div>
+              </details>
+            </Panel>
+          )}
 
           <Panel title="Updates" bodyClassName={null}>
             <div className="border-b border-border p-4">

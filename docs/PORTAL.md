@@ -139,6 +139,17 @@ Admin > Files then shows **Upload a deliverable** next to **Share a link**.
 4. When the money arrives, set that invoice to **Paid**. The plan switches on and the client
    is emailed. Setting it to **Void** cancels the order.
 
+### Project briefs
+
+1. A client opens Projects > **Start a new project** and describes it in their own words
+   (goal, users, features, examples, budget, deadline). You get an email with the whole brief;
+   the client gets a receipt. At most 5 briefs per organization can wait at once.
+2. Admin > the organization > Projects lists **Client briefs**. Open one, then either
+   **Start project** (creates the project with its five stages and links the brief) or
+   **Decline brief** with a reason. Either way the client's members are emailed.
+3. The brief text is never edited. It shows on the project page for you and the client.
+   The client can withdraw a brief until you answer it.
+
 ## 8. Optional: Facebook sign-in
 
 The button is hidden until both secrets are set.

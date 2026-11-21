@@ -98,6 +98,26 @@ export type ProjectUpdate = {
 
 export type ProjectWithStages = Project & { stages: ProjectStage[] };
 
+export type BriefStatus = "submitted" | "accepted" | "declined" | "withdrawn";
+
+export type ProjectBrief = {
+  id: string;
+  org_id: string;
+  project_id: string | null;
+  title: string;
+  goal: string;
+  audience: string | null;
+  features: string | null;
+  examples: string | null;
+  budget: string | null;
+  deadline: string | null;
+  status: BriefStatus;
+  staff_note: string | null;
+  decided_at: string | null;
+  created_at: string;
+  author: PersonRef;
+};
+
 export type Automation = {
   id: string;
   org_id: string;
