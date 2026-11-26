@@ -23,10 +23,24 @@ type MenuId = NonNullable<NavItem["menu"]>;
 
 /* ---------- Mega-menu panels ---------- */
 
-type MenuLink = { href: string; label: string };
+type MenuLink = { href: string; label: string; desc?: string; img?: string };
 
-/** One column of plain links, with an optional small heading. */
-function MenuColumn({ title, titleHref, links }: { title?: string; titleHref?: string; links: MenuLink[] }) {
+const RESOURCE_IMAGES: Record<string, string> = {
+  "/how-it-works": "/images/process-path.webp",
+  "/work": "/images/page-work.webp",
+  "/guides": "/images/page-guides.webp",
+  "/integrations": "/images/page-integrations.webp",
+  "/website-checker": "/images/guide-website-audit-checklist-small-business.webp",
+  "/sample-audit": "/images/page-pricing.webp",
+  "/roi-calculator": "/images/page-roi-calculator.webp",
+  "/security": "/images/page-security.webp",
+  "/faq": "/images/page-faq.webp",
+  "/about": "/images/about-workshop.webp",
+  "/contact": "/images/contact-desk.webp",
+};
+
+/** One column of plain links, with an optional small heading. Hover or focus previews the link. */
+function MenuColumn({ title, titleHref, links, onPreview, active }: { title?: string; titleHref?: string; links: MenuLink[]; onPreview: (l: MenuLink) => void; active?: string }) {
   return (
     <div className="min-w-0">
       {title &&
@@ -42,7 +56,11 @@ function MenuColumn({ title, titleHref, links }: { title?: string; titleHref?: s
           <li key={l.href}>
             <Link
               href={l.href}
-              className="block rounded-lg px-3 py-2 text-[14.5px] font-medium text-foreground/85 transition-colors hover:bg-surface-2 hover:text-foreground"
+              onMouseEnter={() => onPreview(l)}
+              onFocus={() => onPreview(l)}
+              className={`block rounded-lg px-3 py-2 text-[14.5px] font-medium transition-colors hover:bg-surface-2 hover:text-foreground ${
+                active === l.href ? "bg-surface-2 text-foreground" : "text-foreground/85"
+              }`}
             >
               {l.label}
             </Link>
@@ -53,16 +71,19 @@ function MenuColumn({ title, titleHref, links }: { title?: string; titleHref?: s
   );
 }
 
-/** Picture card on the right of a menu. */
-function FeatureCard({ href, img, title, tag }: { href: string; img: string; title: string; tag: string }) {
+/** Picture card on the right of a menu: the hovered option, or the menu's default feature. */
+function FeatureCard({ item, tag }: { item: MenuLink; tag: string }) {
   return (
-    <Link href={href} className="group m-3 flex flex-col rounded-xl border border-border bg-surface-2/50 p-3 transition-colors hover:border-accent/40">
+    <Link href={item.href} className="group m-3 flex flex-col rounded-xl border border-border bg-surface-2/50 p-3 transition-colors hover:border-accent/40">
       <span className="block aspect-[16/10] overflow-hidden rounded-lg bg-surface-2">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={img} alt="" loading="lazy" className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
+        {item.img && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img key={item.img} src={item.img} alt="" className="h-full w-full animate-[menufade_.35s_ease] object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
+        )}
       </span>
-      <span className="mt-3 block px-1 text-[15px] font-semibold leading-snug">{title}</span>
-      <span className="mt-1 inline-flex items-center gap-1 px-1 text-[12.5px] text-muted">
+      <span className="mt-3 block px-1 text-[15px] font-semibold leading-snug">{item.label}</span>
+      {item.desc && <span className="mt-1 block px-1 text-[13px] leading-snug text-muted">{item.desc}</span>}
+      <span className="mt-2 inline-flex items-center gap-1 px-1 text-[12.5px] font-medium text-accent">
         {tag}
         <ArrowUpRight className="h-3.5 w-3.5" />
       </span>
@@ -70,7 +91,7 @@ function FeatureCard({ href, img, title, tag }: { href: string; img: string; tit
   );
 }
 
-/** Shared frame: label, link columns and footer row on the left, the picture card on the right. */
+/** Shared frame: label, link columns and footer row on the left, the preview card on the right. */
 function MenuShell({
   label,
   columns,
@@ -79,16 +100,17 @@ function MenuShell({
   cols = 3,
 }: {
   label: string;
-  columns: React.ReactNode;
+  columns: (onPreview: (l: MenuLink) => void, active?: string) => React.ReactNode;
   footer: [MenuLink, MenuLink];
-  feature: React.ReactNode;
+  feature: { item: MenuLink; tag: string };
   cols?: 2 | 3;
 }) {
+  const [preview, setPreview] = useState<MenuLink | null>(null);
   return (
-    <div className="grid grid-cols-[1fr_280px]">
+    <div className="grid grid-cols-[1fr_290px]">
       <div className="flex flex-col">
         <p className="px-6 pt-5 text-[13px] text-muted">{label}</p>
-        <div className={`grid gap-x-2 gap-y-4 px-3 pb-4 pt-3 ${cols === 3 ? "grid-cols-3" : "grid-cols-2"}`}>{columns}</div>
+        <div className={`grid gap-x-2 gap-y-4 px-3 pb-4 pt-3 ${cols === 3 ? "grid-cols-3" : "grid-cols-2"}`}>{columns(setPreview, preview?.href)}</div>
         <div className="mt-auto flex items-center justify-between border-t border-border px-6 py-3.5">
           {footer.map((f, i) => (
             <Link key={f.href} href={f.href} className={`group inline-flex items-center gap-1.5 text-[13.5px] font-semibold ${i === 1 ? "text-accent" : ""}`}>
@@ -98,12 +120,13 @@ function MenuShell({
           ))}
         </div>
       </div>
-      <div className="border-l border-border">{feature}</div>
+      <div className="border-l border-border">{preview ? <FeatureCard item={preview} tag="Open" /> : <FeatureCard item={feature.item} tag={feature.tag} />}</div>
     </div>
   );
 }
 
-const svcLinks = (id: Parameters<typeof servicesIn>[0]) => servicesIn(id).map((x) => ({ href: `/services/${x.slug}`, label: x.name }));
+const svcLinks = (id: Parameters<typeof servicesIn>[0]): MenuLink[] =>
+  servicesIn(id).map((x) => ({ href: `/services/${x.slug}`, label: x.name, desc: x.short, img: `/images/svc-${x.slug}.webp` }));
 
 function ServicesPanel() {
   const [core, ...others] = serviceCategories;
@@ -111,74 +134,76 @@ function ServicesPanel() {
   return (
     <MenuShell
       label="Explore our services"
-      columns={
+      columns={(onPreview, active) => (
         <>
-          <MenuColumn title={`${core.name} · our core`} titleHref={`/services#${core.id}`} links={svcLinks(core.id)} />
+          <MenuColumn title={`${core.name} · our core`} titleHref={`/services#${core.id}`} links={svcLinks(core.id)} onPreview={onPreview} active={active} />
           {pairs.map((group, i) => (
             <div key={i} className="space-y-4">
               {group.map((c) => (
-                <MenuColumn key={c.id} title={c.name} titleHref={`/services#${c.id}`} links={svcLinks(c.id)} />
+                <MenuColumn key={c.id} title={c.name} titleHref={`/services#${c.id}`} links={svcLinks(c.id)} onPreview={onPreview} active={active} />
               ))}
             </div>
           ))}
         </>
-      }
+      )}
       footer={[
         { href: "/services", label: "Browse all services" },
         { href: "/pricing", label: "See pricing" },
       ]}
-      feature={<FeatureCard href="/services#automation" img="/images/service-automation.webp" title="Automation & AI: the work we do most" tag="Automation" />}
+      feature={{ item: { href: "/services#automation", label: "Automation & AI", desc: core.short, img: "/images/service-automation.webp" }, tag: "Our core" }}
     />
   );
 }
 
 function SolutionsPanel() {
   const featured = caseStudies[0];
-  const links = industryDetails.map((i) => ({ href: `/industries/${i.slug}`, label: i.name }));
+  const links: MenuLink[] = industryDetails.map((i) => ({ href: `/industries/${i.slug}`, label: i.name, desc: i.headline, img: `/images/industry-${i.slug}.webp` }));
   const half = Math.ceil(links.length / 2);
   return (
     <MenuShell
       label="Explore by industry"
       cols={2}
-      columns={
+      columns={(onPreview, active) => (
         <>
-          <MenuColumn links={links.slice(0, half)} />
-          <MenuColumn links={links.slice(half)} />
+          <MenuColumn links={links.slice(0, half)} onPreview={onPreview} active={active} />
+          <MenuColumn links={links.slice(half)} onPreview={onPreview} active={active} />
         </>
-      }
+      )}
       footer={[
         { href: "/industries", label: "Browse all industries" },
         { href: "/contact", label: "Book a free audit" },
       ]}
-      feature={<FeatureCard href={`/work/${featured.slug}`} img={`/images/work-${featured.slug}.webp`} title={featured.name} tag="Case study" />}
+      feature={{ item: { href: `/work/${featured.slug}`, label: featured.name, desc: featured.summary.split(".")[0] + ".", img: `/images/work-${featured.slug}.webp` }, tag: "Case study" }}
     />
   );
 }
 
 function ResourcesPanel() {
-  const half = Math.ceil(resourceLinks.length / 2);
+  const links: MenuLink[] = resourceLinks.map((l) => ({ href: l.href, label: l.label, desc: l.desc, img: RESOURCE_IMAGES[l.href] }));
+  const half = Math.ceil(links.length / 2);
   return (
     <MenuShell
       label="Learn and plan"
       cols={2}
-      columns={
+      columns={(onPreview, active) => (
         <>
-          <MenuColumn links={resourceLinks.slice(0, half).map((l) => ({ href: l.href, label: l.label }))} />
-          <MenuColumn links={resourceLinks.slice(half).map((l) => ({ href: l.href, label: l.label }))} />
+          <MenuColumn links={links.slice(0, half)} onPreview={onPreview} active={active} />
+          <MenuColumn links={links.slice(half)} onPreview={onPreview} active={active} />
         </>
-      }
+      )}
       footer={[
         { href: signIn.href, label: "Client portal sign in" },
         { href: "/guides", label: "All guides" },
       ]}
-      feature={
-        <FeatureCard
-          href="/guides/ai-automation-for-small-business"
-          img="/images/guide-ai-automation-for-small-business.webp"
-          title="AI automation for small business: where to start"
-          tag="Guide"
-        />
-      }
+      feature={{
+        item: {
+          href: "/guides/ai-automation-for-small-business",
+          label: "AI automation for small business",
+          desc: "Where to start, what it costs and what to automate first.",
+          img: "/images/guide-ai-automation-for-small-business.webp",
+        },
+        tag: "Guide",
+      }}
     />
   );
 }

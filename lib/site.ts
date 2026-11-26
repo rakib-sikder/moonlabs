@@ -8,8 +8,19 @@ export const site = {
   tagline: "Automation agency",
   description:
     "Moonlab builds AI agents, workflows and integrations that take repetitive work off your team. We also build the websites, apps, data and marketing around them.",
-  /** Public contact address. NEXT_PUBLIC_CONTACT_EMAIL overrides it. */
-  email: process.env.NEXT_PUBLIC_CONTACT_EMAIL || "sikdersmail@gmail.com",
+  /** General public address. Every @moonlab.space address is routed to the team inbox. */
+  email: "hello@moonlab.space",
+  /** Addresses by department, shown on the contact page and the policy pages. */
+  emails: {
+    hello: "hello@moonlab.space",
+    sales: "sales@moonlab.space",
+    support: "support@moonlab.space",
+    billing: "billing@moonlab.space",
+    careers: "careers@moonlab.space",
+    partners: "partners@moonlab.space",
+    privacy: "privacy@moonlab.space",
+    security: "security@moonlab.space",
+  },
   /** Phone and WhatsApp: `display` is what people read, `e164` is digits only for tel: and wa.me links. */
   phone: { display: "+880 1785-952127", e164: "8801785952127" },
   /** Where visitors book the free audit themselves. NEXT_PUBLIC_CAL_LINK overrides it. */

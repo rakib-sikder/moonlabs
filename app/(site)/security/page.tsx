@@ -3,6 +3,7 @@ import { pageMeta } from "@/lib/seo";
 import { PageHeader } from "@/components/PageHeader";
 import { CtaBanner } from "@/components/CtaBanner";
 import { Reveal, SectionHeading } from "@/components/ui/Section";
+import { site } from "@/lib/site";
 
 export const metadata: Metadata = pageMeta(
   "/security",
@@ -70,6 +71,15 @@ export default function SecurityPage() {
             <p>Need an NDA or a data processing agreement before an audit? We&apos;re happy to sign one.</p>
           </div>
         </div>
+      </section>
+      <section className="mx-auto max-w-6xl px-6 pb-16">
+        <p className="rounded-2xl border border-border bg-surface/80 px-6 py-5 text-sm text-muted">
+          Found a security issue in something we built or run? Email{" "}
+          <a href={`mailto:${site.emails.security}`} className="text-accent hover:underline">
+            {site.emails.security}
+          </a>
+          . We reply within one business day.
+        </p>
       </section>
       <CtaBanner />
     </>
