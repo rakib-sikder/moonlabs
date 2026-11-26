@@ -4,7 +4,7 @@ import { SectionHead } from "./SectionHead";
 /** Home: the five stages as one compact row — the detail lives on /how-it-works. */
 export function ProcessStrip() {
   return (
-    <section className="mx-auto max-w-6xl px-6 py-20">
+    <section className="mx-auto max-w-6xl px-6 py-24 lg:py-32">
       <SectionHead
         eyebrow="How we work"
         title="Fixed price up front. Most builds take a few weeks."

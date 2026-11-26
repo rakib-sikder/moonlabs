@@ -29,11 +29,11 @@ export function Reviews() {
   const avg = reviews.reduce((n, r) => n + r.rating, 0) / reviews.length;
 
   return (
-    <section className="mx-auto max-w-6xl px-6 py-20">
+    <section className="mx-auto max-w-6xl px-6 py-24 lg:py-32">
       <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="mb-3 font-mono text-xs uppercase tracking-widest text-moon">What clients say</p>
-          <h2 className="text-balance text-2xl font-semibold tracking-tight sm:text-[2rem]">Reviews from businesses we&apos;ve worked with.</h2>
+          <h2 className="font-display text-balance text-[2.1rem] font-bold leading-[1.04] tracking-[-0.035em] sm:text-5xl lg:text-[3.4rem]">Reviews from businesses we&apos;ve worked with.</h2>
         </div>
         <p className="flex items-center gap-2 text-sm text-muted">
           <Star className="h-4 w-4 fill-accent text-accent" />

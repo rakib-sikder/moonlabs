@@ -8,7 +8,7 @@ import { SectionHead } from "./SectionHead";
 
 export function Solutions() {
   return (
-    <section className="mx-auto max-w-6xl px-6 py-20">
+    <section className="mx-auto max-w-6xl px-6 py-24 lg:py-32">
       <SectionHead
         eyebrow="Solutions"
         title="Common automations by industry."
@@ -38,10 +38,10 @@ export function Solutions() {
 export function HomeFaq() {
   const items = faqs.flatMap((g) => g.items).slice(0, 7);
   return (
-    <section className="mx-auto grid max-w-6xl gap-10 px-6 py-20 lg:grid-cols-[1fr_1.6fr]">
+    <section className="mx-auto grid max-w-6xl gap-10 px-6 py-24 lg:py-32 lg:grid-cols-[1fr_1.6fr]">
       <div>
         <p className="mb-3 font-mono text-xs uppercase tracking-widest text-moon">FAQ</p>
-        <h2 className="text-2xl font-semibold tracking-tight sm:text-[2rem] sm:leading-tight">Common questions before a project.</h2>
+        <h2 className="font-display text-balance text-[2.1rem] font-bold leading-[1.04] tracking-[-0.035em] sm:text-5xl lg:text-[3.4rem]">Common questions before a project.</h2>
         <Link href="/faq" className="mt-5 inline-flex items-center gap-1 text-sm text-accent hover:underline">
           All questions <ArrowRight className="h-4 w-4" />
         </Link>

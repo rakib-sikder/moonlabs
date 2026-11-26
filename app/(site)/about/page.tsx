@@ -3,6 +3,7 @@ import { pageMeta } from "@/lib/seo";
 import Link from "next/link";
 import { PageHeader } from "@/components/PageHeader";
 import { CtaBanner } from "@/components/CtaBanner";
+import { FilmBlock } from "@/components/home/FilmBlock";
 import { Chip, Reveal, SectionHeading } from "@/components/ui/Section";
 import Image from "next/image";
 import { caseStudies } from "@/lib/content/company";
@@ -99,6 +100,8 @@ export default function AboutPage() {
           )}
         </Reveal>
       </section>
+
+      <FilmBlock />
 
       <section className="mx-auto max-w-6xl px-6 pb-24">
         <SectionHeading eyebrow="What we believe" title="How we work with clients." />

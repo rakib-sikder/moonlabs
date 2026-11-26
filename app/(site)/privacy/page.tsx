@@ -9,7 +9,7 @@ export const metadata: Metadata = pageMeta(
   "Moonlab privacy policy: what we collect through this website and the client portal, why we collect it, who processes it and how long we keep it.",
 );
 
-const contact = site.email ? `email us at ${site.email}` : "use the contact form on this site";
+const contact = `email us at ${site.emails.privacy}`;
 
 export default function PrivacyPage() {
   return (

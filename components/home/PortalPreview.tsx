@@ -22,7 +22,7 @@ const statusColor: Record<string, string> = { Healthy: "#4fd18b", Warning: "#ffc
 /** Home: what clients get after they sign up — the client portal. */
 export function PortalPreview() {
   return (
-    <section className="mx-auto max-w-6xl px-6 py-20">
+    <section className="mx-auto max-w-6xl px-6 py-24 lg:py-32">
       <SectionHead
         eyebrow="Client portal"
         title="Check on your projects any time."

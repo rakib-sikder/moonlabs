@@ -242,6 +242,8 @@ export const faqs: { group: string; items: { q: string; a: string }[] }[] = [
       { q: "How much does an automation cost?", a: "A single standard automation starts from $349. Larger workflows with more tools or AI steps usually cost $900 to $3,500. You get a fixed price before we start." },
       { q: "What counts as one automation?", a: "One trigger, up to 3 connected tools and up to 10 steps. A bigger workflow counts as two, or we quote it as a project. Unused automations in a monthly plan do not roll over." },
       { q: "Are websites, apps and chatbots part of the plans?", a: "No. Plans cover automations. Websites, apps, chatbots and CRM builds are quoted as separate projects with a fixed price, paid in milestones." },
+      { q: "Do you bill by the hour?", a: "Projects and plans are fixed price. For open-ended work or small changes outside a plan, hourly work is $35 an hour, billed weekly in one-hour blocks with a timesheet." },
+      { q: "Can we hire a dedicated developer?", a: "Yes. A part-time developer (80 hours a month) is $2,400 a month and a full-time developer (160 hours a month) is $4,200 a month. For a team with a designer and project manager we send a custom quote." },
       { q: "What is not included in the price?", a: "Your own tool subscriptions (for example Zapier, Make, n8n or GoHighLevel), hosting, SMS and AI usage. You pay those providers directly, at their price, and we tell you the expected cost up front." },
       { q: "How long does it take?", a: "Simple workflows go live in 1-2 weeks. Larger projects with several systems take 3-6 weeks." },
       { q: "Can we cancel a monthly plan?", a: "Yes, any time with 30 days' notice. Everything we built stays in your accounts." },

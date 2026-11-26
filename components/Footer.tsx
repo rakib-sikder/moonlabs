@@ -13,11 +13,9 @@ export function Footer() {
             <address className="mt-3 text-[13px] not-italic text-muted">{fullAddress}</address>
           </div>
           <div className="flex shrink-0 flex-wrap items-center gap-3">
-            {site.email && (
-              <a href={`mailto:${site.email}`} className="text-sm text-muted transition-colors hover:text-foreground">
-                {site.email}
-              </a>
-            )}
+            <a href={`mailto:${site.email}`} className="text-sm text-muted transition-colors hover:text-foreground">
+              {site.email}
+            </a>
             <a
               href={`https://wa.me/${site.phone.e164}`}
               target="_blank"

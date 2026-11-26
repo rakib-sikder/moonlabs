@@ -7,7 +7,7 @@ import { SectionHead } from "./SectionHead";
 /** Home: case studies as rows — problem, what we built, stack, results. */
 export function CaseStudies() {
   return (
-    <section className="mx-auto max-w-6xl px-6 py-20">
+    <section className="mx-auto max-w-6xl px-6 py-24 lg:py-32">
       <SectionHead
         eyebrow="Case studies"
         title="Systems we built and still run."

@@ -15,6 +15,53 @@ export const metadata: Metadata = pageMeta(
   "Simple pricing for AI automation and web projects: a free audit, then a fixed-price project or a monthly plan. One automation from $349, no hourly billing.", "page-pricing",
 );
 
+const engagements: { kicker: string; name: string; body: string; rows: [string, string][]; cta: string; href: string }[] = [
+  {
+    kicker: "Monthly retainer",
+    name: "Automation plans",
+    body: "New automations and care for the ones you run, on a monthly plan. See the plans above.",
+    rows: [
+      ["Half Moon: care for up to 5", "$199 / month"],
+      ["Full Moon: 1 new automation a month", "$399 / month"],
+      ["Crescent: one automation, one-time", "from $349"],
+    ],
+    cta: "Compare plans",
+    href: "#plans",
+  },
+  {
+    kicker: "Fixed price",
+    name: "Projects",
+    body: "Websites, apps, chatbots and CRM work. A written scope and one fixed price, paid 30% to start, 40% at the halfway demo and 30% at launch, with 60 days of fixes.",
+    rows: [] as [string, string][], // filled from projectPrices below
+    cta: "Get a quote",
+    href: "/contact",
+  },
+  {
+    kicker: "Time and materials",
+    name: "Hourly",
+    body: "For open-ended work, small changes outside a plan, or extra hands on your existing project. Billed weekly, in one-hour blocks, with a timesheet.",
+    rows: [
+      ["Developer or designer", "$35 / hour"],
+      ["Minimum", "1 hour"],
+      ["Billing", "Weekly, with a timesheet"],
+    ],
+    cta: "Book hours",
+    href: "/contact",
+  },
+  {
+    kicker: "Dedicated",
+    name: "Developer or team",
+    body: "Developers who work only on your product, in your tools, with a weekly report. Monthly, with 30 days' notice.",
+    rows: [
+      ["Part-time developer (80 h / month)", "$2,400 / month"],
+      ["Full-time developer (160 h / month)", "$4,200 / month"],
+      ["Team: developers, designer, project manager", "Custom quote"],
+    ],
+    cta: "Talk to us",
+    href: "/contact",
+  },
+];
+
 const projectPrices: [string, string][] = [
   ["Website", "$900"],
   ["Online shop", "$1,500"],
@@ -43,6 +90,8 @@ function MoonPhase({ phase }: { phase: number }) {
   );
 }
 
+engagements[1].rows = projectPrices.map(([what, from]) => [what, `from ${from}`]);
+
 export default function PricingPage() {
   const pricingFaq = faqs.find((g) => g.group === "Pricing & timeline")!.items;
 
@@ -69,7 +118,7 @@ export default function PricingPage() {
         </Reveal>
       </section>
 
-      <section className="mx-auto max-w-6xl px-6 pb-24 grid gap-8 lg:grid-cols-3 lg:gap-5">
+      <section id="plans" className="mx-auto max-w-6xl scroll-mt-24 px-6 pb-24 grid gap-8 lg:grid-cols-3 lg:gap-5">
         {plans.map((p, i) => (
           <Reveal key={p.name} delay={i * 0.08}>
             <div
@@ -164,35 +213,36 @@ export default function PricingPage() {
       </section>
 
       <section className="mx-auto max-w-6xl px-6 pb-24">
-        <Reveal>
-          <div className="flex flex-col gap-6 rounded-2xl border border-border bg-surface/80 p-8 backdrop-blur-sm md:flex-row md:items-center md:justify-between">
-            <div className="max-w-2xl">
-              <p className="text-xs uppercase tracking-widest text-moon mb-2">Websites, apps, design &amp; marketing</p>
-              <p className="text-lg font-medium">Quoted per project, as a fixed price.</p>
-              <p className="mt-2 text-sm text-muted leading-relaxed">
-                These are not part of the plans above. You describe the project, get a written scope and a fixed quote, and pay in
-                three steps: 30% to start, 40% at the halfway demo and 30% at launch. Every launch includes 60 days of fixes.
-              </p>
-              <ul className="mt-4 grid grid-cols-1 gap-x-6 gap-y-1.5 text-sm sm:grid-cols-2 lg:grid-cols-3">
-                {projectPrices.map(([what, from]) => (
-                  <li key={what} className="flex justify-between gap-3 border-b border-border/60 py-1">
-                    <span className="text-muted">{what}</span>
-                    <span className="whitespace-nowrap font-medium">from {from}</span>
-                  </li>
-                ))}
-              </ul>
-              <p className="mt-3 text-xs text-muted">
-                Tool subscriptions, hosting, SMS and AI usage are paid by you directly, at the provider&apos;s price.
-              </p>
-            </div>
-            <Link
-              href="/contact"
-              className="shrink-0 rounded-full border border-border px-5 py-2.5 text-sm font-medium transition-colors hover:border-muted"
-            >
-              Get a quote →
-            </Link>
-          </div>
-        </Reveal>
+        <SectionHeading
+          eyebrow="Engagement models"
+          title="Four ways to work with us."
+          intro="Pick the one that fits the work. Plans for automations, fixed prices for projects, hours for open-ended work, or a developer who works only on your product."
+        />
+        <div className="grid gap-5 md:grid-cols-2">
+          {engagements.map((e, i) => (
+            <Reveal key={e.name} delay={(i % 2) * 0.08}>
+              <div className="flex h-full flex-col rounded-3xl border border-border bg-surface/80 p-8 backdrop-blur-sm">
+                <p className="font-mono text-[11px] uppercase tracking-[0.18em] text-moon">{e.kicker}</p>
+                <h3 className="mt-3 font-display text-2xl font-bold tracking-[-0.02em]">{e.name}</h3>
+                <p className="mt-2 text-[15px] leading-relaxed text-muted">{e.body}</p>
+                <ul className="mt-5 flex-1 space-y-2 text-sm">
+                  {e.rows.map(([what, price]) => (
+                    <li key={what} className="flex justify-between gap-4 border-b border-border/60 pb-2">
+                      <span className="text-muted">{what}</span>
+                      <span className="whitespace-nowrap font-medium">{price}</span>
+                    </li>
+                  ))}
+                </ul>
+                <Link href={e.href} className="mt-6 self-start rounded-full border border-border px-5 py-2.5 text-sm font-medium transition-colors hover:border-muted">
+                  {e.cta} →
+                </Link>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+        <p className="mt-6 text-xs text-muted">
+          Tool subscriptions, hosting, SMS and AI usage are paid by you directly, at the provider&apos;s price. Prices in USD.
+        </p>
       </section>
 
       <section className="mx-auto max-w-6xl px-6 pb-24">

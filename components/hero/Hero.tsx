@@ -29,8 +29,17 @@ export function Hero() {
         }}
       />
 
+      {/* Main Street at dusk: a faint line drawing behind the lower half of the hero. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-[clamp(190px,40vw,600px)]"
+        style={{ maskImage: "linear-gradient(to bottom, transparent 0%, black 40%)", WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 40%)" }}
+      >
+        <div className="absolute inset-0 bg-[url(/images/main-street-light.webp)] bg-[length:max(100%,900px)_auto] bg-bottom bg-no-repeat opacity-35 dark:bg-[url(/images/main-street-dark.webp)] dark:opacity-25" />
+      </div>
+
       {/* Phones: copy, then the pile underneath. Tablet and up: side by side. */}
-      <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-12 px-6 pb-16 pt-28 md:min-h-[100svh] md:grid-cols-[1.08fr_1fr] md:gap-6 md:pb-12 md:pt-24 lg:gap-12">
+      <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-12 px-6 pb-48 pt-28 md:min-h-[100svh] md:grid-cols-[1.08fr_1fr] md:gap-6 md:pb-56 md:pt-24 lg:gap-12">
         <div className="flex flex-col items-center text-center md:items-start md:text-left">
         <motion.p
           initial={{ opacity: 0, y: 10 }}
@@ -45,7 +54,7 @@ export function Hero() {
           AI AUTOMATION AGENCY · NOW BOOKING
         </motion.p>
 
-        <h1 className="text-[2rem] leading-[1.06] sm:text-5xl md:text-[2.5rem] lg:text-5xl xl:text-[3.4rem] font-semibold tracking-tight">
+        <h1 className="font-display text-[2.5rem] font-bold leading-[1.02] tracking-[-0.035em] sm:text-6xl md:text-[3.2rem] lg:text-6xl xl:text-[4.6rem]">
           {lines.map((line, li) => (
             <span key={li} className="sm:block md:inline">
               {line.words.map((w) => {
@@ -103,7 +112,7 @@ export function Hero() {
           <Magnetic>
             <Link
               href="/services"
-              className="inline-flex whitespace-nowrap rounded-full border border-border bg-surface/50 px-6 py-3 md:max-lg:px-5 text-sm font-medium backdrop-blur transition-colors hover:border-muted"
+              className="inline-flex whitespace-nowrap rounded-full border border-border bg-surface px-6 py-3 md:max-lg:px-5 text-sm font-medium backdrop-blur transition-colors hover:border-muted"
             >
               Explore services
             </Link>

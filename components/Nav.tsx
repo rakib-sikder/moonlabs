@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
-import { ArrowRight, ChevronDown, LayoutDashboard } from "lucide-react";
+import { ArrowUpRight, ChevronDown } from "lucide-react";
 import {
   mainNav,
   primaryCta,
@@ -16,7 +16,6 @@ import {
 } from "@/lib/site";
 import { industryDetails } from "@/lib/content/industries";
 import { caseStudies } from "@/lib/content/company";
-import { categoryIcons, fallbackIcon, industryIcons, resourceIcons, serviceIcons } from "@/lib/icons";
 import { Logo } from "./Logo";
 import { AccountMenu, useNavUser } from "./AccountMenu";
 
@@ -24,146 +23,195 @@ type MenuId = NonNullable<NavItem["menu"]>;
 
 /* ---------- Mega-menu panels ---------- */
 
+type MenuLink = { href: string; label: string; desc?: string; img?: string };
+
+const RESOURCE_IMAGES: Record<string, string> = {
+  "/how-it-works": "/images/process-path.webp",
+  "/work": "/images/page-work.webp",
+  "/guides": "/images/page-guides.webp",
+  "/integrations": "/images/page-integrations.webp",
+  "/website-checker": "/images/guide-website-audit-checklist-small-business.webp",
+  "/sample-audit": "/images/page-pricing.webp",
+  "/roi-calculator": "/images/page-roi-calculator.webp",
+  "/security": "/images/page-security.webp",
+  "/faq": "/images/page-faq.webp",
+  "/about": "/images/about-workshop.webp",
+  "/contact": "/images/contact-desk.webp",
+};
+
+/** One column of plain links, with an optional small heading. Hover or focus previews the link. */
+function MenuColumn({ title, titleHref, links, onPreview, active }: { title?: string; titleHref?: string; links: MenuLink[]; onPreview: (l: MenuLink) => void; active?: string }) {
+  return (
+    <div className="min-w-0">
+      {title &&
+        (titleHref ? (
+          <Link href={titleHref} className="mb-2 block px-3 text-[12.5px] text-muted transition-colors hover:text-foreground">
+            {title}
+          </Link>
+        ) : (
+          <p className="mb-2 px-3 text-[12.5px] text-muted">{title}</p>
+        ))}
+      <ul className="space-y-0.5">
+        {links.map((l) => (
+          <li key={l.href}>
+            <Link
+              href={l.href}
+              onMouseEnter={() => onPreview(l)}
+              onFocus={() => onPreview(l)}
+              className={`block rounded-lg px-3 py-2 text-[14.5px] font-medium transition-colors hover:bg-surface-2 hover:text-foreground ${
+                active === l.href ? "bg-surface-2 text-foreground" : "text-foreground/85"
+              }`}
+            >
+              {l.label}
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/** Picture card on the right of a menu: the hovered option, or the menu's default feature. */
+function FeatureCard({ item, tag }: { item: MenuLink; tag: string }) {
+  return (
+    <Link href={item.href} className="group m-3 flex flex-col rounded-xl border border-border bg-surface-2/50 p-3 transition-colors hover:border-accent/40">
+      <span className="block aspect-[16/10] overflow-hidden rounded-lg bg-surface-2">
+        {item.img && (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img key={item.img} src={item.img} alt="" className="h-full w-full animate-[menufade_.35s_ease] object-cover transition-transform duration-500 group-hover:scale-[1.04]" />
+        )}
+      </span>
+      <span className="mt-3 block px-1 text-[15px] font-semibold leading-snug">{item.label}</span>
+      {item.desc && <span className="mt-1 block px-1 text-[13px] leading-snug text-muted">{item.desc}</span>}
+      <span className="mt-2 inline-flex items-center gap-1 px-1 text-[12.5px] font-medium text-accent">
+        {tag}
+        <ArrowUpRight className="h-3.5 w-3.5" />
+      </span>
+    </Link>
+  );
+}
+
+/** Shared frame: label, link columns and footer row on the left, the preview card on the right. */
+function MenuShell({
+  label,
+  columns,
+  footer,
+  feature,
+  cols = 3,
+}: {
+  label: string;
+  columns: (onPreview: (l: MenuLink) => void, active?: string) => React.ReactNode;
+  footer: [MenuLink, MenuLink];
+  feature: { item: MenuLink; tag: string };
+  cols?: 2 | 3;
+}) {
+  const [preview, setPreview] = useState<MenuLink | null>(null);
+  return (
+    <div className="grid grid-cols-[1fr_290px]">
+      <div className="flex flex-col">
+        <p className="px-6 pt-5 text-[13px] text-muted">{label}</p>
+        <div className={`grid gap-x-2 gap-y-4 px-3 pb-4 pt-3 ${cols === 3 ? "grid-cols-3" : "grid-cols-2"}`}>{columns(setPreview, preview?.href)}</div>
+        <div className="mt-auto flex items-center justify-between border-t border-border px-6 py-3.5">
+          {footer.map((f, i) => (
+            <Link key={f.href} href={f.href} className={`group inline-flex items-center gap-1.5 text-[13.5px] font-semibold ${i === 1 ? "text-accent" : ""}`}>
+              {f.label}
+              <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+            </Link>
+          ))}
+        </div>
+      </div>
+      <div className="border-l border-border">{preview ? <FeatureCard item={preview} tag="Open" /> : <FeatureCard item={feature.item} tag={feature.tag} />}</div>
+    </div>
+  );
+}
+
+const svcLinks = (id: Parameters<typeof servicesIn>[0]): MenuLink[] =>
+  servicesIn(id).map((x) => ({ href: `/services/${x.slug}`, label: x.name, desc: x.short, img: `/images/svc-${x.slug}.webp` }));
+
 function ServicesPanel() {
   const [core, ...others] = serviceCategories;
+  const pairs = [others.slice(0, 2), others.slice(2)];
   return (
-    <div className="grid grid-cols-[1.35fr_2fr]">
-      <div className="border-r border-border p-5">
-        <Link href={`/services#${core.id}`} className="mb-3 flex items-center justify-between text-xs uppercase tracking-widest text-moon hover:text-foreground">
-          Automation &amp; AI · core
-          <ArrowRight className="h-3.5 w-3.5" />
-        </Link>
-        <ul className="grid grid-cols-1 gap-0.5">
-          {servicesIn(core.id).map((s) => {
-            const Icon = serviceIcons[s.slug];
-            return (
-              <li key={s.slug}>
-                <Link href={`/services/${s.slug}`} className="group flex gap-3 rounded-lg px-2 py-1.5 transition-colors hover:bg-accent-soft">
-                  <Icon className="mt-0.5 h-4 w-4 shrink-0 text-muted group-hover:text-accent" strokeWidth={1.6} />
-                  <span className="min-w-0">
-                    <span className="block text-sm font-medium leading-5 transition-colors group-hover:text-accent">{s.name}
-                    <ArrowRight aria-hidden className="ml-1 inline h-3.5 w-3.5 -translate-x-1 opacity-0 transition group-hover:translate-x-0 group-hover:opacity-100" />
-                  </span>
-                    <span className="block text-xs leading-snug text-muted">{s.short}</span>
-                  </span>
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
-      </div>
-      <div className="grid grid-cols-2 gap-x-4 gap-y-5 p-5">
-        {others.map((c) => {
-          const CatIcon = categoryIcons[c.id];
-          return (
-            <div key={c.id}>
-              <Link href={`/services#${c.id}`} className="mb-2 flex items-center gap-2 text-xs uppercase tracking-widest text-moon hover:text-foreground">
-                <CatIcon className="h-3.5 w-3.5" strokeWidth={1.6} />
-                {c.name}
-              </Link>
-              <ul className="space-y-0.5">
-                {servicesIn(c.id).map((s) => {
-                  const Icon = serviceIcons[s.slug] ?? fallbackIcon;
-                  return (
-                    <li key={s.slug}>
-                      <Link href={`/services/${s.slug}`} className="group flex gap-3 rounded-lg px-2 py-1.5 transition-colors hover:bg-accent-soft">
-                        <Icon className="mt-0.5 h-4 w-4 shrink-0 text-muted group-hover:text-accent" strokeWidth={1.6} />
-                        <span className="min-w-0">
-                          <span className="block text-sm font-medium leading-5 transition-colors group-hover:text-accent">{s.name}
-                    <ArrowRight aria-hidden className="ml-1 inline h-3.5 w-3.5 -translate-x-1 opacity-0 transition group-hover:translate-x-0 group-hover:opacity-100" />
-                  </span>
-                          <span className="block text-xs leading-snug text-muted">{s.short}</span>
-                        </span>
-                      </Link>
-                    </li>
-                  );
-                })}
-              </ul>
+    <MenuShell
+      label="Explore our services"
+      columns={(onPreview, active) => (
+        <>
+          <MenuColumn title={`${core.name} · our core`} titleHref={`/services#${core.id}`} links={svcLinks(core.id)} onPreview={onPreview} active={active} />
+          {pairs.map((group, i) => (
+            <div key={i} className="space-y-4">
+              {group.map((c) => (
+                <MenuColumn key={c.id} title={c.name} titleHref={`/services#${c.id}`} links={svcLinks(c.id)} onPreview={onPreview} active={active} />
+              ))}
             </div>
-          );
-        })}
-      </div>
-    </div>
+          ))}
+        </>
+      )}
+      footer={[
+        { href: "/services", label: "Browse all services" },
+        { href: "/pricing", label: "See pricing" },
+      ]}
+      feature={{ item: { href: "/services#automation", label: "Automation & AI", desc: core.short, img: "/images/service-automation.webp" }, tag: "Our core" }}
+    />
   );
 }
 
 function SolutionsPanel() {
   const featured = caseStudies[0];
+  const links: MenuLink[] = industryDetails.map((i) => ({ href: `/industries/${i.slug}`, label: i.name, desc: i.headline, img: `/images/industry-${i.slug}.webp` }));
+  const half = Math.ceil(links.length / 2);
   return (
-    <div className="grid grid-cols-[2fr_1fr]">
-      <ul className="grid grid-cols-2 gap-0.5 p-5">
-        {industryDetails.map((ind) => {
-          const Icon = industryIcons[ind.slug];
-          return (
-            <li key={ind.slug}>
-              <Link href={`/industries/${ind.slug}`} className="group flex gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-accent-soft">
-                <Icon className="mt-0.5 h-4 w-4 shrink-0 text-muted group-hover:text-accent" strokeWidth={1.6} />
-                <span className="min-w-0">
-                  <span className="block text-sm font-medium leading-5 transition-colors group-hover:text-accent">{ind.name}
-                    <ArrowRight aria-hidden className="ml-1 inline h-3.5 w-3.5 -translate-x-1 opacity-0 transition group-hover:translate-x-0 group-hover:opacity-100" />
-                  </span>
-                  <span className="block text-xs leading-snug text-muted">{ind.headline}</span>
-                </span>
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-      <Link href={`/work/${featured.slug}`} className="group m-3 flex flex-col justify-between rounded-xl border border-border bg-surface-2/60 p-5 transition-colors hover:border-accent/40">
-        <div>
-          <p className="text-xs uppercase tracking-widest text-moon">Case study</p>
-          <p className="mt-2 font-medium">{featured.name}</p>
-          <p className="mt-1 text-xs leading-relaxed text-muted">{featured.summary}</p>
-        </div>
-        <span className="mt-4 inline-flex items-center gap-1 text-xs text-accent">
-          Read it <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-        </span>
-      </Link>
-    </div>
+    <MenuShell
+      label="Explore by industry"
+      cols={2}
+      columns={(onPreview, active) => (
+        <>
+          <MenuColumn links={links.slice(0, half)} onPreview={onPreview} active={active} />
+          <MenuColumn links={links.slice(half)} onPreview={onPreview} active={active} />
+        </>
+      )}
+      footer={[
+        { href: "/industries", label: "Browse all industries" },
+        { href: "/contact", label: "Book a free audit" },
+      ]}
+      feature={{ item: { href: `/work/${featured.slug}`, label: featured.name, desc: featured.summary.split(".")[0] + ".", img: `/images/work-${featured.slug}.webp` }, tag: "Case study" }}
+    />
   );
 }
 
 function ResourcesPanel() {
+  const links: MenuLink[] = resourceLinks.map((l) => ({ href: l.href, label: l.label, desc: l.desc, img: RESOURCE_IMAGES[l.href] }));
+  const half = Math.ceil(links.length / 2);
   return (
-    <div className="grid grid-cols-[2fr_1fr]">
-      <ul className="grid grid-cols-2 gap-0.5 p-5">
-        {resourceLinks.map((l) => {
-          const Icon = resourceIcons[l.href] ?? fallbackIcon;
-          return (
-            <li key={l.href}>
-              <Link href={l.href} className="group flex gap-3 rounded-lg px-2 py-2 transition-colors hover:bg-accent-soft">
-                <Icon className="mt-0.5 h-4 w-4 shrink-0 text-muted group-hover:text-accent" strokeWidth={1.6} />
-                <span className="min-w-0">
-                  <span className="block text-sm font-medium leading-5 transition-colors group-hover:text-accent">{l.label}
-                    <ArrowRight aria-hidden className="ml-1 inline h-3.5 w-3.5 -translate-x-1 opacity-0 transition group-hover:translate-x-0 group-hover:opacity-100" />
-                  </span>
-                  <span className="block text-xs leading-snug text-muted">{l.desc}</span>
-                </span>
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
-      <Link href={signIn.href} className="group m-3 flex flex-col justify-between rounded-xl border border-border bg-surface-2/60 p-5 transition-colors hover:border-accent/40">
-        <div>
-          <LayoutDashboard className="h-5 w-5 text-accent" strokeWidth={1.6} />
-          <p className="mt-3 font-medium">Client portal</p>
-          <p className="mt-1 text-xs leading-relaxed text-muted">
-            Clients sign in to follow their projects, automation runs, requests and invoices.
-          </p>
-        </div>
-        <span className="mt-4 inline-flex items-center gap-1 text-xs text-accent">
-          Sign in <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-        </span>
-      </Link>
-    </div>
+    <MenuShell
+      label="Learn and plan"
+      cols={2}
+      columns={(onPreview, active) => (
+        <>
+          <MenuColumn links={links.slice(0, half)} onPreview={onPreview} active={active} />
+          <MenuColumn links={links.slice(half)} onPreview={onPreview} active={active} />
+        </>
+      )}
+      footer={[
+        { href: signIn.href, label: "Client portal sign in" },
+        { href: "/guides", label: "All guides" },
+      ]}
+      feature={{
+        item: {
+          href: "/guides/ai-automation-for-small-business",
+          label: "AI automation for small business",
+          desc: "Where to start, what it costs and what to automate first.",
+          img: "/images/guide-ai-automation-for-small-business.webp",
+        },
+        tag: "Guide",
+      }}
+    />
   );
 }
 
 const panels: Record<MenuId, { width: string; render: () => React.ReactNode }> = {
   services: { width: "max-w-[1040px]", render: () => <ServicesPanel /> },
-  solutions: { width: "max-w-[860px]", render: () => <SolutionsPanel /> },
-  resources: { width: "max-w-[760px]", render: () => <ResourcesPanel /> },
+  solutions: { width: "max-w-[720px]", render: () => <SolutionsPanel /> },
+  resources: { width: "max-w-[700px]", render: () => <ResourcesPanel /> },
 };
 
 /* ---------- Mobile menu sections ---------- */
@@ -312,12 +360,6 @@ export function Nav() {
                 className={`mx-auto ${panels[activeMenu].width} overflow-hidden rounded-2xl border border-border bg-surface shadow-[0_24px_60px_-20px_rgba(0,0,0,0.45)]`}
               >
                 {panels[activeMenu].render()}
-                <div className="flex items-center justify-between border-t border-border bg-surface-2/50 px-5 py-3 text-xs text-muted">
-                  <span>Not sure where to start? A free 30-minute audit maps it out.</span>
-                  <Link href={primaryCta.href} className="inline-flex items-center gap-1 font-medium text-accent hover:underline">
-                    Book a free audit <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
-                </div>
               </div>
             </motion.div>
           )}

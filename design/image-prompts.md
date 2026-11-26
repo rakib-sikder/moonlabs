@@ -895,3 +895,32 @@ HOW IT IS MADE AND LIT (the look only, this adds no extra objects): A photoreali
 
 The only objects in the picture are the ones listed in THE SCENE, plus the small paper moon.
 ```
+
+## Hero background: Main Street line drawing (2026-11-26)
+
+Used along the bottom of the homepage hero, very faint. Generate on pure white; we turn the white
+transparent in code and make the dark-mode copy by recolouring the lines.
+
+> A wide panoramic hand-drawn ink line illustration of a small American Main Street at dusk, drawn
+> with a fine, even-weight technical pen, thin light-grey lines only, no shading, no hatching, no
+> colour, no fills, on a pure white background. Left to right: a corner bakery with an awning and a
+> tray of bread in the window, a plumber's van parked at the kerb, a hardware store, a small cafe with
+> two chairs outside, old street lamps, a few trees, two or three simple people walking, and a few
+> origami paper cranes flying low over the rooftops toward a small crescent moon. Calm, minimal,
+> elegant architectural sketch style, generous white space above the rooftops, the street drawn in
+> one-point perspective along the bottom edge. The left and right edges must match so the image can
+> repeat seamlessly side by side. No text, no signs with words, no logos, no watermark, no border.
+> Aspect ratio 21:9, as wide and high resolution as possible.
+
+## 49b. Page: Pricing (v2, 2026-11-27)
+
+The first version (three moons on stands with tags) looked odd. Same file and shape as 49.
+Plan order on the page is Crescent, Full Moon (recommended, middle), Half Moon.
+
+```
+Create a brand-new image. Aspect ratio: 4:3 landscape. High resolution.
+
+THE SCENE (this is the subject, and it is the most important part): Three paper moons hang in a row from fine, almost invisible threads above a small paper rooftop skyline of three or four little houses. From left to right: a thin crescent moon, then a large full round moon in the middle, then a half moon on the right. The full moon in the middle is the biggest, hangs slightly lower than the other two, and glows warm amber softly from behind, as the only light in the scene; its glow falls on the rooftops below. The crescent and the half moon are cut from warm off-white paper (#ece6d8) and catch a little of that amber light on their edges. A few tiny paper stars on threads in the background. Nothing stands on the ground: no stands, no poles, no tags, no labels. Important: in this image leave out the small hanging moon described in the look section; the three hanging moons replace it.
+
+HOW IT IS MADE AND LIT (the look only, this adds no extra objects): A photorealistic macro studio photograph of a handmade paper-craft miniature diorama. Every object in the scene is cut, scored and folded by hand from thick matte paper and card. The paper is deep graphite and charcoal (between #0b0c0f and #272b33), with visible paper fibre, crisp knife-cut edges, tiny glue seams and soft layered shadows between the layers. The diorama sits on a dark matte charcoal desk surface at night, against a plain near-black backdrop (#0b0c0f) that fades to darkness at the edges. There is exactly one accent colour: warm amber (#f5b24e), used only where described below, like lamplight. Lighting: a single small warm amber light source inside the scene, plus a very faint cool fill so the dark paper shapes stay readable. Gentle glow, long soft shadows, no harsh highlights. Camera: 85mm macro lens at f/4, slightly raised front view, shallow depth of field with the three moons tack sharp and the background softly blurred. Calm, tidy, quiet mood. Strictly no people, no hands, no faces, no animals. No text, letters, numbers, logos, brand marks, screens, user-interface elements or watermarks anywhere; every surface is blank paper. Not a 3D render, not a cartoon, not an illustration, not neon, not glossy plastic: it must look like real paper photographed in a studio.
+```
