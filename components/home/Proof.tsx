@@ -43,7 +43,7 @@ export function StatsRow() {
 export function Testimonials() {
   if (testimonials.length === 0) return null;
   return (
-    <section className="mx-auto max-w-6xl px-6 py-20">
+    <section className="mx-auto max-w-6xl px-6 py-24 lg:py-32">
       <p className="mb-3 font-mono text-xs uppercase tracking-widest text-moon">What clients say</p>
       <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
         {testimonials.map((t) => (

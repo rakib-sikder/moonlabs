@@ -28,12 +28,15 @@ export function MissionControl() {
   const enterScale = useTransform(scrollYProgress, [0, 1], [0.86, 1]);
 
   return (
-    <section ref={ref} className="relative mx-auto max-w-6xl px-6 py-20 grid grid-cols-[minmax(0,1fr)] gap-14 lg:grid-cols-[1fr_1.15fr] lg:items-center">
+    <section ref={ref} className="relative mx-auto max-w-6xl px-6 py-24 lg:py-32 grid grid-cols-[minmax(0,1fr)] gap-14 lg:grid-cols-[1fr_1.15fr] lg:items-center">
       <div>
-        <p className="font-mono text-xs uppercase tracking-widest text-moon mb-3">How an automation runs</p>
+        <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-surface/70 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.18em] text-moon">
+          <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+          How an automation runs
+        </p>
         <RevealText
           text="What an automation actually does."
-          className="text-2xl sm:text-[2rem] font-semibold tracking-tight leading-tight"
+          className="font-display text-balance text-[2.1rem] font-bold leading-[1.04] tracking-[-0.035em] sm:text-5xl lg:text-[3.4rem]"
         />
         <ul className="mt-10 space-y-6">
           {points.map((p, i) => (

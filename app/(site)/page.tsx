@@ -26,7 +26,9 @@ export default function Home() {
       <ServiceDirectory />
       <MissionControl />
       <StatsRow />
-      <CaseStudies />
+      <div className="theme-night">
+        <CaseStudies />
+      </div>
       <Testimonials />
       <Reviews />
       <ProcessStrip />

@@ -45,7 +45,7 @@ export function Hero() {
           AI AUTOMATION AGENCY · NOW BOOKING
         </motion.p>
 
-        <h1 className="text-[2rem] leading-[1.06] sm:text-5xl md:text-[2.5rem] lg:text-5xl xl:text-[3.4rem] font-semibold tracking-tight">
+        <h1 className="font-display text-[2.5rem] font-bold leading-[1.02] tracking-[-0.035em] sm:text-6xl md:text-[3.2rem] lg:text-6xl xl:text-[4.6rem]">
           {lines.map((line, li) => (
             <span key={li} className="sm:block md:inline">
               {line.words.map((w) => {

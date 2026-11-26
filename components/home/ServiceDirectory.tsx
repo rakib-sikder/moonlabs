@@ -14,7 +14,7 @@ export function ServiceDirectory() {
   const coreServices = servicesIn(core.id);
 
   return (
-    <section id="services" className="mx-auto max-w-6xl px-6 py-20">
+    <section id="services" className="mx-auto max-w-6xl px-6 py-24 lg:py-32">
       <SectionHead
         eyebrow="Services"
         title="Mostly automation, plus the work around it."

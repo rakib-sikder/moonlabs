@@ -53,6 +53,26 @@
   }
 }
 
+/* A graphite band in the page rhythm: the dark palette inside, whatever the OS mode. */
+.theme-night {
+  color-scheme: dark;
+  --background: #0b0c0f;
+  --surface: #121418;
+  --surface-2: #1a1d23;
+  --border: #272b33;
+  --foreground: #f3f2ef;
+  --muted: #a9adb6;
+  --accent: #f5b24e;
+  --accent-ink: #1a1206;
+  --accent-soft: rgba(245, 178, 78, 0.12);
+  --moon: #ece6d8;
+  --grid-line: rgba(255, 255, 255, 0.035);
+  --late: #f47c7c;
+  --ok: #4fd18b;
+  background: var(--background);
+  color: var(--foreground);
+}
+
 /* Slightly larger base size: every rem-based size and spacing scales with it. */
 html {
   font-size: 106.25%;
@@ -71,6 +91,7 @@ html {
   --color-border: var(--border);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --font-display: var(--font-sora);
 }
 
 body {

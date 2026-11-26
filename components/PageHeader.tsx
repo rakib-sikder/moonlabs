@@ -53,7 +53,7 @@ export function PageHeader({
         <RevealText
           as="h1"
           text={title}
-          className="max-w-3xl text-balance text-4xl sm:text-5xl font-semibold tracking-tight leading-[1.08]"
+          className="font-display max-w-3xl text-balance text-[2.6rem] font-bold leading-[1.03] tracking-[-0.04em] sm:text-6xl lg:text-[4.2rem]"
         />
         {intro && (
           <motion.p

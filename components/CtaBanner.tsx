@@ -39,7 +39,7 @@ export function CtaBanner({
 
         <div className="relative grid gap-10 px-6 py-14 sm:px-12 sm:py-16 lg:grid-cols-[1.4fr_1fr] lg:items-center">
           <div>
-            <h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">{title}</h2>
+            <h2 className="font-display text-balance text-4xl font-bold leading-[1.04] tracking-[-0.035em] sm:text-6xl">{title}</h2>
             <p className="mt-4 max-w-xl text-lg leading-relaxed text-muted">{body}</p>
             <div className="mt-8 flex flex-wrap items-center gap-3">
               <Magnetic>

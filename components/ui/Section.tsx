@@ -44,16 +44,19 @@ export function SectionHeading({
   center?: boolean;
 }) {
   return (
-    <div className={`mb-10 max-w-2xl ${center ? "mx-auto text-center" : ""}`}>
-      <p className="mb-3 font-mono text-xs uppercase tracking-widest text-moon">{eyebrow}</p>
+    <div className={`mb-14 max-w-3xl sm:mb-16 ${center ? "mx-auto text-center" : ""}`}>
+      <p className="mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-surface/70 px-3 py-1 font-mono text-[11px] uppercase tracking-[0.18em] text-moon">
+        <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+        {eyebrow}
+      </p>
       <RevealText
         text={title}
         highlight={highlight}
-        className="text-balance text-2xl sm:text-[2rem] font-semibold tracking-tight leading-tight"
+        className="font-display text-balance text-[2.1rem] font-bold leading-[1.04] tracking-[-0.035em] sm:text-5xl lg:text-[3.6rem]"
       />
       {intro && (
         <Reveal delay={0.15}>
-          <p className="mt-4 text-muted leading-relaxed">{intro}</p>
+          <p className="mt-6 max-w-2xl text-lg leading-relaxed text-muted sm:text-[1.2rem]">{intro}</p>
         </Reveal>
       )}
     </div>

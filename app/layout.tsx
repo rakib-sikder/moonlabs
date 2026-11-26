@@ -1,11 +1,17 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Geist, Geist_Mono, Sora } from "next/font/google";
 import "./globals.css";
 import { MotionProvider } from "@/components/MotionProvider";
 import { site } from "@/lib/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+// Display face for headings: the same Sora as the MOONLAB wordmark.
+const sora = Sora({
+  variable: "--font-sora",
   subsets: ["latin"],
 });
 
@@ -42,7 +48,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+    <html lang="en" className={`${geistSans.variable} ${sora.variable} ${geistMono.variable} antialiased`}>
       <body>
         {/* Marketing chrome lives in app/(site)/layout.tsx; the client portal has its own. */}
         <MotionProvider>{children}</MotionProvider>
