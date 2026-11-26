@@ -29,13 +29,13 @@ export function Hero() {
         }}
       />
 
-      {/* Main Street, drawn from our film's paper diorama: a quiet line sketch along the bottom. */}
+      {/* Main Street at dusk: a faint line drawing behind the lower half of the hero. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-[170px] sm:h-[210px] md:h-[240px]"
-        style={{ maskImage: "linear-gradient(to bottom, transparent 0%, black 55%)", WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 55%)" }}
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-[clamp(190px,40vw,600px)]"
+        style={{ maskImage: "linear-gradient(to bottom, transparent 0%, black 40%)", WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 40%)" }}
       >
-        <div className="absolute inset-0 bg-[url(/images/main-street-sketch-light.webp)] bg-[length:auto_100%] bg-bottom bg-repeat-x opacity-70 dark:bg-[url(/images/main-street-sketch-dark.webp)] dark:opacity-60" />
+        <div className="absolute inset-0 bg-[url(/images/main-street-light.webp)] bg-[length:max(100%,900px)_auto] bg-bottom bg-no-repeat opacity-35 dark:bg-[url(/images/main-street-dark.webp)] dark:opacity-25" />
       </div>
 
       {/* Phones: copy, then the pile underneath. Tablet and up: side by side. */}

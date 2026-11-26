@@ -44,7 +44,7 @@ export const stats: Stat[] = [];
 export const founders: Founder[] = [
   {
     name: "Rakibul Hasan",
-    role: "Founder",
+    role: "Founder & CEO",
     bio: "Designs and builds the automations Moonlab runs for itself and for clients, including LeadPilot, Inbox Unifier and Automation Toolkit.",
     photo: "/people/rakibul-hasan.webp",
     links: [
