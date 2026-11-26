@@ -29,8 +29,17 @@ export function Hero() {
         }}
       />
 
+      {/* Main Street, drawn from our film's paper diorama: a quiet line sketch along the bottom. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-[170px] sm:h-[210px] md:h-[240px]"
+        style={{ maskImage: "linear-gradient(to bottom, transparent 0%, black 55%)", WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 55%)" }}
+      >
+        <div className="absolute inset-0 bg-[url(/images/main-street-sketch-light.webp)] bg-[length:auto_100%] bg-bottom bg-repeat-x opacity-70 dark:bg-[url(/images/main-street-sketch-dark.webp)] dark:opacity-60" />
+      </div>
+
       {/* Phones: copy, then the pile underneath. Tablet and up: side by side. */}
-      <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-12 px-6 pb-16 pt-28 md:min-h-[100svh] md:grid-cols-[1.08fr_1fr] md:gap-6 md:pb-12 md:pt-24 lg:gap-12">
+      <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-12 px-6 pb-48 pt-28 md:min-h-[100svh] md:grid-cols-[1.08fr_1fr] md:gap-6 md:pb-56 md:pt-24 lg:gap-12">
         <div className="flex flex-col items-center text-center md:items-start md:text-left">
         <motion.p
           initial={{ opacity: 0, y: 10 }}
@@ -103,7 +112,7 @@ export function Hero() {
           <Magnetic>
             <Link
               href="/services"
-              className="inline-flex whitespace-nowrap rounded-full border border-border bg-surface/50 px-6 py-3 md:max-lg:px-5 text-sm font-medium backdrop-blur transition-colors hover:border-muted"
+              className="inline-flex whitespace-nowrap rounded-full border border-border bg-surface px-6 py-3 md:max-lg:px-5 text-sm font-medium backdrop-blur transition-colors hover:border-muted"
             >
               Explore services
             </Link>

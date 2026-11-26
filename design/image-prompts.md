@@ -895,3 +895,19 @@ HOW IT IS MADE AND LIT (the look only, this adds no extra objects): A photoreali
 
 The only objects in the picture are the ones listed in THE SCENE, plus the small paper moon.
 ```
+
+## Hero background: Main Street line drawing (2026-11-26)
+
+Used along the bottom of the homepage hero, very faint. Generate on pure white; we turn the white
+transparent in code and make the dark-mode copy by recolouring the lines.
+
+> A wide panoramic hand-drawn ink line illustration of a small American Main Street at dusk, drawn
+> with a fine, even-weight technical pen, thin light-grey lines only, no shading, no hatching, no
+> colour, no fills, on a pure white background. Left to right: a corner bakery with an awning and a
+> tray of bread in the window, a plumber's van parked at the kerb, a hardware store, a small cafe with
+> two chairs outside, old street lamps, a few trees, two or three simple people walking, and a few
+> origami paper cranes flying low over the rooftops toward a small crescent moon. Calm, minimal,
+> elegant architectural sketch style, generous white space above the rooftops, the street drawn in
+> one-point perspective along the bottom edge. The left and right edges must match so the image can
+> repeat seamlessly side by side. No text, no signs with words, no logos, no watermark, no border.
+> Aspect ratio 21:9, as wide and high resolution as possible.
