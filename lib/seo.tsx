@@ -43,7 +43,7 @@ export const organizationLd = {
   logo: abs("/icon.svg"),
   image: abs("/opengraph-image.jpg"),
   description: site.description,
-  founder: { "@type": "Person", name: site.founder },
+  founder: { "@type": "Person", name: site.founder, sameAs: [site.founderLinkedIn] },
   ...(site.email ? { email: site.email } : {}),
   telephone: `+${site.phone.e164}`,
   sameAs: site.social.map((s) => s.href),

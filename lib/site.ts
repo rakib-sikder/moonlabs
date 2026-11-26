@@ -27,9 +27,12 @@ export const site = {
   calLink: "https://cal.com/rakibulhasan-us/free-automation-audit",
   /** Public profiles, shown in the footer and listed in structured data. */
   social: [
-    { label: "LinkedIn", href: "https://www.linkedin.com/in/rakibul-hasan-us/" },
+    { label: "LinkedIn", href: "https://www.linkedin.com/company/moonlab-space/" },
     { label: "Facebook", href: "https://www.facebook.com/moonlabspace" },
+    { label: "GitHub", href: "https://github.com/moonlab-space" },
   ],
+  /** Founder's own profile, linked from the Organization structured data. */
+  founderLinkedIn: "https://www.linkedin.com/in/rakibul-hasan-us/",
   /** Canonical origin for SEO (sitemap, Open Graph). */
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://moonlab.space",
   founder: "Rakibul Hasan",
